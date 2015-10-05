@@ -1,0 +1,44 @@
+#!/usr/bin/env node
+
+/*
+ * MAIN
+ * Author: x-web
+ * Date: 5/10/2015
+ */
+
+var app = require('../app.js');
+var debug = require('debug')('ParknShop:server');
+var http = require('http');
+var settings = require('../settings');
+
+var port = settings.port;
+app.set('port', port);
+
+var server = http.createServer(app);
+server.listen(port);
+
+// 出错处理
+server.on('error', function (error) {
+	if (error.syscall !== 'listen') {
+		throw error;
+	}
+
+	switch (error.code) {
+	  case 'EACCES': 
+		console.error('Port ' + port + ' requires elevated privileges');
+		process.exit(1);
+		break;
+	  case 'EADDRINUSE':
+	  	console.error('Port ' + port + ' is already in use');
+	  	process.exit(1);
+	  	break;
+	  default:
+	  	throw error;
+	}
+});
+
+server.on('listening', function () {
+	var addr = server.address();
+	debug('listening on port ' + addr.port);
+})
+

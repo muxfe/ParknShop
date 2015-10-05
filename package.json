@@ -5,8 +5,6 @@
   "description": "a project for SPM named PARKnSHOP.com Online Mall in XDU Software School",
   "author": "x-web",
   "repository": "https://github.com/x-web/ParknShop.git",
-  "os": ["win8.1"],
-  "cpu": ["x64"],
   "scripts": {
     "start": "node ./bin/www"
   },
