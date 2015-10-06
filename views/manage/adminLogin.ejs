@@ -24,7 +24,7 @@
     </div><!-- /.login-logo -->
     <div class="login-box-body">
         <p class="login-box-msg">SYSTEM MANAGER LOGIN</p>
-        <div class="alert alert-danger hide" role="alert" id="loginInfo"><i class="fa fa-exclamation-triangle"></i>&nbsp;username or password wrong.</div>
+        <div class="alert alert-danger" role="alert" id="loginInfo"><i class="fa fa-exclamation-triangle"></i>&nbsp;username or password is wrong.</div>
         <form name="loginForm" ng-submit="processLogForm(loginForm.$valid)" novalidate>
             <div class="form-group has-feedback">
                 <input type="text" class="form-control" ng-model="logFormData.username" placeholder="username"/>
@@ -55,28 +55,32 @@
 <!-- Bootstrap 3.3.2 JS -->
 <script src="/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
 <script>
-    angular.module("adminLogin", [])
-            .controller("login", function ($scope, $http) {
-                $scope.processLogForm = function (isValid) {
-                    if (isValid) {
-                        $http({
-                            method  : 'POST',
-                            url     : "/admin/doLogin",
-                            data    : $.param($scope.logFormData),  // pass in data as strings
-                            headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
-                        })
-                        .success(function (data) {
-                            if (data === "success") {
-                                window.location = "/admin/manage";
-                            } else {
-                                $("#loginInfo").show();
-                            }
-                        });
+  $(function () {
+    $("#loginInfo").hide();
+  })
+
+  angular.module("adminLogin", [])
+    .controller("login", function ($scope, $http) {
+        $scope.processLogForm = function (isValid) {
+            if (isValid) {
+                $http({
+                    method  : 'POST',
+                    url     : "/admin/doLogin",
+                    data    : $.param($scope.logFormData),  // pass in data as strings
+                    headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
+                })
+                .success(function (data) {
+                    if (data === "success") {
+                        window.location = "/admin/manage";
                     } else {
-                        alert("error");
+                        $("#loginInfo").show();
                     }
-                };
-            });
+                });
+            } else {
+                alert("error");
+            }
+        };
+    });
 </script>
 </body>
 </html>
