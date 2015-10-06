@@ -19,5 +19,14 @@ Our team has 38 members.
 * GUI design tool: DevTool, Photoshop , Firebug
 * Programming Language: CSS , JavaScript
 
+# TODO LIST
+1. build basic framework
+2. complete admin function
+3. complete shop owner function
+4. complete customer function
+5. complete public pages
+6. complete some additional functions
+7. optimize and beautify
+
 # The Deadline
 21/11/2015

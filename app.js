@@ -82,7 +82,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 // 指定路由
-//app.use('/admin', admin);
+app.use('/admin', admin);
 
 app.use('/', routes);
 

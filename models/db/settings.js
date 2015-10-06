@@ -15,7 +15,7 @@ module.exports = {
 	encrypt_key: 'ParknShop',
 
 	// MongoDB config
-	URL: 'mongdb://127.0.0.1:27017/ParknShop',
+	URL: 'mongodb://127.0.0.1:27017/ParknShop',
 	DB: 'ParknShop',
 	HOST: '127.0.0.1',
 	PORT: 27017,
@@ -24,7 +24,7 @@ module.exports = {
 
 
 	// 站点基础信息
-	SITE_TITLE: 'ParknShop',
+	SITE_TITLE: 'PARKnSHOP.com Onlin Mall',
 	SITE_DOMAIN: '',
 	SITE_ICP: '',
 	SYSTEM_MAIL: '',
