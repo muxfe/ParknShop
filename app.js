@@ -72,6 +72,14 @@ app.use(session({
 	secret: settings.session_secret
 }));
 
+app.use(function (req, res, next) {
+	// for Administrator
+	res.locals.adminlogined = req.session.adminlogined;
+	res.locals.adminUserInfo = req.session.adminUserInfo;
+
+	next();
+});
+
 app.get('/robots.txt', function (req, res, next) {
 	var stream = fs.createReadStream('./robots.txt', { flag: 'r' });
 	stream.pipe(res);

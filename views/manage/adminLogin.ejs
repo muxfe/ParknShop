@@ -23,7 +23,7 @@
         <a href="/"><b>PARKnSHOP</b>.com</a>
     </div><!-- /.login-logo -->
     <div class="login-box-body">
-        <p class="login-box-msg">SYSTEM MANAGER LOGIN</p>
+        <p class="login-box-msg">Administrator Login</p>
         <div class="alert alert-danger" role="alert" id="loginInfo"><i class="fa fa-exclamation-triangle"></i>&nbsp;username or password is wrong.</div>
         <form name="loginForm" ng-submit="processLogForm(loginForm.$valid)" novalidate>
             <div class="form-group has-feedback">
@@ -36,14 +36,14 @@
             </div>
             <div class="row">
                 <div class="col-xs-8">
-                    <div class="checkbox">
+                    <div class="checkbox hide">
                         <label>
                             <input type="checkbox"/> Remember Me
                         </label>
                     </div>
                 </div><!-- /.col -->
                 <div class="col-xs-4">
-                    <button type="submit" class="btn btn-primary btn-block btn-flat" ng-disabled="loginForm.$invalid">LOGIN</button>
+                    <button type="submit" class="btn btn-primary btn-block btn-flat" ng-disabled="loginForm.$invalid">Lgoin</button>
                 </div><!-- /.col -->
             </div>
         </form>

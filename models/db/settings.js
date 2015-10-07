@@ -32,6 +32,21 @@ module.exports = {
 	SITE_KEYWORDS: '',
 	SITE_BASIC_KEYWORDS: '',
 
+	// 系统管理模块
+	SYSTEM_MANAGE: new Array('sysTemManage', 'System Management'),
+	ADMIN_USER_LIST: new Array('sysTemManage_user', 'Administrator Management'),
+	ADMINI_GROUP_LIST: new Array('sysTemManage_group', 'Admin Group Management'),
+	ADS_LIST: new Array('sysTemManage_ads', 'Ads Management'),
+	FILES_LIST: new Array('sysTemManage_files', 'Files Management'),
+	DATA_MANAGE: new Array('sysTemManage_data', 'Data Management'),
+	BACKUP_MANAGE: new Array('sysTemManage_backup', 'Backup Management'),
+	SYSTEM_LOGS: new Array('sysTemManage_logs', 'System Logs Management'),
+
+	// 用户管理模块
+	USER_MANAGE: new Array('userManage', 'Users Management'),
+	
+
+
 	// 目录
 	UPDATE_FOLDER: process.cwd() + '/public/upload',
 	TEMPLATE_FOLDER: process.cwd() + '/views/web/temp',
