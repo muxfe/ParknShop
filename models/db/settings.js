@@ -35,7 +35,7 @@ module.exports = {
 	// 系统管理模块
 	SYSTEM_MANAGE: new Array('sysTemManage', 'System Management'),
 	ADMIN_USER_LIST: new Array('sysTemManage_user', 'Administrator Management'),
-	ADMINI_GROUP_LIST: new Array('sysTemManage_group', 'Admin Group Management'),
+	//ADMINI_GROUP_LIST: new Array('sysTemManage_group', 'Admin Group Management'),
 	ADS_LIST: new Array('sysTemManage_ads', 'Ads Management'),
 	FILES_LIST: new Array('sysTemManage_files', 'Files Management'),
 	DATA_MANAGE: new Array('sysTemManage_data', 'Data Management'),
@@ -44,7 +44,7 @@ module.exports = {
 
 	// 用户管理模块
 	USER_MANAGE: new Array('userManage', 'Users Management'),
-	
+
 
 
 	// 目录
