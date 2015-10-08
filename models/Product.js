@@ -42,7 +42,7 @@ var product = new Schema({
     images: [ String ],
     // 评论
     comments: [
-        new Schema({
+        {
             username: String,
             user_id: String,
             content: String,
@@ -51,7 +51,7 @@ var product = new Schema({
                 type: Date,
                 default: Date.now
             }
-        })
+        }
     ],
     // 运费说明
     transport: String

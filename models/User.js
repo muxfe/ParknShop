@@ -37,22 +37,22 @@ var User = mongoose.model('User', {
     },
     // 收货地址
     address: [
-        new Schema({
+        {
             name: String,
             postcode: Number,
             address: String,
             phoneNum: String,
             isDefault: Boolean
-        })
+        }
     ],
     // 购物车
     cart: [
-        new Schema({
+        {
             product_name: String,
             product_link: String,
             product_id: String,
             product_num: Number
-        })
+        }
     ]
 });
 

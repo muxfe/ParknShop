@@ -35,9 +35,7 @@ var category = new Schema({
     // 是否有子目录
     isChild: Boolean,
     // 子目录列表
-    childs: [ // 子目录
-        String
-    ]
+    childs: [ String ]
 });
 
 var Category = mongoose.model('Category', category);

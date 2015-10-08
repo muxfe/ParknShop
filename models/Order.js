@@ -20,13 +20,13 @@ var order = new Schema({
     },
     address: String,
     products: [
-        new Schema({
+        {
             _id: String,
             name: String,
             quantity: Number,
             description: String,
             url: String
-        })
+        }
     ],
     shop: {
         _id: String,
