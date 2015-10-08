@@ -42,10 +42,10 @@ var settings = require('./models/db/settings')
 
 /* 路由 */
 var routes = require('./routes/index');
-
 // admin
 var admin = require('./routes/admin');
-
+// validate
+var validate = require('./routes/validate');
 
 /* 层次结构 */
 
@@ -72,14 +72,6 @@ app.use(session({
 	secret: settings.session_secret
 }));
 
-app.use(function (req, res, next) {
-	// for Administrator
-	res.locals.adminlogined = req.session.adminlogined;
-	res.locals.adminUserInfo = req.session.adminUserInfo;
-
-	next();
-});
-
 app.get('/robots.txt', function (req, res, next) {
 	var stream = fs.createReadStream('./robots.txt', { flag: 'r' });
 	stream.pipe(res);
@@ -90,8 +82,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 // 指定路由
-app.use('/admin', admin);
+app.use('/', validate);
+app.use(function (req, res, next) {
+	// for user
+	res.locals.logined = req.session.logined;
+	res.locals.userInfo = req.session.user;
+	// for Administrator
+	res.locals.adminlogined = req.session.adminlogined;
+	res.locals.adminUserInfo = req.session.adminUserInfo;
+	// for domain
+	res.locals.curDomain = req.headers.host;
 
+	next();
+});
+
+app.use('/admin', admin);
 app.use('/', routes);
 
 

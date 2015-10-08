@@ -4,7 +4,6 @@
  * Date: 5/10/2015
  */
 
-
 var express = require('express');
 var url = require('url');
 var crypto = require('crypto');
@@ -13,6 +12,8 @@ var router = express.Router();
 
 // 管理员对象
 var AdminUser = require('../models/AdminUser');
+// 系统日志对象
+var SystemLog = require('../models/SystemLog');
 // 数据库操作对象
 var Db = require('../models/db/Db');
 // 站点配置
@@ -21,11 +22,27 @@ var settings = require('../models/db/settings');
 var AdminUtils = require('../utils/adminUtils');
 
 
-router.get('/', function (req, res, next) {
+router.get('/login', function (req, res, next) {
 	res.render('manage/adminLogin', AdminUtils.getSiteInfo());
 });
 
-router.post('/doLogin', function (req, res, next) {
+router.get('/logout', function (req, res, next) {
+	req.session.adminlogined = false;
+	req.session.adminUserInfo = null;
+
+	// loged
+	AdminUtils.saveSystemLog( 'logout', user.username + " logout." );
+
+	res.redirect('/admin/login');
+});
+
+router.get('/', function (req, res, next) {
+	res.render('manage/main', AdminUtils.getPageInfo(req, res, settings.SYSTEM_MANAGE));
+});
+
+
+/* api */
+router.post('/api/v1/login_auth', function (req, res, next) {
 	var username = req.body.username,
 		password = req.body.password,
 		encryptedPwd = Db.encrypt(password, settings.encrypt_key);
@@ -34,6 +51,10 @@ router.post('/doLogin', function (req, res, next) {
 		if (user) {
 			req.session.adminlogined = true;
 			req.session.adminUserInfo = user;
+
+			// loged
+			AdminUtils.saveSystemLog( 'login', user.username + " logined from " + adminUtils.getClientIp(req) );
+
 			res.end('success');
 		} else {
 			console.log("Login failed.");
@@ -42,20 +63,9 @@ router.post('/doLogin', function (req, res, next) {
 	});
 });
 
-router.get('/logout', function (req, res, next) {
-	req.session.adminlogined = false;
-	req.session.adminUserInfo = '';
-	res.redirect('/admin');
-});
 
-router.get('/manage', function (req, res, next) {
-	res.render('manage/main', AdminUtils.getPageInfo(req, res, settings.SYSTEM_MANAGE));
-});
-
-
-/* manage/main */
-router.get('/manage/main_info', function (req, res, next) {
-	AdminUtiles.setMainInfo(req, res);
+router.get('/api/v1/main_info', function (req, res, next) {
+	AdminUtils.setMainInfo(req, res);
 });
 
 module.exports = router;
