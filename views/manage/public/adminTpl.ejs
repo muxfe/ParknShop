@@ -6,6 +6,8 @@
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <!-- Bootstrap 3.3.2 -->
     <link href="/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <!-- Font Awesome Icons -->
+    <link href="/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
     <!--数据表格相关样式-->
     <link href="/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
     <!-- Theme style -->
@@ -80,9 +82,9 @@
             <!-- search form (Optional) -->
             <form action="#" method="get" class="sidebar-form">
                 <div class="input-group">
-                    <input type="text" name="searchKey" class="form-control" placeholder="search..." value=""/>
+                    <input type="text" name="searchKey" class="form-control" placeholder="Search..." value=""/>
               <span class="input-group-btn">
-                <button type='submit' name='search' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i></button>
+                <button type="submit" name='search' id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
               </span>
                 </div>
             </form>
@@ -94,29 +96,42 @@
                 <!-- Optionally, you can add icons to the links -->
                 <input type="hidden" id="currentCate" value="<%= bigCategory%>"/>
                 <li class="treeview active" cid="sysTemManage">
-                    <a href="#"><span>System Management</span> <i class="fa fa-angle-left pull-right"></i></a>
+                    <a href="#"><span>System Management</span> <i class="fa fa-angle-right pull-right"></i></a>
                     <ul class="treeview-menu">
-                        <li cid="sysTemManage_user"><a href="/admin/manage/adminUsersList"><i class="fa fa-user"></i> Administrator Manage</a></li>
-                        <li cid="sysTemManage_uGroup"><a href="/admin/manage/adminGroupList"><i class="fa fa-group"></i> Admin Group Manage</a></li>
+                        <li cid="sysTemManage_user"><a href="/admin/manage/adminUsers"><i class="fa fa-user"></i> Administrator Management</a></li>
                         <li cid="sysTemManage_ads"><a href="/admin/manage/adsList"><i class="fa fa-camera-retro"></i> Ads Manage</a></li>
-                        <li cid="sysTemManage_files"><a href="/admin/manage/filesList"><i class="fa fa-file-text"></i> Files Manage</a></li>
                         <li cid="sysTemManage_data">
-                            <a href="#"><i class="fa fa-cloud"></i> Data Manage<i class="fa fa-angle-left pull-right"></i></a>
+                            <a href="#"><i class="fa fa-cloud"></i> Data Management<i class="fa fa-angle-right pull-right"></i></a>
                             <ul class="treeview-menu">
-                                <li cid="sysTemManage_data_1"><a href="/admin/manage/dataManage/m/backUpData"><i class="fa fa-copy"></i> Backup</a></li>
+                                <li cid="sysTemManage_data_backup"><a href="/admin/manage/dataManage/m/backUpData"><i class="fa fa-copy"></i> Backup</a></li>
                             </ul>
                         </li>
-                        <li cid="sysTemManage_logs"><a href="/admin/manage/systemLogs"><i class="fa fa-fw fa-clipboard"></i> System Log</a></li>
+                        <li cid="sysTemManage_logs"><a href="/admin/manage/systemLogs"><i class="fa fa-fw fa-clipboard"></i> System Logs Management</a></li>
                     </ul>
                 </li>
-                <li class="treeview" cid="contentManage">
-                    <a href="#"><span>文档管理</span> <i class="fa fa-angle-left pull-right"></i></a>
+                <li class="treeview" cid="userManage">
+                    <a href="#"><span>Users Management</span> <i class="fa fa-angle-right pull-right"></i></a>
                     <ul class="treeview-menu">
-                        <li cid="contentManage_content"><a href="/admin/manage/contentList"><i class="fa fa-file-text-o"></i> 文档管理</a></li>
-                        <li cid="contentManage_cateGory"><a href="/admin/manage/contentCategorys"><i class="fa fa-clipboard"></i> 文档类别管理</a></li>
-                        <li cid="contentManage_tag"><a href="/admin/manage/contentTags"><i class="fa fa-tags"></i> 文档标签管理</a></li>
-                        <li cid="contentManage_temp"><a href="/admin/manage/contentTemps"><i class="fa fa-dashboard"></i> 文档模板配置</a></li>
-                        <li cid="contentManage_msg"><a href="/admin/manage/contentMsgs"><i class="fa fa-comments"></i> 留言管理</a></li>
+                        <li cid="userManage_shop_owner"><a href="/admin/manage/shop_owners"><i class="fa fa-male"></i> Shop Owner Management</a></li>
+                        <li cid="userManage_customer"><a href="/admin/manage/customers"><i class="fa fa-users"></i> Customer Management</a></li>
+                        <li cid="userManage_blacklist"><a href="/admin/manage/blacklist"><i class="fa fa-trash"></i> Blacklist</a></li>
+                    </ul>
+                </li>
+                <li class="treeview" cid="shopManage">
+                    <a href="#"><span>Shops Management</span> <i class="fa fa-angle-right pull-right"></i></a>
+                    <ul class="treeview-menu">
+                        <li cid="shopManage"><a href="/admin/manage/shops"><i class="fa fa-home"></i> Shop Management</a></li>
+                        <li cid="shopManage"><a href="/admin/manage/category"><i class="fa fa-reorder"></i> Category Management</a></li>
+                        <li cid="shopManage"><a href="/admin/manage/commission"><i class="fa fa-cc-visa"></i> Commission Management</a></li>
+                    </ul>
+                </li>
+                <li class="treeview" cid="saleManage">
+                    <a href="#"><span>Sales Management</span> <i class="fa fa-angle-right pull-right"></i></a>
+                    <ul class="treeview-menu">
+                        <li cid="saleManage"><a href="/admin/manage/orders"><i class="fa fa-list"></i> Order Management</a></li>
+                        <li cid="saleManage"><a href="/admin/manage/sales_history"><i class="fa fa-history"></i> Sales History Management</a></li>
+                        <li cid="saleManage"><a href="/admin/manage/income"><i class="fa fa-usd"></i> Income Management</a></li>
+                        <li cid="saleManage"><a href="/admin/manage/payment"><i class="fa fa-credit-card"></i> Payment Management</a></li>
                     </ul>
                 </li>
             </ul><!-- /.sidebar-menu -->
@@ -147,7 +162,7 @@
     <!-- Main Footer -->
     <footer class="main-footer">
         <!-- Default to the left -->
-        <strong>Copyright &copy; 2015 <a href="http://www.html-js.cn" target="_blank"><b>PARKnSHOP</b>.com</a>.</strong> All rights reserved.
+        <strong>Copyright &copy; 2015 <a href="<%= curDomain %>" target="_blank"><b>PARKnSHOP</b>.com</a>.</strong> All rights reserved.
     </footer>
 
 </div><!-- ./wrapper -->
