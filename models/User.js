@@ -5,9 +5,10 @@
  */
 
 var mongoose = require('mongoose'),
-    shortid = require('shortid');
+    shortid = require('shortid'),
+    Schema = mongoose.Schema;
 
-var User = mongoose.model('User', {
+var user = new Schema({
     _id: {
         type: String,
         unique: true,
@@ -37,23 +38,25 @@ var User = mongoose.model('User', {
     },
     // 收货地址
     address: [
-        {
+        new Schema({
             name: String,
             postcode: Number,
             address: String,
             phoneNum: String,
             isDefault: Boolean
-        }
+        })
     ],
     // 购物车
     cart: [
-        {
+        new Schema({
             product_name: String,
             product_link: String,
             product_id: String,
             product_num: Number
-        }
+        })
     ]
 });
+
+var User = mongoose.model( 'User', user );
 
 module.exports = User;

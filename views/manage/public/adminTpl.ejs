@@ -22,7 +22,10 @@
     <!--uploadify-->
     <link href="/plugins/uploadify/uploadify.css" rel="stylesheet" type="text/css" />
     <script src="/plugins/uploadify/jquery.uploadify.min.js"></script>
-
+    <!--d3-->
+    <script src="/plugins/d3/d3.v3.min.js"></script>
+    <script src="/plugins/d3/d3pie.min.js"></script>
+    <!--ParknShop-->
     <script src="/javascripts/PnP-angular.js"></script>
     <link rel="stylesheet" href="/stylesheets/backstage/css/style.css"/>
 
@@ -100,13 +103,13 @@
                     <ul class="treeview-menu">
                         <li cid="sysTemManage_user"><a href="/admin/manage/adminUsers"><i class="fa fa-user"></i> Administrator Management</a></li>
                         <li cid="sysTemManage_ads"><a href="/admin/manage/adsList"><i class="fa fa-camera-retro"></i> Ads Manage</a></li>
+                        <li cid="sysTemManage_logs"><a href="/admin/manage/systemLogs"><i class="fa fa-calendar-o"></i> System Logs Management</a></li>
                         <li cid="sysTemManage_data">
                             <a href="#"><i class="fa fa-cloud"></i> Data Management<i class="fa fa-angle-right pull-right"></i></a>
                             <ul class="treeview-menu">
                                 <li cid="sysTemManage_data_backup"><a href="/admin/manage/dataManage/m/backUpData"><i class="fa fa-copy"></i> Backup</a></li>
                             </ul>
                         </li>
-                        <li cid="sysTemManage_logs"><a href="/admin/manage/systemLogs"><i class="fa fa-fw fa-clipboard"></i> System Logs Management</a></li>
                     </ul>
                 </li>
                 <li class="treeview" cid="userManage">
@@ -162,7 +165,7 @@
     <!-- Main Footer -->
     <footer class="main-footer">
         <!-- Default to the left -->
-        <strong>Copyright &copy; 2015 <a href="<%= curDomain %>" target="_blank"><b>PARKnSHOP</b>.com</a>.</strong> All rights reserved.
+        <strong>Copyright &copy; 2015 <a href="<%= curDomain %>/" target="_blank"><b>PARKnSHOP</b>.com</a>.</strong> All rights reserved.
     </footer>
 
 </div><!-- ./wrapper -->

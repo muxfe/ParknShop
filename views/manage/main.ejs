@@ -4,21 +4,11 @@
         <div class="col-md-6">
             <div class="box box-solid">
                 <div class="box-header with-border">
-                    <i class="fa fa-fw fa-list"></i>
-                    <h3 class="box-title">概况</h3>
+                    <i class="fa fa-fw fa-pie-chart"></i>
+                    <h3 class="box-title">Site Profile</h3>
                 </div><!-- /.box-header -->
-                <div class="box-body">
-
-                    <dl class="dl-horizontal sysSurvey">
-                        <dt class="text-info"><i class="fa fa-fw fa-user"></i> 管理员数</dt>
-                        <dd>{{mainData.adminUserCount}}</dd>
-                        <dt class="text-info"><i class="fa fa-fw fa-users"></i> 注册用户</dt>
-                        <dd>{{mainData.regUsersCount}}</dd>
-                        <dt class="text-info"><i class="fa fa-fw fa-file-text-o"></i> 文档总数</dt>
-                        <dd>{{mainData.contentsCount}}</dd>
-                        <dt class="text-info"><i class="fa fa-fw fa-file-text-o"></i> 留言总数</dt>
-                        <dd>{{mainData.msgCount}}</dd>
-                    </dl>
+                <div class="box-body" id="site-pie">
+                    <!-- d3-pie-chart -->
                 </div><!-- /.box-body -->
             </div><!-- /.box -->
         </div><!-- ./col -->
@@ -26,15 +16,14 @@
             <div class="box box-solid">
                 <div class="box-header with-border">
                     <i class="fa fa-location-arrow"></i>
-                    <h3 class="box-title">快捷操作</h3>
+                    <h3 class="box-title">Quick Start</h3>
                 </div><!-- /.box-header -->
                 <div class="box-body">
                     <ul class="list-unstyled">
-                        <li><a href="/admin/manage/adminUsersList"><i class="fa fa-fw fa-user"></i> 添加管理员</a></li>
-                        <li><a href="/admin/manage/content/add/content"><i class="fa fa-fw fa-file-text-o"></i> 创建新文档</a></li>
-                        <li><a href="/admin/manage/content/add/plug"><i class="fa fa-fw fa-file-text-o"></i> 添加Jquery插件</a></li>
+                        <li><a href="/admin/manage/adminUsersList"><i class="fa fa-fw fa-user-plus"></i> Add Administrator</a></li>
+                        <li><a href="/admin/manage/content/add/content"><i class="fa fa-fw fa-history"></i> View Sales History</a></li>
+                        <li><a href="/admin/manage/content/add/plug"><i class="fa fa-fw fa-usd"></i> Update Commission</a></li>
                     </ul>
-
                 </div><!-- /.box-body -->
             </div><!-- /.box -->
         </div><!-- ./col -->
@@ -43,17 +32,26 @@
         <div class="col-md-6">
             <div class="box box-solid">
                 <div class="box-header with-border">
-                    <i class="fa fa-fw fa-comments-o"></i>
-                    <h3 class="box-title">近期评论</h3>
+                    <i class="fa fa-fw fa-bar-chart"></i>
+                    <h3 class="box-title">Income Profile</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body" id="income-bar">
+                    <!-- d3-bar-chart -->
+                </div><!-- /.box-body -->
+            </div><!-- /.box -->
+        </div><!-- ./col -->
+        <div class="col-md-6">
+            <div class="box box-solid">
+                <div class="box-header with-border">
+                    <i class="fa fa-fw fa-calendar-o"></i>
+                    <h3 class="box-title">System Logs</h3>
                 </div><!-- /.box-header -->
                 <div class="box-body">
                     <ul class="list-unstyled">
                         <li>
-                            <div class="dashboard-comment-wrap" ng-repeat="msg in mainData.msgList">
-                                <small class="pull-right">{{msg.date | date : "yyyy-MM-dd HH:mm:ss"}}</small>
-                                <h4 class="comment-meta">
-                                    由 <cite class="comment-author"><a class="url" rel="external nofollow" href="#">{{msg.uName}}</a></cite> 发表在《<a href="/details/{{msg.contentId}}.html" target="_blank">{{msg.contentTitle}}</a>》</h4>
-                                <blockquote><p>{{msg.content}}</p></blockquote>
+                            <div ng-repeat="syslog in systemLog">
+                                <small class="pull-right">{{syslog.date | date : "yy-MM-dd HH:mm:ss"}}</small>
+                                <p>{{syslog.log}}</p>
                             </div>
                         </li>
                     </ul>
@@ -63,9 +61,78 @@
     </div>
 </div>
 <script>
-    App.controller("mainPanel", function($scope, $http){
-        $http.get("/admin/manage/main_info").success(function (result) {
-            $scope.mainData = result;
+    App.controller( "mainPanel", function( $scope, $http ) {
+        $http.get("/admin/api/v1/user_count").success( function ( result ) {
+            var userCount = result;
+            new d3pie( "#site-pie", {
+                size: {
+                    "canvasWidth": jQuery("#site-pie").width(),
+                    "canvasHeight": jQuery(window).height() * 0.26,
+                    "pieInnerRadius": "1%",
+                    "pieOuterRadius": "100%"
+                },
+                data: {
+                    "sortOrder": "value-desc",
+                    "content": [
+                        {
+                            "label": "admin",
+                            "value": userCount.adminCount
+                        },
+                        {
+                            "label": "customer",
+                            "value": userCount.customerCount
+                        },
+                        {
+                            "label": "shop owner",
+                            "value": userCount.shopOwnerCount
+                        }
+                    ]
+                },
+                tooltips: {
+                    "enabled": true,
+                    "type": "placeholder",
+                    "fontColor": "#efefef",
+                    "string": "{label}: {value}, {percentage}%"
+                },
+                misc: {
+        			"colors": {
+        				"segmentStroke": "#fff"
+        			}
+        		},
+                effects: {
+                    "pullOutSegmentOnClick": {
+                        "effect": "linear",
+                        "speed": 400,
+                        "size": 8
+                    }
+                },
+                labels: {
+                    "outer": {
+                        "pieDistance": 10
+                    },
+                    "mainLabel": {
+                        "fontSize": 16
+                    },
+                    "percentage": {
+                        "fontSize": 14,
+                        "decimalPlaces": 0
+                    },
+        			"value": {
+        				"color": "#cccc43",
+        				"fontSize": 14
+        			},
+        			"lines": {
+        				"enabled": true,
+        				"color": "#aaa"
+        			},
+        			"truncation": {
+        				"enabled": true
+        			}
+                }
+            });
+        });
+        $http.get("/admin/api/v1/system_logs?limit=5").success( function ( result ) {
+            $scope.systemLog = result;
         });
     });
 </script>

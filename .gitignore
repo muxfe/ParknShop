@@ -1,5 +1,6 @@
 .DS_Store
 
+test_data.js
 npm-debug.log
 node_modules
 coverage

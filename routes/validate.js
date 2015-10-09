@@ -36,16 +36,26 @@ router.get( "/", function ( req, res, next ) {
 });
 
 // 管理员权限验证
-router.get( /^\/admin\/manage\/\w+?/, function ( req, res, next ) {
+router.get( /\/admin(\/logout)?$/, function ( req, res, next ) {
     if ( req.session.adminlogined ) {
         next();
     } else {
         res.redirect('/admin/login');
     }
 });
-// api验证
-router.get( /^\/admin\/api\/v[0-9]+\/\w+?/, function ( req, res, next ) {
+
+// 后台页面验证
+router.get( /^\/admin\/manage(\/\w+)?$/, function ( req, res, next ) {
     if ( req.session.adminlogined ) {
+        next();
+    } else {
+        res.end('Permission Denied.');
+    }
+});
+
+// api验证
+router.get( /^\/admin\/api\/v[0-9]+\/\w+$/, function ( req, res, next ) {
+    if ( settings.debug || req.session.adminlogined ) {
         next();
     } else {
         res.end('Permission Denied.');

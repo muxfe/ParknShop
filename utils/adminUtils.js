@@ -53,10 +53,10 @@ var AdminUtils = {
     saveSystemLog: function ( type, logs ) {
         var log = new SystemLog();
         log.type = type;
-        log.logs = logs;
+        log.log = logs;
         log.save(function ( err ) {
             if ( err ) {
-                console.error(err)
+                console.error(err);
                 if ( settings.debug ) {
                     res.end(err);
                 }
