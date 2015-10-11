@@ -6,6 +6,7 @@
 
 var mongoose = require('mongoose'),
     shortid = require('shortid'),
+    system = require('../utils/system'),
     Schema = mongoose.Schema;
 
 var dataLog = new Schema({
@@ -29,7 +30,14 @@ DataLog.business = {
 
     delete: function ( id, req, res ) {
         var Db = require('./db/Db');
-        Db.delete( id, DataLog, req, res, req.session.adminUserInfo.username + ' delete a datalog(' + id  + ')' );
+        DataLog.findOne({ _id: id }, function (err, log) {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            system.deleteBackup(log.filename);
+            Db.delete( id, DataLog, req, res, req.session.adminUserInfo.username + ' delete a datalog(' + id  + ')' );
+        });
     }
 
 };

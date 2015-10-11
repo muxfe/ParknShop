@@ -12,7 +12,6 @@ var moment = require('moment');
 
 var Db = require('../models/db/Db');
 var settings = require('../models/db/settings');
-var AdminUtils = require('./AdminUtils');
 
 var System = {
 
@@ -63,7 +62,19 @@ var System = {
                     ]);
                     archive.finalize();
 
+                    output.on('close', function () {
+                        // 删除文件夹
+                        var bakPath = dataPath + '\\' + settings.DB,
+                            dirList = fs.readdirSync(bakPath);
+                        dirList.forEach(function (filename) {
+                            fs.unlinkSync(bakPath + '\\' + filename);
+                        });
+                        fs.rmdir(bakPath);
+                        fs.rmdir(dataPath);
+                    });
+
                     // log
+                    var AdminUtils = require('./AdminUtils');
                     var logs = req.session.adminUserInfo.username + ' backup the data.';
                     AdminUtils.saveDataLog(filename, dataPath,  logs);
                     AdminUtils.saveSystemLog('backup', logs);
@@ -72,6 +83,12 @@ var System = {
                 });
             }); // writeFile
         }); // mkdir
+    },
+
+    deleteBackup: function (filename) {
+        if (fs.existsSync(filename)) {
+            fs.unlinkSync(filename);
+        }
     }
 
 };
