@@ -24,14 +24,14 @@ var shop = new Schema({
     email: String,
     description: String,
     ads: [
-        {
+        new Schema({
             title: String,
             url: String,
             image: {
                 type: String,
                 default: 'upload/images/default_shop_ad.jpg'
             }
-        }
+        })
     ]
 });
 

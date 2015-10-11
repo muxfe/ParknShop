@@ -4,11 +4,11 @@
  * Date: 5/10/2015
  */
 
-var url = require('url');
-var crypto = require('crypto');
-var mongoose = require('mongoose');
-
-var settings = require('./settings');
+var url = require('url'),
+	crypto = require('crypto'),
+	mongoose = require('mongoose'),
+	settings = require('./settings'),
+	AdminUtils = require('../../utils/AdminUtils');
 
 var db = mongoose.connect(settings.URL);
 /* 数据库需要安全认证时，用下面的连接 */
@@ -16,13 +16,13 @@ var db = mongoose.connect(settings.URL);
 
 var Db = {
 
-	delete: function (obj, req, res, logMsg) {
-		var params = url.parse(req.url, true);
-		obj.remove({ _id: params.query.uid }, function (err, result) {
+	delete: function ( id, obj, req, res, logMsg) {
+		obj.remove({ _id: id }, function (err, result) {
 			if (err) {
 				res.end(err);
 			} else {
 				console.log(logMsg + ' success!');
+				AdminUtils.saveSystemLog( 'delete', logMsg );
 				res.end('success');
 			}
 		});
@@ -39,29 +39,26 @@ var Db = {
 		});
 	},
 
-	findOne: function (obj, req, res, logMsg) {
-		var params = url.parse(req.url, true);
-		var currentId = (params.query.uid).split('.')[0];
-		obj.findOne({ _id: currentId }, function (err, result) {
+	findOne: function ( id, obj, req, res, logMsg) {
+		obj.findOne({ _id: id }, function (err, result) {
 			if (err) {
 				res.next(err);
 			} else {
 				console.log(logMsg + ' success!');
-				return res.json(result);				
+				return res.json(result);
 			}
 		});
 	},
 
-	updateOneById: function (obj, req, res, logMsg) {
-		var params = url.parse(req.url, true);
-		var condition = { _id: params.query.uid };
-		res.body.updateDate = new Date();
+	updateOneById: function (id, obj, req, res, logMsg) {
+		req.body.updateDate = new Date();
 		var update = { $set: req.body };
-		obj.update(condition, update, function (err) {
+		obj.update({ _id: id }, update, function (err) {
 			if (err) {
 				res.end(err);
 			} else {
 				console.log(logMsg + ' success!');
+				AdminUtils.saveSystemLog( 'update', logMsg );
 				res.end('success');
 			}
 		});
@@ -74,12 +71,13 @@ var Db = {
 				res.end(err);
 			} else {
 				console.log(logMsg + ' success!');
+				AdminUtils.saveSystemLog( 'insert', logMsg );
 				res.end('success');
 			}
 		});
 	},
 
-	pagination: function (obj, req, res, coditions) {
+	pagination: function (obj, req, res, conditions) {
 		var params = url.parse(req.url, true),
 			startNum = (params.query.currentPage - 1) * params.query.limit + 1,
 			currentPage = Number(params.query.currentPage),
@@ -107,7 +105,7 @@ var Db = {
 					"startNum": Number(startNum)
 				};
 
-				return res.json({ 
+				return res.json({
 					docs: docs.slice(startNum - 1, startNum + limit - 1),
 					pageInfo: pageInfo
 				});
@@ -187,8 +185,8 @@ var Db = {
 
 		if (!limit) {
 			return obj.find(q).sort(sq);
-		} 
-		
+		}
+
 		return obj.find(q).sort(sq).skip(0).limit(limit);
 	},
 
@@ -202,7 +200,7 @@ var Db = {
 				console.error(err);
 			} else {
 				return res.json({
-					count: count 
+					count: count
 				});
 			}
 		});
