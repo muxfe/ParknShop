@@ -9,7 +9,13 @@ var url = require('url');
 var settings = require('../models/db/settings'),
     Db = require('../models/db/Db'),
     AdminUser = require('../models/AdminUser'),
-    SystemLog = require('../models/SystemLog');
+    SystemLog = require('../models/SystemLog'),
+    User = require('../models/User'),
+    Shop = require('../models/Shop'),
+    Order = require('../models/Order'),
+    Product = require('../models/Product'),
+    Category = require('../models/Category'),
+    Ad = require('../models/Ad');
 
 var AdminUtils = {
 
@@ -62,6 +68,45 @@ var AdminUtils = {
                 }
             }
         });
+    },
+
+    getTarget: function ( type, keywords ) {
+        var ret = {
+            obj: null,
+            key: []
+        };
+        var re = keywords && new RegExp( keywords, 'i' );
+
+        switch ( type ) {
+            case 'admin_user':
+                ret.obj = AdminUser;
+                break;
+            case 'user':
+                ret.obj = User;
+                break;
+            case 'ad':
+                ret.obj = Ad;
+                break;
+            case 'category':
+                ret.obj = Category;
+                break;
+            case 'shop':
+                ret.obj = Shop;
+                break;
+            case 'product':
+                ret.obj = Product;
+                break;
+            case 'order':
+                ret.obj = Order;
+                break;
+            case 'system_log':
+                ret.obj = SystemLog;
+                break;
+            default:
+                return null;
+        }
+
+        return ret;
     }
 
 };

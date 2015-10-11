@@ -36,7 +36,7 @@ router.get( "/", function ( req, res, next ) {
 });
 
 // 管理员权限验证
-router.get( /\/admin(\/logout)?$/, function ( req, res, next ) {
+router.get( /^\/admin\/?(logout)?$/, function ( req, res, next ) {
     if ( req.session.adminlogined ) {
         next();
     } else {

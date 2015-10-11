@@ -99,4 +99,64 @@ router.get( '/api/v1/system_logs', function ( req, res, next ) {
 	});
 });
 
+// 获取对象信息
+router.get( '/api/v1/:object_type/:_id?', function ( req, res, next ) {
+	var params = url.parse( req.url, true ),
+		object_type = req.params.object_type,
+		_id = req.params._id,
+		keywords = params.query.searchKey,
+		target = AdminUtils.getTarget( object_type, keywords );
+
+	if ( target ) {
+		if ( _id ) {
+			Db.findOne( _id, target.obj, req, res, 'find ' + _id );
+		} else {
+			Db.pagination( target.obj, req, res, target.key );
+		}
+	} else {
+		return next();
+	}
+});
+
+// 添加对象信息
+router.put( '/api/v1/:object_type', function ( req, res, next ) {
+	var params = url.parse( req.url, true ),
+		object_type = req.params.object_type,
+		target = AdminUtils.getTarget( object_type );
+
+	if ( target ) {
+		target.obj.business.insert( req, res );
+	} else {
+		return next();
+	}
+});
+
+// 修改对象信息
+router.post( '/api/v1/:object_type/:_id?', function ( req, res, next ) {
+	var params = url.parse( req.url, true ),
+		object_type = req.params.object_type,
+		_id = req.params._id,
+		target = AdminUtils.getTarget( object_type );
+
+	if ( target ) {
+		target.obj.business.update( _id, req, res );
+	} else {
+		return next();
+	}
+});
+
+// 删除对象信息
+router.delete( '/api/v1/:object_type/:_id?', function ( req, res, next ) {
+	var params = url.parse( req.url, true ),
+		object_type = req.params.object_type,
+		_id = req.params._id,
+		target = AdminUtils.getTarget( object_type );
+
+	if ( target ) {
+		target.obj.business.delete( _id, req, res );
+	} else {
+		return next();
+	}
+});
+
 module.exports = router;

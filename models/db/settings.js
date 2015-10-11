@@ -24,7 +24,7 @@ module.exports = {
 
 
 	// 站点基础信息
-	SITE_TITLE: 'PARKnSHOP.com Onlin Mall',
+	SITE_TITLE: 'PARKnSHOP.com Online Mall',
 	SITE_DOMAIN: '',
 	SITE_ICP: '',
 	SYSTEM_MAIL: '',
