@@ -7,8 +7,7 @@
 var express = require('express'),
     router = express.Router(),
     settings = require('../models/db/settings'),
-    User = require('../models/User'),
-    SiteUtils = require('../utils/siteUtils');
+    User = require('../models/User');
 
 // 用户登录权限验证
 router.get( "/", function ( req, res, next ) {

@@ -10,16 +10,16 @@ var crypto = require('crypto');
 
 var router = express.Router();
 
+// 站点配置
+var settings = require('../models/db/settings');
+// 数据库操作对象
+var Db = require('../models/db/Db');
 // 管理员对象
 var AdminUser = require('../models/AdminUser');
 // 用户对象
 var User = require('../models/User');
 // 系统日志对象
 var SystemLog = require('../models/SystemLog');
-// 数据库操作对象
-var Db = require('../models/db/Db');
-// 站点配置
-var settings = require('../models/db/settings');
 // 管理员工具
 var AdminUtils = require('../utils/adminUtils');
 
@@ -68,6 +68,18 @@ router.get( '/', function ( req, res, next ) {
 
 router.get( '/manage/adminUsers', function ( req, res, next ) {
 	res.render('manage/adminUsers', AdminUtils.getPageInfo( req, res, settings.ADMIN_USER_LIST, '/admin/manage/adminUsers' ));
+});
+
+router.get( '/manage/systemLogs', function ( req, res, next ) {
+	res.render('manage/systemLogs', AdminUtils.getPageInfo( req, res, settings.SYSTEM_LOGS, '/admin/manage/systemLogs' ));
+});
+
+router.get( '/manage/ads', function ( req, res, next ) {
+	res.render('manage/ads', AdminUtils.getPageInfo( req, res, settings.ADS_LIST, '/admin/manage/ads' ));
+});
+
+router.get( '/manage/backup', function ( req, res, next ) {
+	res.render('manage/backup', AdminUtils.getPageInfo( req, res, settings.BACKUP_MANAGE, '/admin/manage/backup' ));
 });
 
 /* api */

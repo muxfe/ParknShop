@@ -26,4 +26,12 @@ var systemLog = new Schema({
 
 var SystemLog = mongoose.model('SystemLog', systemLog);
 
+SystemLog.business = {
+
+    delete: function ( id, req, res ) {
+        res.end('error');
+    }
+
+};
+
 module.exports = SystemLog;

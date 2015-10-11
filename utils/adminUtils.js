@@ -7,7 +7,6 @@
 var url = require('url');
 
 var settings = require('../models/db/settings'),
-    Db = require('../models/db/Db'),
     AdminUser = require('../models/AdminUser'),
     SystemLog = require('../models/SystemLog'),
     User = require('../models/User'),
