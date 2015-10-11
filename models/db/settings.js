@@ -34,13 +34,11 @@ module.exports = {
 
 	// 系统管理模块
 	SYSTEM_MANAGE: new Array('sysTemManage', 'System Management'),
-	ADMIN_USER_LIST: new Array('sysTemManage_user', 'Administrator Management'),
-	//ADMINI_GROUP_LIST: new Array('sysTemManage_group', 'Admin Group Management'),
-	ADS_LIST: new Array('sysTemManage_ads', 'Ads Management'),
-	FILES_LIST: new Array('sysTemManage_files', 'Files Management'),
+	ADMIN_USER_LIST: new Array('admin_user', 'Administrator Management'),
+	ADS_LIST: new Array('ad', 'Ads Management'),
 	DATA_MANAGE: new Array('sysTemManage_data', 'Data Management'),
-	BACKUP_MANAGE: new Array('sysTemManage_backup', 'Backup Management'),
-	SYSTEM_LOGS: new Array('sysTemManage_logs', 'System Logs Management'),
+	BACKUP_MANAGE: new Array('data_log', 'Backup Management'),
+	SYSTEM_LOGS: new Array('system_log', 'System Logs Management'),
 
 	// 用户管理模块
 	USER_MANAGE: new Array('userManage', 'Users Management'),
@@ -48,10 +46,10 @@ module.exports = {
 
 
 	// 目录
-	UPDATE_FOLDER: process.cwd() + '/public/upload',
-	TEMPLATE_FOLDER: process.cwd() + '/views/web/temp',
-	DB_BACKUP_BAT: process.cwd() + '/models/db/bat',
-	DB_SERVER_OPT: 'F:/Program Files/MongoDB/ParknShop',
+	UPDATE_FOLDER: process.cwd() + '/public/upload/',
+	TEMPLATE_FOLDER: process.cwd() + '/views/web/temp/',
+	DB_BACKUP_FOLDER: 'F:\\Program Files\\MongoDB\\ParknShop\\backup\\',
+	DB_BACKUP_BAT: process.cwd() + '/models/db/bat/backup.bat',
 
 
 	// 本地缓存（Redis）

@@ -1,0 +1,101 @@
+<div class="row" ng-controller="backUpData">
+	<% include public/modal %>
+    <div class="col-xs-12">
+        <p class="myInfoBox bg-warning text-warning"><i class="icon fa fa-warning"></i> Download the backup data please contact the super administrator</p>
+        <div class="panel">
+            <a ng-click="backUpData()" role="button" class="btn btn-primary btn-sm"><span class="fa fa-fw fa-cloud" aria-hidden="true">&nbsp;</span>New Backup</a>
+			<% include public/tableTool %>
+		</div>
+        <div class="box">
+            <div class="box-body table-responsive no-padding" >
+                <table class="table table-hover">
+                    <tr>
+                        <th><input type="checkbox" class="mini" id="selectAll"/></th>
+                        <th>File Name</th>
+                        <th>Log</th>
+                        <th>Date</th>
+                        <th>Operation</th>
+                    </tr>
+                    <tr ng-repeat="opt in data">
+                        <td><input type="checkbox" class="mini"/></td>
+                        <td><i class="fa fa-fw fa-table"></i> {{opt.filename}}</td>
+                        <td class="  sorting_1">{{opt.log}}</td>
+                        <td class=" ">{{opt.date | date : "yyyy-MM-dd HH:mm:ss"}}</td>
+                        <td class=" ">
+                            <button class="btn btn-danger btn-xs" ng-click="delDataItem(opt._id, opt.path)"><span class="fa fa-fw fa-trash-o" aria-hidden="true"></span>Delete</button>
+                        </td>
+                    </tr>
+                </table>
+
+            </div><!-- /.box-body -->
+            <div class="box-footer">
+                <!--分页-->
+                <% include public/pagination %>
+            </div>
+            <div class="overlay hide" id="dataLoading">
+                <i class="fa fa-refresh fa-spin"></i>
+            </div>
+        </div><!-- /.box -->
+
+    </div><!-- /.col -->
+
+    <!--信息提示模态窗口-->
+    <div class="modal fade" id="checkIfBackUp">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">System Hints</h4>
+                </div>
+                <div class="modal-body">
+                    <h4><i class="icon fa fa-warning"></i> Confirm the backup operation? Database operation, please be careful.</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" ng-click="confirmBackUp()">Execute</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+</div>
+
+
+<script>
+
+    App.controller("backUpData",function($scope,$http){
+		// 初始化名称和权限
+        $scope.formData = {};
+        // 获取备份数据列表
+        initPagination( $scope, $http, "<%=bigCategory%>", "<%=searchKey%>" );
+        // 删除备份数据
+        $scope.delDataItem = function ( id, path ) {
+            initCheckIfDo( $scope, id, 'Are you sure you want to delete the backup?', function ( currentID ) {
+                angularHttpDelete( $http, "/admin/api/v1/<%=bigCategory%>/" + currentID, function () {
+                    initPagination( $scope, $http, "<%=bigCategory%>", "<%=searchKey%>" );
+                });
+            });
+        };
+
+        $scope.backUpData = function () {
+
+            initCheckIfDo( $scope, '', 'Confirm the backup operation? Database operation, please be careful.', function ( currentID ) {
+				$http({
+					method: 'PUT',
+					url: '/admin/manage/backup'
+				})
+				.success(function (data) {
+					if (data === 'success') {
+						alert( 'Backup success.' );
+						initPagination( $scope, $http, "<%=bigCategory%>", "<%=searchKey%>" );
+					} else {
+						showErrorInfo('Backup failed.Please contact administrator.');
+					}
+				});
+				$("#checkIfDo").modal('hide');
+            });
+
+        };
+    });
+
+</script>

@@ -3,8 +3,7 @@
     <div class="col-xs-12">
         <div class="panel">
             <a href="#addNewAdminUser" role="button" class="btn btn-primary btn-sm" data-toggle="modal"><span class="fa fa-plus-square" aria-hidden="true">&nbsp;</span> New Administrator</a>
-            <button class="btn btn-danger btn-sm" ng-click="batchDel()"><span class="fa fa-remove" aria-hidden="true">&nbsp;</span> Delete Selected</button>
-            <input type="hidden" id="targetIds" />
+            <% include public/tableTool %>
             <div class="pull-right">
                 <% include public/searchBox %>
             </div>
@@ -110,7 +109,7 @@
     App.controller( "adminUser", function ( $scope, $http ) {
         $scope.formData = {};
 
-        $scope.object_type = 'admin_user';
+        $scope.object_type = '<%=bigCategory%>';
 
         //获取管理员列表信息
         initPagination( $scope, $http, $scope.object_type, "<%=searchKey%>" );

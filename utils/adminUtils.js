@@ -9,6 +9,7 @@ var url = require('url');
 var settings = require('../models/db/settings'),
     AdminUser = require('../models/AdminUser'),
     SystemLog = require('../models/SystemLog'),
+    DataLog = require('../models/DataLog')
     User = require('../models/User'),
     Shop = require('../models/Shop'),
     Order = require('../models/Order'),
@@ -69,6 +70,21 @@ var AdminUtils = {
         });
     },
 
+    saveDataLog: function ( filename, path, logs ) {
+        var log = new DataLog();
+        log.filename = filename;
+        log.log = logs;
+        log.path = path;
+        log.save(function ( err ) {
+            if ( err ) {
+                console.error(err);
+                if ( settings.debug ) {
+                    res.end(err);
+                }
+            }
+        });
+    },
+
     getTarget: function ( type, keywords ) {
         var ret = {
             obj: null,
@@ -100,6 +116,9 @@ var AdminUtils = {
                 break;
             case 'system_log':
                 ret.obj = SystemLog;
+                break;
+            case 'data_log':
+                ret.obj = DataLog;
                 break;
             default:
                 return null;

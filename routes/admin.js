@@ -22,6 +22,8 @@ var User = require('../models/User');
 var SystemLog = require('../models/SystemLog');
 // 管理员工具
 var AdminUtils = require('../utils/adminUtils');
+// 系统工具
+var system = require('../utils/system');
 
 
 router.get( '/login', function ( req, res, next ) {
@@ -80,6 +82,10 @@ router.get( '/manage/ads', function ( req, res, next ) {
 
 router.get( '/manage/backup', function ( req, res, next ) {
 	res.render('manage/backup', AdminUtils.getPageInfo( req, res, settings.BACKUP_MANAGE, '/admin/manage/backup' ));
+});
+
+router.put( '/manage/backup', function ( req, res, next ) {
+	system.backup(req, res);
 });
 
 /* api */

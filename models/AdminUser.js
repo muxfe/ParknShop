@@ -62,7 +62,7 @@ AdminUser.business = {
         if ( req.session.adminUserInfo._id === id ) {
             res.end('Cannot delete current logined administrator.');
         } else {
-            Db.delete( id, AdminUser, req, res, req.session.adminUserInfo.username + ' delete the ' + id );
+            Db.delete( id, AdminUser, req, res, req.session.adminUserInfo.username + ' delete a adminuser( ' + id + ')' );
         }
     }
 
