@@ -33,15 +33,19 @@ module.exports = {
 	SITE_BASIC_KEYWORDS: '',
 
 	// 系统管理模块
-	SYSTEM_MANAGE: new Array('sysTemManage', 'System Management'),
+	SYSTEM_MANAGE: new Array('system', 'System Management'),
 	ADMIN_USER_LIST: new Array('admin_user', 'Administrator Management'),
 	ADS_LIST: new Array('ad', 'Ads Management'),
-	DATA_MANAGE: new Array('sysTemManage_data', 'Data Management'),
 	BACKUP_MANAGE: new Array('data_log', 'Backup Management'),
 	SYSTEM_LOGS: new Array('system_log', 'System Logs Management'),
 
 	// 用户管理模块
-	USER_MANAGE: new Array('userManage', 'Users Management'),
+	USER_MANAGE: {
+		'user': new Array('user', 'Users Management'),
+		'shop_owner': new Array('shop_owner', 'Shop Owner Management'),
+		'customer': new Array('customer', 'Customer Management'),
+		'blacklist': new Array('blacklist', 'Blacklist Management'),
+	},
 
 
 

@@ -88,7 +88,8 @@ var AdminUtils = {
     getTarget: function ( type, keywords ) {
         var ret = {
             obj: null,
-            key: []
+            key: [],
+            group: ''
         };
         var re = keywords && new RegExp( keywords, 'i' );
 
@@ -96,8 +97,20 @@ var AdminUtils = {
             case 'admin_user':
                 ret.obj = AdminUser;
                 break;
-            case 'user':
+            case 'customer':
                 ret.obj = User;
+                ret.group = type;
+                ret.key.push({ 'group': type });
+                break;
+            case 'shop_owner':
+                ret.obj = User;
+                ret.group = type;
+                ret.key.push({ 'group': type });
+                break;
+            case 'blacklist':
+                ret.obj = User;
+                ret.group = type;
+                ret.key.push({ 'group': type });
                 break;
             case 'ad':
                 ret.obj = Ad;

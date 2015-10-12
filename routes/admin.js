@@ -68,6 +68,7 @@ router.get( '/', function ( req, res, next ) {
 	res.render('manage/main', AdminUtils.getPageInfo( req, res, settings.SYSTEM_MANAGE ) );
 });
 
+/* System Management */
 router.get( '/manage/adminUsers', function ( req, res, next ) {
 	res.render('manage/adminUsers', AdminUtils.getPageInfo( req, res, settings.ADMIN_USER_LIST, '/admin/manage/adminUsers' ));
 });
@@ -86,6 +87,15 @@ router.get( '/manage/backup', function ( req, res, next ) {
 
 router.put( '/manage/backup', function ( req, res, next ) {
 	system.backup(req, res);
+});
+
+/* User Management */
+router.get( '/manage/users/:group', function ( req, res, next ) {
+	var group = req.params.group;
+	if ( !group || 'shop_owner,customer,blacklist'.indexOf(group) < 0 ) {
+		return next();
+	}
+	res.render('manage/users', AdminUtils.getPageInfo( req, res, settings.USER_MANAGE[group], '/admin/manage/users/' + group ));
 });
 
 /* api */
@@ -171,7 +181,7 @@ router.delete( '/api/v1/:object_type/:_id?', function ( req, res, next ) {
 		target = AdminUtils.getTarget( object_type );
 
 	if ( target ) {
-		target.obj.business.delete( _id, req, res );
+		target.obj.business.delete( _id, req, res, target );
 	} else {
 		return next();
 	}

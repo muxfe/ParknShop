@@ -1,0 +1,115 @@
+<div class="row" ng-controller="users">
+    <% include public/modal %>
+    <div class="col-xs-12">
+        <div class="panel">
+            <input type="hidden" id="targetIds"/>
+            <% if (bigCategory === 'blacklist') { %>
+                <button class="btn btn-primary btn-sm" ng-click="batchRecovery()" role="button"><span class="fa fa-fw fa-rotate-left" aria-hidden="true">&nbsp;</span>Recovery Selected</button>
+            <% } %>
+            <button class="btn btn-danger btn-sm" ng-click="batchDel()" role="button"><span class="fa fa-fw fa-trash-o" aria-hidden="true">&nbsp;</span>
+                <% if (bigCategory === 'blacklist') { %>
+                    Delete
+                <% } else { %>
+                    Add Selected to Blacklist
+                <% } %>
+            </button>
+            <div class="pull-right">
+                <% include public/searchBox %>
+            </div>
+        </div>
+        <div class="box">
+            <div class="box-body table-responsive no-padding" >
+                <table class="table table-hover">
+                    <tr>
+                        <th><input type="checkbox" class="mini" id="selectAll"/></th>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <% if (bigCategory === 'blacklist') { %>
+                            <th>Group</th>
+                        <% } %>
+                        <th>Email</th>
+                        <th>Telephone</th>
+                        <th>Create-date</th>
+                        <th>Operation</th>
+                    </tr>
+                    <tr class="datalist" ng-repeat="user in data">
+                        <td><input type="checkbox" name="listItem" class="mini" value="{{user._id}}" ng-click="getNewIds()"/></td>
+                        <td class="  sorting_1">{{user.name}}</td>
+                        <td class="  sorting_1">{{user.username}}</td>
+                        <% if (bigCategory === 'blacklist') { %> <!-- 黑名单里用户原来所属用户组 -->
+                            <td class=" ">{{user.group_bak}}</td>
+                        <% } %>
+                        <td class=" ">{{user.email}}</td>
+                        <td class=" ">{{user.phoneNum}}</td>
+                        <td class=" ">{{user.date | date : "yyyy-MM-dd HH:mm:ss"}}</td>
+                        <td class=" ">
+                            <% if (bigCategory === 'blacklist') { %>
+                                <button class="btn btn-primary btn-xs" ng-click="recoveryOne(user._id)" role="button"><span class="fa fa-fw fa-rotate-left" aria-hidden="true">&nbsp;</span>Recovery</button>
+                            <% } %>
+                            <button class="btn btn-danger btn-xs" ng-click="delOneItem(user._id)"><span class="fa fa-fw fa-trash-o" aria-hidden="true"></span>Blacklist</button>
+                        </td>
+                    </tr>
+                </table>
+
+            </div><!-- /.box-body -->
+            <div class="box-footer">
+                <!--分页-->
+                <% include public/pagination %>
+            </div>
+            <div class="overlay hide" id="dataLoading">
+                <i class="fa fa-refresh fa-spin"></i>
+            </div>
+        </div><!-- /.box -->
+
+    </div><!-- /.col -->
+</div><!-- /.row -->
+
+<script>
+
+    App.controller( "users", function ( $scope, $http ) {
+        $scope.formData = {};
+
+        $scope.object_type = '<%=bigCategory%>';
+
+        //获取管理员列表信息
+        initPagination( $scope, $http, $scope.object_type, "<%=searchKey%>" );
+
+        //删除用户
+        initDelOption( $scope, $http, $scope.object_type, "<%=searchKey%>", 'Are you sure you want to join the selected users to blacklist? ' );
+
+        function recovery( id ) {
+            $http({
+                method: 'POST',
+                url: '/admin/api/v1/' + $scope.object_type + '/' + id
+            })
+            .success( function (data) {
+                if ( data === 'success' ) {
+                    initPagination( $scope, $http, "<%=bigCategory%>", "<%=searchKey%>" );
+                } else {
+                    showErrorInfo('Recovery is failed.');
+                }
+            });
+        }
+
+        $scope.recoveryOne = function (id) {
+            initCheckIfDo( $scope, id, 'Are you sure you want to recovery this user?', function ( currentID) {
+                recovery( currentID );
+                $("#checkIfDo").modal('hide');
+            });
+        };
+
+        $scope.batchRecovery = function () {
+            var targetIds = $( '#targetIds' ).val();
+            if ( targetIds && targetIds.split(',').length > 0 ) {
+                initCheckIfDo( $scope, targetIds, 'Are you sure you want to recovery these selected users?', function ( currentID) {
+                    var ida = currentID.split(',');
+                    for ( var i = 0; i < ida.length; i++ ) {
+                        recovery(ida[i]);
+                    }
+                    $("#checkIfDo").modal('hide');
+                });
+            }
+        };
+    });
+
+</script>

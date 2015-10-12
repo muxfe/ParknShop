@@ -84,11 +84,15 @@ var Db = {
 			limit = Number(params.query.limit),
 			pageInfo = null;
 
+		startNum = isNaN(startNum) ? 0 : startNum;
+		limit = isNaN(limit) ? 10 : limit;
+		currentPage = isNaN(currentPage) ? 1 : currentPage;
+
 		var query = null;
-		if (conditions && conditions.length > 1) {
+		if (conditions && conditions.length > 1 ) {
 			query = obj.find().or(conditions);
 		} else if (conditions) {
-			query = obj.find(conditions);
+			query = obj.find(conditions[0]);
 		} else {
 			query = obj.find({});
 		}
@@ -104,7 +108,6 @@ var Db = {
 					"limit": limit,
 					"startNum": Number(startNum)
 				};
-
 				return res.json({
 					docs: docs.slice(startNum - 1, startNum + limit - 1),
 					pageInfo: pageInfo

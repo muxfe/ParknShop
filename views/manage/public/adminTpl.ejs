@@ -97,22 +97,22 @@
             <ul class="sidebar-menu">
                 <li class="header">Main Menu</li>
                 <!-- Optionally, you can add icons to the links -->
-                <input type="hidden" id="currentCate" value="<%= bigCategory%>"/>
-                <li class="treeview active" cid="sysTemManage">
+                <input type="hidden" id="currentCate" value="<%=bigCategory%>"/>
+                <li class="treeview active" cid="system">
                     <a href="#"><span>System Management</span> <i class="fa fa-angle-right pull-right"></i></a>
                     <ul class="treeview-menu">
-                        <li cid="sysTemManage_user"><a href="/admin/manage/adminUsers"><i class="fa fa-user"></i> Administrator Management</a></li>
-                        <li cid="sysTemManage_ads"><a href="/admin/manage/ads"><i class="fa fa-camera-retro"></i> Ads Manage</a></li>
-                        <li cid="sysTemManage_logs"><a href="/admin/manage/systemLogs"><i class="fa fa-calendar-o"></i> System Logs Management</a></li>
-                        <li cid="sysTemManage_backup"><a href="/admin/manage/backup"><i class="fa fa-copy"></i> Backup</a></li>
+                        <li cid="admin_user"><a href="/admin/manage/adminUsers"><i class="fa fa-user"></i> Administrator Management</a></li>
+                        <li cid="ad"><a href="/admin/manage/ads"><i class="fa fa-camera-retro"></i> Ads Manage</a></li>
+                        <li cid="system_log"><a href="/admin/manage/systemLogs"><i class="fa fa-calendar-o"></i> System Logs Management</a></li>
+                        <li cid="data_log"><a href="/admin/manage/backup"><i class="fa fa-copy"></i> Backup</a></li>
                     </ul>
                 </li>
-                <li class="treeview" cid="userManage">
+                <li class="treeview" cid="users">
                     <a href="#"><span>Users Management</span> <i class="fa fa-angle-right pull-right"></i></a>
                     <ul class="treeview-menu">
-                        <li cid="userManage_shop_owner"><a href="/admin/manage/shop_owners"><i class="fa fa-male"></i> Shop Owner Management</a></li>
-                        <li cid="userManage_customer"><a href="/admin/manage/customers"><i class="fa fa-users"></i> Customer Management</a></li>
-                        <li cid="userManage_blacklist"><a href="/admin/manage/blacklist"><i class="fa fa-trash"></i> Blacklist</a></li>
+                        <li cid="shop_owner"><a href="/admin/manage/users/shop_owner"><i class="fa fa-male"></i> Shop Owner Management</a></li>
+                        <li cid="customer"><a href="/admin/manage/users/customer"><i class="fa fa-users"></i> Customer Management</a></li>
+                        <li cid="blacklist"><a href="/admin/manage/users/blacklist"><i class="fa fa-trash"></i> Blacklist</a></li>
                     </ul>
                 </li>
                 <li class="treeview" cid="shopManage">
@@ -183,17 +183,13 @@
     $(function(){
         var curerntCate = $("#currentCate").val();
         var cateList = $(".sidebar-menu").find("li");
-        var pCateList = $(".sidebar-menu").find(".treeview");
-        for (var i = 0; i < cateList.length; i++) {
+        var parentCategoryActive = $(".sidebar-menu").find(".treeview.active");
+        for ( var i = 0; i < cateList.length; i++ ) {
             var obj = $(cateList[i]);
             if (obj.attr("cid") === curerntCate) {
                 obj.addClass("active");
-                for (var j = 0; j < pCateList.length; j++){
-                    var pobj = $(pCateList[j]);
-                    if (pobj.attr("cid").split("_")[0] === obj.attr("cid").split("_")[0]) {
-                        pobj.addClass("active").siblings().removeClass("active");
-                    }
-                }
+                parentCategoryActive.removeClass("active");
+                obj.parent().parent().addClass("active");
             }
         }
     })

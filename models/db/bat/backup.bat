@@ -1,1 +1,1 @@
-mongodump -o "F:\Program Files\MongoDB\ParknShop\backup\20151011224942"
+mongodump -o "F:\Program Files\MongoDB\ParknShop\backup\20151011225221"
