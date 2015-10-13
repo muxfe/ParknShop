@@ -63,21 +63,21 @@ router.post( '/login', function ( req, res, next ) {
 	});
 });
 
-// 后台主页
+/* 后台主页 */
 router.get( '/', function ( req, res, next ) {
 	res.render('manage/main', AdminUtils.getPageInfo( req, res, settings.SYSTEM_MANAGE ) );
 });
 
 /* System Management */
-router.get( '/manage/adminUsers', function ( req, res, next ) {
+router.get( '/manage/admin_user', function ( req, res, next ) {
 	res.render('manage/adminUsers', AdminUtils.getPageInfo( req, res, settings.ADMIN_USER_LIST, '/admin/manage/adminUsers' ));
 });
 
-router.get( '/manage/systemLogs', function ( req, res, next ) {
+router.get( '/manage/system_log', function ( req, res, next ) {
 	res.render('manage/systemLogs', AdminUtils.getPageInfo( req, res, settings.SYSTEM_LOGS, '/admin/manage/systemLogs' ));
 });
 
-router.get( '/manage/ads', function ( req, res, next ) {
+router.get( '/manage/ad', function ( req, res, next ) {
 	res.render('manage/ads', AdminUtils.getPageInfo( req, res, settings.ADS_LIST, '/admin/manage/ads' ));
 });
 
@@ -97,6 +97,18 @@ router.get( '/manage/users/:group', function ( req, res, next ) {
 	}
 	res.render('manage/users', AdminUtils.getPageInfo( req, res, settings.USER_MANAGE[group], '/admin/manage/users/' + group ));
 });
+
+/* Shop Management */
+router.get( '/manage/shop', function (req, res, next) {
+	res.render('manage/shops', AdminUtils.getPageInfo( req, res, settings.SHOP_MANAGE['shop'], '/admin/manage/shop' ));
+});
+
+/* Sale Management */
+router.get( '', function (req, res, next) {
+
+});
+
+/******************************************************************************/
 
 /* api */
 // 获取后台主页信息

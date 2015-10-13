@@ -47,7 +47,12 @@ module.exports = {
 		'blacklist': new Array('blacklist', 'Blacklist Management'),
 	},
 
-
+	// 商家管理模块
+	SHOP_MANAGE: {
+		'shop': new Array('shop', 'Shop Management'),
+		'category': new Array('category', 'Category Management'),
+		'commission': new Array('commission', 'Commission Management')
+	},
 
 	// 目录
 	UPDATE_FOLDER: process.cwd() + '/public/upload/',
