@@ -14,6 +14,7 @@ var category = new Schema({
         unique: true,
         'default': shortid.generate
     },
+    // 名称
     name: String,
     // 目录连接
     url: {
@@ -22,20 +23,28 @@ var category = new Schema({
     },
     keywords: String,
     description: String,
-    // 父目录
-    parent: {
-        _id: String,
-        name: String,
-        url: String
-    },
     date: {
         type: Date,
         default: Date.now
     },
-    // 是否有子目录
-    isChild: Boolean,
+    // 是否公开
+    state: {
+        type: Boolean,
+        default: true
+    },
+    // 排序
+    sortId: {
+        type: Number,
+        default: 1
+    },
     // 子目录列表
-    childs: [ String ]
+    childIds: [ String ],
+    // 父目录列表，
+    parentId: {
+        type: String,
+        default: '0'
+    },
+    childs: [ ]
 });
 
 var Category = mongoose.model('Category', category);
