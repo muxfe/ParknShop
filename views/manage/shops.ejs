@@ -55,10 +55,10 @@
 
         $scope.object_type = '<%=bigCategory%>';
 
-        //获取管理员列表信息
+        //获取信息
         initPagination( $scope, $http, $scope.object_type, "<%=searchKey%>" );
 
-        //删除用户
+        //删除
         initDelOption( $scope, $http, $scope.object_type, "<%=searchKey%>", 'Are you sure you want to delete the selected shops? ' );
 
     });

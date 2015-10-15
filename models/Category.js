@@ -16,12 +16,8 @@ var category = new Schema({
     },
     // 名称
     name: String,
-    // 目录连接
-    url: {
-        type: String,
-        default: ''
-    },
-    keywords: String,
+    url: String,
+    keywords: [ String ],
     description: String,
     date: {
         type: Date,
@@ -37,16 +33,63 @@ var category = new Schema({
         type: Number,
         default: 1
     },
-    // 子目录列表
-    childIds: [ String ],
-    // 父目录列表，
+    // 父目录列表，top | id
     parentId: {
         type: String,
-        default: '0'
+        default: 'top'
     },
-    childs: [ ]
+    // 类型，system | shop
+    type: {
+        type: String,
+        default: 'shop'
+    },
+    // if type === 'shop'
+    shop_id: String
 });
 
 var Category = mongoose.model('Category', category);
+
+Category.business = {
+
+    query: function ( req, res ) {
+        var cursor = Category.find( { type: 'system' } ).sort( { sortId: 1 } );
+        cursor.exec( function ( err, result ) {
+            if ( err ) {
+                res.end( 'error' );
+                console.log(err);
+                return;
+            }
+
+            res.json( result );
+        });
+    },
+
+    delete: function ( id, req, res ) {
+        var Db = require('./db/Db');
+        var cursor = Category.find( { parentId: id }, function ( err, result ) {
+            if ( err ) {
+                console.log( err );
+                res.end('error');
+                return;
+            }
+            if ( result ) {
+                res.end('Cannot delete this category that has childs.Please delete these first.');
+            } else {
+                Db.delete( id, Category, req, res, req.session.adminUserInfo.username + ' delete the category(' + id + ')');
+            }
+        });
+    },
+
+    insert: function ( req, res ) {
+        var Db = require('./db/Db');
+
+    },
+
+    update: function ( id, req, res ) {
+        var Db = require('./db/Db');
+        Db.updateOneById( id, Category, req, res, req.session.adminUserInfo.username + ' update the category(' + id + ')' );
+    }
+
+};
 
 module.exports = Category;

@@ -18,8 +18,11 @@ var Db = require('../models/db/Db');
 var AdminUser = require('../models/AdminUser');
 // 用户对象
 var User = require('../models/User');
+// 分类对象
+var Category = require('../models/Category');
 // 系统日志对象
 var SystemLog = require('../models/SystemLog');
+
 // 管理员工具
 var AdminUtils = require('../utils/adminUtils');
 // 系统工具
@@ -103,6 +106,10 @@ router.get( '/manage/shop', function (req, res, next) {
 	res.render('manage/shops', AdminUtils.getPageInfo( req, res, settings.SHOP_MANAGE['shop'], '/admin/manage/shop' ));
 });
 
+router.get( '/manage/category', function (req, res, next) {
+	res.render('manage/category', AdminUtils.getPageInfo( req, res, settings.SHOP_MANAGE['category'], '/admin/manage/category' ));
+});
+
 /* Sale Management */
 router.get( '', function (req, res, next) {
 
@@ -150,6 +157,8 @@ router.get( '/api/v1/:object_type/:_id?', function ( req, res, next ) {
 	if ( target ) {
 		if ( _id ) {
 			Db.findOne( _id, target.obj, req, res, 'find ' + _id );
+		} else if ( target.obj.business.query ) {
+			target.obj.business.query( req, res );
 		} else {
 			Db.pagination( target.obj, req, res, target.key );
 		}
