@@ -69,10 +69,10 @@ Category.business = {
         var cursor = Category.find( { parentId: id }, function ( err, result ) {
             if ( err ) {
                 console.log( err );
-                res.end('error');
+                res.end( 'error' );
                 return;
             }
-            if ( result ) {
+            if ( result.length > 0 ) { 
                 res.end('Cannot delete this category that has childs.Please delete these first.');
             } else {
                 Db.delete( id, Category, req, res, req.session.adminUserInfo.username + ' delete the category(' + id + ')');
@@ -82,7 +82,9 @@ Category.business = {
 
     insert: function ( req, res ) {
         var Db = require('./db/Db');
-
+        req.body.keywords = req.body.keywords.split(';');
+        req.body.type = 'system';
+        Db.addOne( Category, req, res, req.session.adminUserInfo.username + ' insert a category.' );
     },
 
     update: function ( id, req, res ) {

@@ -3,16 +3,18 @@
     <div class="col-xs-12">
         <div class="panel">
             <a href="#addCategory" role="button" class="btn btn-primary btn-sm" data-toggle="modal"><span class="fa fa-plus-square" aria-hidden="true">&nbsp;</span>New Category</a>
-        </div>
+			<input type="hidden" id="targetIds"/>
+			<button class="btn btn-danger btn-sm" ng-click="deleteItems()" role="button"><span class="fa fa-fw fa-trash-o" aria-hidden="true">&nbsp;</span>Delete Selected</button>
+		</div>
 		<!-- Category Table -->
 		<div class="box">
 			<div class="box-body table-responsive no-padding" >
 				<table class="table table-hover">
 					<tr>
 						<th><input type="checkbox" class="mini" id="selectAll"/></th>
+						<th>SortId</th>
 						<th>Name</th>
 						<th>Url</th>
-						<th>SortId</th>
 						<th>State</th>
 						<th>Description</th>
 						<th>Date</th>
@@ -20,15 +22,16 @@
 					</tr>
 					<tr class="datalist" ng-repeat="item in data">
 						<td><input type="checkbox" name="listItem" class="mini" value="{{item._id}}" ng-click="getNewIds()"/></td>
-						<td class=" ">{{item.name}}</td>
-						<td class=" ">{{item.url}}</td>
 						<td class=" ">{{item.sortId}}</td>
+						<td class=" " ng-show="item.parentId === 'top'">{{item.name}}</td>
+						<td class=" " ng-show="item.parentId !== 'top'">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-location-arrow"></i>&nbsp;{{item.name}}</td>
+						<td class=" ">{{item.url}}</td>
 						<td class=" ">{{item.state}}</td>
 						<td class=" ">{{item.description}}</td>
-						<td class=" ">{{item.date | date : "yyyy-MM-dd"}}</td>
+						<td class=" ">{{item.date | date : "yy-MM-dd"}}</td>
 						<td class=" ">
 							<button class="btn btn-primary btn-xs" data-whatever="{{item._id}}" data-toggle="modal" data-target="#addCategory"><span class="fa fa-fw fa-edit" aria-hidden="true"></span>Edit</button>&nbsp;
-							<button class="btn btn-danger btn-xs" ng-click="delOneItem(item._id)"><span class="fa fa-fw fa-trash-o" aria-hidden="true"></span>Delete</button>
+							<button class="btn btn-danger btn-xs" ng-click="deleteItems(item._id)"><span class="fa fa-fw fa-trash-o" aria-hidden="true"></span>Delete</button>
 						</td>
 					</tr>
 				</table>
@@ -52,15 +55,10 @@
                         <div class="form-group">
                             <label class="control-label col-sm-4">Parent</label>
                             <div class="col-sm-4">
-                                <input type="hidden" class="form-control" id="input-parentId" name="parentId" ng-model="formData.parentId" disabled/>
-								<button id="label-parentId" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-									Select Parent
-									<span class="caret"></span>
-								</button>
-								<ul class="dropdown-menu" aria-labelledby="label-parentId" id="ul-parentId">
-									<li><a href="#" ng-click="selectParent('top')">Top</a></li>
-									<li ng-repeat="item in data"><a href="#" ng-click="selectParent(item._id)">{{item.name}}</a></li>
-								</ul>
+								<select class="form-control" id="select-parentId" name="parentId" ng-model="formData.parentId">
+									<option value="top">Top</option>
+									<option value="{{item._id}}" ng-repeat="item in data" ng-show="item.parentId === 'top'">{{item.name}}</option>
+								</select>
                             </div>
                         </div>
                         <div class="form-group">
@@ -112,6 +110,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary" ng-disabled="myForm.$invalid">Submit</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                         </div>
                     </form>
                 </div><!-- /.modal-content -->
@@ -126,6 +125,8 @@
     App.controller( 'Category', function ( $scope,$http ) {
 
         $scope.formData = { };
+		$scope.formData.state = true;
+		$scope.formData.parentId = 'top';
 		$scope.object_type = '<%=bigCategory%>';
 
 		$scope.load = function () {
@@ -135,7 +136,8 @@
 				url: '/admin/api/v1/' + $scope.object_type
 			}).success( function ( data ) {
 				if ( data !== 'error' && data !== 'Page Not Found!' ) {
-					$scope.data = data; console.log(data);
+					//console.log(data);
+					$scope.data = $scope.data2tree(data);
 				} else {
 					showErrorInfo( data );
 				}
@@ -162,32 +164,94 @@
                 });
             } else {
                 modalTitle.text("New Category");
-                $scope.formData = { };
+				$scope.formData = { };
+				$scope.formData.state = true;
+				$scope.formData.parentId = 'top';
             }
         }).on( 'hidden.bs.modal', function ( e ) {
             // 清空数据
             $scope.formData = { };
+			$scope.formData.state = true;
+			$scope.formData.parentId = 'top';
             $scope.targetID = "";
             $( this ).find( "input" ).val( "" );
         });
 
 		// 添加类别
-        $scope.processForm = function(isValid){
-            var curentUrl = "/admin/manage/<%=bigCategory%>",
+        $scope.processForm = function ( isValid ) {
+            var curentUrl = "/admin/api/v1/" + $scope.object_type,
 				method = "PUT";
             if ( $scope.targetID ) {
-                curentUrl = "/admin/api/v1/<%=bigCategory%>/" + $scope.targetID;
+                curentUrl = "/admin/api/v1/" + $scope.object_type + '/' + $scope.targetID;
 				method = "POST";
             }
 
             angularHttp( $http, isValid, method, curentUrl, $scope.formData, function ( data ) {
-                $scope.load();
+				if ( data === 'success' ) {
+					$scope.load();
+				} else {
+					showErrorInfo( data );
+				}
             });
         };
 
-		$scope.selectParent = function ( parentId ) {
-			$( "#input-parentId" ).val( parentId );
+		$scope.data2tree = function ( data ) {
+			var d = { }, // 生成树的中间结果，利用了对象属性的哈希特性
+				da = [ ], // 返回的结果数组，内容为Category对象
+				keys = [ ]; // 为了保证SortId的有序，先保存所有已排序Top目录的_id，后面用此_id遍历对象属性
+			for ( var i = 0; i < data.length; i++ ) {
+				if ( data[i].parentId === 'top' ) {
+					if ( typeof d[data[i]._id] === 'undefined' ) {
+						d[data[i]._id] = { };
+					}
+					keys.push( data[i]._id );
+					d[data[i]._id].me = data[i];
+				} else {
+					if ( typeof d[data[i].parentId] === 'undefined' ) {
+						d[data[i].parentId] = { };
+					}
+					if ( typeof d[data[i].parentId].children === 'undefined' ) {
+						d[data[i].parentId].children = [];
+					}
+					d[data[i].parentId].children.push(data[i]);
+				}
+			}
+			// console.log(d);
+			for ( var j = 0; j < keys.length; j++ ) {
+				da.push(d[keys[j]].me); // key[j]为parentId为'top'的Category的_id值
+				if ( typeof d[keys[j]].children === 'undefined' ) continue;
+				for ( var i = 0; i < d[keys[j]].children.length; i++ ) {
+					da.push(d[keys[j]].children[i]); // 依次将子目录加在父目录后面
+				}
+			}
+			// console.log(da);
+			return da;
 		};
+
+		$scope.deleteItems = function ( id ) {
+			if ( id ) { // delOneItem
+				initCheckIfDo( $scope, id, 'Are you sure to delete this category?', function ( currentID ) {
+					angularHttpDelete( $http, "/admin/api/v1/" + $scope.object_type + "/" + currentID, function ( ) {
+		                $scope.load();
+		            });
+				});
+			} else { // batchDel
+				var targetIds = $( '#targetIds' ).val();
+				if ( targetIds && targetIds.split(',').length > 0 ) {
+		            initCheckIfDo( $scope, $('#targetIds').val(), 'Are you sure to delete selected categories?', function ( currentID ) {
+		                var ida = currentID.split(',');
+		                for ( var i = 0; i < ida.length; i++ ) {
+		                    angularHttpDelete( $http, "/admin/api/v1/" + $scope.object_type + "/" + ida[i], function ( ) {
+		                        $scope.load();
+		                    });
+		                }
+		            });
+		        } else {
+		            alert('Please choose one at least.');
+		        }
+			}
+		};
+
     }); // END-App
 
 </script>
