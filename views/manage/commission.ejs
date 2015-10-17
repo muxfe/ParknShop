@@ -1,0 +1,89 @@
+<div class="row" ng-controller="Commission">
+	<% include public/modal %>
+    <div class="col-xs-12">
+        <div class="row" style="margin-bottom: 30px;">
+            <form role="form" class="" name="myForm" ng-submit="processForm(myForm.$valid)" novalidate>
+                <div class="col-lg-6">
+                    <div class="input-group">
+                        <span class="input-group-btn">
+                          <button class="btn btn-default">Commission(%):</button>
+                        </span>
+                        <input type="text" class="form-control" name="rate" ng-model="formData.rate" ng-minlength="1" ng-maxlength="2" ng-pattern="/^[1-9][0-9]*$/" required/>
+                        <span class="input-group-btn">
+                        <button type="submit" class="btn btn-primary" ng-disabled="myForm.$invalid">Change</button>
+                        </span>
+                    </div><!-- /input-group -->
+                </div><!-- /.col-lg-6 -->
+            </form>
+		</div>
+        <div class="box">
+            <div class="box-body table-responsive no-padding" >
+                <table class="table table-hover">
+                    <tr>
+                        <th>Rate</th>
+                        <th>Start</th>
+                        <th>End</th>
+                    </tr>
+                    <tr class="datalist" ng-repeat="opt in data">
+                        <td>{{opt.rate}}</td>
+                        <td>{{opt.startDate | date : "yyyy-MM-dd HH:mm:ss"}}</td>
+                        <td class=" ">{{opt.endDate | date : "yyyy-MM-dd HH:mm:ss"}}</td>
+                    </tr>
+                </table>
+
+            </div><!-- /.box-body -->
+            <div class="box-footer">
+                <!--分页-->
+                <% include public/pagination %>
+            </div>
+            <div class="overlay hide" id="dataLoading">
+                <i class="fa fa-refresh fa-spin"></i>
+            </div>
+        </div><!-- /.box -->
+
+    </div><!-- /.col -->
+
+</div>
+
+
+<script>
+
+    App.controller( "Commission", function ( $scope, $http ) {
+
+		// 初始化名称和权限
+        $scope.formData = {};
+        $scope.object_type = "<%=bigCategory%>";
+        //获取日志数据列表
+        initPagination( $scope, $http, $scope.object_type, "<%=searchKey%>" );
+
+        $http({
+            url: '/admin/api/v1/current_' + $scope.object_type,
+            method: 'GET'
+        }).success( function ( data ) {
+            if ( data !== 'error' ) {
+                $scope.formData.rate = data.rate;
+                $scope.original_comm = data.rate;
+            } else {
+                showErrorInfo('error');
+            }
+        });
+
+        // 提交表单
+        $scope.processForm = function ( isValid ) {
+            if ( $scope.original_comm == $scope.formData.rate ) {
+                alert("No Change!");
+                return;
+            }
+
+            var curentUrl = "/admin/api/v1/" + $scope.object_type,
+				method = "POST";
+
+            angularHttp( $http, isValid, method, curentUrl, $scope.formData, function ( data ) {
+                $scope.original_comm = $scope.formData.rate;
+				initPagination( $scope, $http, $scope.object_type, "<%=searchKey%>" );
+            });
+        };
+
+    });
+
+</script>

@@ -69,8 +69,12 @@ var System = {
                         dirList.forEach(function (filename) {
                             fs.unlinkSync(bakPath + '\\' + filename);
                         });
-                        fs.rmdir(bakPath);
-                        fs.rmdir(dataPath);
+                        fs.rmdir(bakPath, function (err) {
+                            if (err) throw err;
+                            fs.rmdir(dataPath, function (err) {
+                                if (err) throw err;
+                            });
+                        });
                     });
 
                     // log

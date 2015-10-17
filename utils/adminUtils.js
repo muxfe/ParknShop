@@ -15,7 +15,8 @@ var settings = require('../models/db/settings'),
     Order = require('../models/Order'),
     Product = require('../models/Product'),
     Category = require('../models/Category'),
-    Ad = require('../models/Ad');
+    Ad = require('../models/Ad'),
+    Commission = require('../models/Commission');
 
 var AdminUtils = {
 
@@ -126,6 +127,10 @@ var AdminUtils = {
                 break;
             case 'order':
                 ret.obj = Order;
+                break;
+            case 'commission':
+                ret.obj = Commission;
+                ret.key.push({ endDate: { '$ne': null } });
                 break;
             case 'system_log':
                 ret.obj = SystemLog;

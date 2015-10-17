@@ -22,6 +22,8 @@ var User = require('../models/User');
 var Category = require('../models/Category');
 // 系统日志对象
 var SystemLog = require('../models/SystemLog');
+// 手续费对象
+var Commission = require('../models/Commission');
 
 // 管理员工具
 var AdminUtils = require('../utils/adminUtils');
@@ -108,6 +110,14 @@ router.get( '/manage/shop', function (req, res, next) {
 
 router.get( '/manage/category', function (req, res, next) {
 	res.render('manage/category', AdminUtils.getPageInfo( req, res, settings.SHOP_MANAGE['category'], '/admin/manage/category' ));
+});
+
+router.get( '/manage/commission', function (req, res, next) {
+	res.render('manage/commission', AdminUtils.getPageInfo( req, res, settings.SHOP_MANAGE['commission'], '/admin/manage/commission' ));
+});
+
+router.get( '/api/v1/current_commission', function (req, res, next) {
+	Commission.business.query_current( req, res );
 });
 
 /* Sale Management */
