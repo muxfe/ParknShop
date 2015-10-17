@@ -156,6 +156,9 @@ router.get( '/api/v1/system_logs', function ( req, res, next ) {
 	});
 });
 
+/* RESTful API */
+
+
 // 获取对象信息
 router.get( '/api/v1/:object_type/:_id?', function ( req, res, next ) {
 	var params = url.parse( req.url, true ),

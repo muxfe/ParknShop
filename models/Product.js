@@ -16,12 +16,8 @@ var product = new Schema({
     },
     // 商品名称
     name: String,
-    // 属于的分类目录
-    category: {
-        _id: String,
-        name: String,
-        url: String
-    },
+    // 分类目录ID
+    category_id: String,
     // 属于的店家
     shop: {
         _id: String,
@@ -32,29 +28,33 @@ var product = new Schema({
     description: String,
     // 内容
     content: String,
+    // 细节
+    details: {
+        color: String,
+        manufacturer: String,
+        brand: String
+    },
     // 售价
     price: Number,
+    // 价格历史
+    price_history: [
+        new Schema({
+            saledNum: Number,
+            price: Number,
+            startDate: Date,
+            endDate: Date
+        })
+    ],
     // 库存
     storage: Number,
     // 销量
     saledNum: Number,
     // 商品图片
     images: [ String ],
-    // 评论
-    comments: [
-        new Schema({
-            username: String,
-            user_id: String,
-            content: String,
-            score: Number, // 评分
-            date: {
-                type: Date,
-                default: Date.now
-            }
-        })
-    ],
     // 运费说明
-    transport: String
+    transport: String,
+    // 标签
+    tags: [ String ]
 });
 
 var Product = mongoose.model('Product', product);
