@@ -75,15 +75,15 @@ router.get( '/', function ( req, res, next ) {
 
 /* System Management */
 router.get( '/manage/admin_user', function ( req, res, next ) {
-	res.render('manage/adminUsers', AdminUtils.getPageInfo( req, res, settings.ADMIN_USER_LIST, '/admin/manage/adminUsers' ));
+	res.render('manage/adminUsers', AdminUtils.getPageInfo( req, res, settings.ADMIN_USER_LIST, '/admin/manage/admin_user' ));
 });
 
 router.get( '/manage/system_log', function ( req, res, next ) {
-	res.render('manage/systemLogs', AdminUtils.getPageInfo( req, res, settings.SYSTEM_LOGS, '/admin/manage/systemLogs' ));
+	res.render('manage/systemLogs', AdminUtils.getPageInfo( req, res, settings.SYSTEM_LOGS, '/admin/manage/system_log' ));
 });
 
 router.get( '/manage/ad', function ( req, res, next ) {
-	res.render('manage/ads', AdminUtils.getPageInfo( req, res, settings.ADS_LIST, '/admin/manage/ads' ));
+	res.render('manage/ads', AdminUtils.getPageInfo( req, res, settings.ADS_LIST, '/admin/manage/ad' ));
 });
 
 router.get( '/manage/backup', function ( req, res, next ) {

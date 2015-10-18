@@ -97,30 +97,49 @@ var AdminUtils = {
         switch ( type ) {
             case 'admin_user':
                 ret.obj = AdminUser;
+                ret.key.push( { 'name': { $regex: re } } );
+                ret.key.push( { 'username': { $regex: re } } );
+                ret.key.push( { 'phoneNum': { $regex: re } } );
+                ret.key.push( { 'email': { $regex: re } } );
                 break;
             case 'customer':
                 ret.obj = User;
                 ret.group = type;
-                ret.key.push({ 'group': type });
+                ret.key.push( { 'group': type } );
+                ret.key.push( { 'name': { $regex: re } } );
+                ret.key.push( { 'username': { $regex: re } } );
+                ret.key.push( { 'phoneNum': { $regex: re } } );
+                ret.key.push( { 'email': { $regex: re } } );
                 break;
             case 'shop_owner':
                 ret.obj = User;
                 ret.group = type;
-                ret.key.push({ 'group': type });
+                ret.key.push( { 'group': type } );
+                ret.key.push( { 'name': { $regex: re } } );
+                ret.key.push( { 'username': { $regex: re } } );
+                ret.key.push( { 'phoneNum': { $regex: re } } );
+                ret.key.push( { 'email': { $regex: re } } );
                 break;
             case 'blacklist':
                 ret.obj = User;
                 ret.group = type;
-                ret.key.push({ 'group': type });
+                ret.key.push( { 'group': type } );
+                ret.key.push( { 'name': { $regex: re } } );
+                ret.key.push( { 'username': { $regex: re } } );
+                ret.key.push( { 'phoneNum': { $regex: re } } );
+                ret.key.push( { 'email': { $regex: re } } );
                 break;
             case 'ad':
                 ret.obj = Ad;
+                ret.key.push( { 'name': { $regex: re } } );
                 break;
             case 'category':
                 ret.obj = Category;
                 break;
             case 'shop':
                 ret.obj = Shop;
+                ret.key.push( { 'name': { $regex: re } } );
+                ret.key.push( { 'description': { $regex: re } } );
                 break;
             case 'product':
                 ret.obj = Product;
@@ -131,12 +150,17 @@ var AdminUtils = {
             case 'commission':
                 ret.obj = Commission;
                 ret.key.push({ endDate: { '$ne': null } });
+                ret.key.push( { 'rate': { $regex: re } } );
                 break;
             case 'system_log':
                 ret.obj = SystemLog;
+                ret.key.push( { 'type': { $regex: re } } );
+                ret.key.push( { 'log': { $regex: re } } );
                 break;
             case 'data_log':
                 ret.obj = DataLog;
+                ret.key.push( { 'filename': { $regex: re } } );
+                ret.key.push( { 'log': { $regex: re } } );
                 break;
             default:
                 return null;

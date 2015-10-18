@@ -5,6 +5,9 @@
             <a href="#addCategory" role="button" class="btn btn-primary btn-sm" data-toggle="modal"><span class="fa fa-plus-square" aria-hidden="true">&nbsp;</span>New Category</a>
 			<input type="hidden" id="targetIds"/>
 			<button class="btn btn-danger btn-sm" ng-click="deleteItems()" role="button"><span class="fa fa-fw fa-trash-o" aria-hidden="true">&nbsp;</span>Delete Selected</button>
+			<div class="pull-right">
+				<% include public/searchBox %>
+			</div>
 		</div>
 		<!-- Category Table -->
 		<div class="box">
@@ -133,7 +136,7 @@
 			$("#dataLoading").removeClass("hide");
 			$http({
 				method: 'GET',
-				url: '/admin/api/v1/' + $scope.object_type
+				url: '/admin/api/v1/' + $scope.object_type + "?searchKey=<%=searchKey%>"
 			}).success( function ( data ) {
 				if ( data !== 'error' && data !== 'Page Not Found!' ) {
 					//console.log(data);

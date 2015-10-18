@@ -20,7 +20,7 @@ var adminUser = new Schema({
   username: String,
   password: String,
   email: String,
-  phoneNum: Number,
+  phoneNum: String,
   comments: String,
   date: {
     type: Date,

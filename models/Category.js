@@ -6,6 +6,7 @@
 
 var mongoose = require('mongoose'),
     shortid = require('shortid'),
+    url = require('url'),
     Schema = mongoose.Schema;
 
 var category = new Schema({
@@ -52,16 +53,26 @@ var Category = mongoose.model('Category', category);
 Category.business = {
 
     query: function ( req, res ) {
-        var cursor = Category.find( { type: 'system' } ).sort( { sortId: 1 } );
-        cursor.exec( function ( err, result ) {
-            if ( err ) {
-                res.end( 'error' );
-                console.log(err);
-                return;
-            }
-
-            res.json( result );
-        });
+        var query = url.parse( req.url, true ).query,
+            keyword = query.searchKey,
+            re = new RegExp( keyword, 'i' ),
+            key = [ ];
+        Category.find()
+            .and( [ { type: 'system' } ] )
+            // .or( [ {
+            //     name: { $regex: re },
+            //     description: { $regex: re },
+            //     url: { $regex: re }
+            // }])
+            .sort( { sortId: 1 } )
+            .exec( function ( err, result ) {
+                if ( err ) {
+                    res.end( 'error' );
+                    console.log(err);
+                    return;
+                }
+                res.json( result );
+            });
     },
 
     delete: function ( id, req, res ) {
@@ -72,7 +83,7 @@ Category.business = {
                 res.end( 'error' );
                 return;
             }
-            if ( result.length > 0 ) { 
+            if ( result.length > 0 ) {
                 res.end('Cannot delete this category that has childs.Please delete these first.');
             } else {
                 Db.delete( id, Category, req, res, req.session.adminUserInfo.username + ' delete the category(' + id + ')');
