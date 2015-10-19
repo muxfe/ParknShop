@@ -206,12 +206,17 @@
 				if ( data[i].parentId === 'top' ) {
 					if ( typeof d[data[i]._id] === 'undefined' ) {
 						d[data[i]._id] = { };
+						if ( keys.join(',').indexOf( data[i]._id ) < 0 ) {
+							keys.push( data[i]._id );
+						}
 					}
-					keys.push( data[i]._id );
 					d[data[i]._id].me = data[i];
 				} else {
 					if ( typeof d[data[i].parentId] === 'undefined' ) {
 						d[data[i].parentId] = { };
+						if ( keys.join(',').indexOf( data[i].parentId ) < 0 ) {
+							keys.push( data[i].parentId );
+						}
 					}
 					if ( typeof d[data[i].parentId].children === 'undefined' ) {
 						d[data[i].parentId].children = [];
@@ -221,10 +226,13 @@
 			}
 			// console.log(d);
 			for ( var j = 0; j < keys.length; j++ ) {
-				da.push(d[keys[j]].me); // key[j]为parentId为'top'的Category的_id值
-				if ( typeof d[keys[j]].children === 'undefined' ) continue;
-				for ( var i = 0; i < d[keys[j]].children.length; i++ ) {
-					da.push(d[keys[j]].children[i]); // 依次将子目录加在父目录后面
+				if ( typeof d[keys[j]].me !== 'undefined' ) {
+					da.push(d[keys[j]].me); // key[j]为parentId为'top'的Category的_id值
+				}
+				if ( typeof d[keys[j]].children !== 'undefined' ) {
+					for ( var i = 0; i < d[keys[j]].children.length; i++ ) {
+						da.push(d[keys[j]].children[i]); // 依次将子目录加在父目录后面
+					}
 				}
 			}
 			// console.log(da);

@@ -57,13 +57,14 @@ Category.business = {
             keyword = query.searchKey,
             re = new RegExp( keyword, 'i' ),
             key = [ ];
-        Category.find()
-            .and( [ { type: 'system' } ] )
-            // .or( [ {
-            //     name: { $regex: re },
-            //     description: { $regex: re },
-            //     url: { $regex: re }
-            // }])
+        Category.find( {
+                type: 'system',
+                $or: [
+                    { name: { $regex: re } },
+                    { description: { $regex: re } },
+                    { url: { $regex: re } }
+                ]
+            })
             .sort( { sortId: 1 } )
             .exec( function ( err, result ) {
                 if ( err ) {

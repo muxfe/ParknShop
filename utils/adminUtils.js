@@ -105,29 +105,41 @@ var AdminUtils = {
             case 'customer':
                 ret.obj = User;
                 ret.group = type;
-                ret.key.push( { 'group': type } );
-                ret.key.push( { 'name': { $regex: re } } );
-                ret.key.push( { 'username': { $regex: re } } );
-                ret.key.push( { 'phoneNum': { $regex: re } } );
-                ret.key.push( { 'email': { $regex: re } } );
+                ret.key.push( {
+                    'group': type,
+                    $or: [
+                        { 'name': { $regex: re } },
+                        { 'username': { $regex: re } },
+                        { 'phoneNum': { $regex: re } },
+                        { 'email': { $regex: re } }
+                    ]
+                });
                 break;
             case 'shop_owner':
                 ret.obj = User;
                 ret.group = type;
-                ret.key.push( { 'group': type } );
-                ret.key.push( { 'name': { $regex: re } } );
-                ret.key.push( { 'username': { $regex: re } } );
-                ret.key.push( { 'phoneNum': { $regex: re } } );
-                ret.key.push( { 'email': { $regex: re } } );
+                ret.key.push( {
+                    'group': type,
+                    $or: [
+                        { 'name': { $regex: re } },
+                        { 'username': { $regex: re } },
+                        { 'phoneNum': { $regex: re } },
+                        { 'email': { $regex: re } }
+                    ]
+                });
                 break;
             case 'blacklist':
                 ret.obj = User;
                 ret.group = type;
-                ret.key.push( { 'group': type } );
-                ret.key.push( { 'name': { $regex: re } } );
-                ret.key.push( { 'username': { $regex: re } } );
-                ret.key.push( { 'phoneNum': { $regex: re } } );
-                ret.key.push( { 'email': { $regex: re } } );
+                ret.key.push( {
+                    'group': type,
+                    $or: [
+                        { 'name': { $regex: re } },
+                        { 'username': { $regex: re } },
+                        { 'phoneNum': { $regex: re } },
+                        { 'email': { $regex: re } }
+                    ]
+                });
                 break;
             case 'ad':
                 ret.obj = Ad;
@@ -150,7 +162,6 @@ var AdminUtils = {
             case 'commission':
                 ret.obj = Commission;
                 ret.key.push({ endDate: { '$ne': null } });
-                ret.key.push( { 'rate': { $regex: re } } );
                 break;
             case 'system_log':
                 ret.obj = SystemLog;
