@@ -44,6 +44,8 @@ var settings = require('./models/db/settings')
 var routes = require('./routes/index');
 // admin
 var admin = require('./routes/admin');
+// User
+var user = require('./routes/user');
 // validate
 var validate = require('./routes/validate');
 
@@ -97,6 +99,7 @@ app.use(function (req, res, next) {
 });
 
 app.use('/admin', admin);
+app.use('/user', user);
 app.use('/', routes);
 
 

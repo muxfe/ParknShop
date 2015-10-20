@@ -1,7 +1,7 @@
 .DS_Store
 
-../models/db/bat/backup.bat
 test_data.js
 npm-debug.log
 node_modules
 coverage
+models/db/bat/backup.bat

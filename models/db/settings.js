@@ -28,8 +28,8 @@ module.exports = {
 	SITE_DOMAIN: '',
 	SITE_ICP: '',
 	SYSTEM_MAIL: '',
-	SITE_DESCRIPTION: '',
-	SITE_KEYWORDS: '',
+	SITE_DESCRIPTION: 'an E-Commerce o2o website',
+	SITE_KEYWORDS: 'E-Commerce,parknshop,o2o',
 	SITE_BASIC_KEYWORDS: '',
 
 	// 系统管理模块
