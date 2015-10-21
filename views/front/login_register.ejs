@@ -1,7 +1,7 @@
 <section class="col-xs-12" id="login">
     <div class="col-xs-7 left" ng-controller="userLogin">
         <form class="col-xs-7" name="loginForm" ng-submit="processLogForm(loginForm.$valid)" novalidate>
-            <h2 class="text-center">Sign In Your Account &nbsp;<br/><small class="text-danger hide" id="errorInfo"> Sign in failed.</small><small class="text-danger hide" id="serverErrorInfo">Server Interval Error.</small></h2>
+            <h2 class="text-center">Sign In Your Account &nbsp;<br/><small class="text-danger hide" id="loginErrorInfo"> Sign in failed.</small><small class="text-danger hide" id="serverErrorInfo">Server Interval Error.</small></h2>
             <div class="form-group">
                 <input type="username" class="form-control input-lg" name="username" ng-model="logFormData.username" placeholder="username"  required>
             </div>
@@ -42,7 +42,7 @@
     </div>
     <div class="col-xs-7 float right" ng-controller="userReg">
         <form class="col-xs-6" name="regForm" ng-submit="processRegForm(regForm.$valid)" novalidate>
-            <h2 class="text-center">New Account &nbsp;<small class="text-danger hide" id="errorInfo"> Sing up failed.</small></h2>
+            <h2 class="text-center">New Account &nbsp; <br/><small class="text-danger hide" id="regErrorInfo"> Sing up failed.</small></h2>
             <div class="form-group">
                 <input type="text" class="form-control"  name="username" id="username" ng-minlength="2" ng-maxlength="16" ng-model="regFormData.username" placeholder="username" required/>
                 <label for="inputError" class="control-label text-danger" ng-show="regForm.username.$invalid && !regForm.username.$pristine"><i class="glyphicon glyphicon-info-sign"></i> 2-16 letters or numbers</label>
@@ -67,7 +67,7 @@
                 <button class="btn btn-lg" role="button" ng-disabled="regForm.$invalid">Sign Up</button>
             </div>
             <div class="tips text-center">
-                <p>If you have an account already, please <br/> <a class="sign" href="#login">Sign In</a> from here.</p>
+                <p>If you have an account already, <br/> <a class="sign" href="#login">Sign In</a> from here.</p>
             </div>
         </form>
     </div>
@@ -124,7 +124,7 @@
                     if ( data === "success" ) {
                         window.location = '/';
                     } else {
-                        $( '#errorInfo' ).removeClass( 'hide' ).text( data );
+                        $( '#loginErrorInfo' ).removeClass( 'hide' ).text( data );
                     }
                 });
             }
@@ -142,9 +142,10 @@
                 })
                 .success( function ( data ) {
                     if ( data === "success" ) {
-                        window.location = "/";
+                        alert('Register success!');
+                        window.location = "/user/login";
                     } else {
-                        $( '#errorInfo' ).removeClass( 'hide' ).text( data );
+                        $( '#regErrorInfo' ).removeClass( 'hide' ).text( data );
                     }
                 });
             }

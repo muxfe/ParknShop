@@ -6,7 +6,8 @@
 
 var mongoose = require('mongoose'),
     shortid = require('shortid'),
-    Schema = mongoose.Schema;
+    Schema = mongoose.Schema,
+    settings = require('./db/settings');
 
 var user = new Schema({
     _id: {
@@ -62,6 +63,18 @@ var user = new Schema({
 var User = mongoose.model( 'User', user );
 
 User.business = {
+
+    insert: function ( req, res ) {
+        var Db = require('./db/Db');
+        User.findOne( { username: req.body.username }, function ( err, user ) {
+            if ( user ) {
+                res.end( user.username + ' was already existed.' );
+            } else {
+                req.body.password = Db.encrypt( req.body.password, settings.encrypt_key );
+                Db.addOne( User, req, res, req.body.username + ' join in us.' );
+            }
+        });
+    },
 
     delete: function ( id, req, res, target ) {
         var Db = require('./db/Db');

@@ -65,7 +65,7 @@ router.post( '/login', function ( req, res, next) {
 });
 
 router.put( '/', function ( req, res, next ) {
-
+    User.business.insert( req, res );
 });
 
 module.exports = router;
