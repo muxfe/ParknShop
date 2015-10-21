@@ -1,48 +1,51 @@
 <section class="col-xs-12" id="login">
-    <div class="col-xs-7" ng-controller="userLogin">
-        <form class="col-xs-7 col-xs-offset-2" name="loginForm" ng-submit="processLogForm(loginForm.$valid)" novalidate>
-            <h2 class="text-center">Sign In Your Account &nbsp;<small class="text-danger hide" id="errorInfo"> Sign in failed.</small><small class="text-danger hide" id="serverErrorInfo">Server Interval Error.</small></h2>
+    <div class="col-xs-7 left" ng-controller="userLogin">
+        <form class="col-xs-7" name="loginForm" ng-submit="processLogForm(loginForm.$valid)" novalidate>
+            <h2 class="text-center">Sign In Your Account &nbsp;<br/><small class="text-danger hide" id="errorInfo"> Sign in failed.</small><small class="text-danger hide" id="serverErrorInfo">Server Interval Error.</small></h2>
             <div class="form-group">
                 <input type="username" class="form-control input-lg" name="username" ng-model="logFormData.username" placeholder="username"  required>
-                <label for="inputError" class="control-label text-danger" ng-show="loginForm.username.$invalid && !loginForm.username.$pristine"><i class="glyphicon glyphicon-info-sign"></i> Please enter your username.</label>
             </div>
             <div class="form-group">
                 <input type="password" class="form-control input-lg" name="password" ng-model="logFormData.password" ng-minlength="4" ng-maxlength="18" placeholder="password" required>
-                <label for="inputError" class="control-label text-danger" ng-show="loginForm.password.$invalid && !loginForm.password.$pristine"><i class="glyphicon glyphicon-info-sign"></i> 4-18 numbers or letters</label>
             </div>
             <div class="text-center">
                 <button type="submit" class="btn btn-lg" ng-disabled="loginForm.$invalid">Sign In</button>&nbsp;
                 <small><a class="forget" href="/user/forget">Forget password ?</a></small>
             </div>
             <div class="tips text-center">
-                <p>Have no account ? <br/> <a class="sign-up" href="#">Sign Up</a> for free.</p>
+                <p>Have no account ? <br/> <a class="sign" href="#register">Sign Up</a> for free.</p>
             </div>
         </form>
     </div>
     <div class="ellipse col-xs-offset-7">
-        <a>
+        <a href="#register" title="Sign Up">
             <img src="/stylesheets/front/image/ellipse_light.png" />
-            <span>||</span>
         </a>
     </div>
-    <div class="col-xs-5 float">
+    <div class="col-xs-5 float right">
         <div class="info text-center">
             <h2>Do you want to Shopping or Saling, please Sign In first.</h2>
         </div>
     </div>
 </section>
 
-<section class="col-xs-12 hide" id="register">
-    <div class="col-xs-8" ng-controller="userReg">
-        <form class="col-xs-6 col-xs-offset-3" name="regForm" ng-submit="processRegForm(regForm.$valid)" novalidate>
-            <h2 class="text-center">Sign Up &nbsp;<small class="text-danger hide" id="errorInfo"> Sing up failed.</small></h2>
+<section class="col-xs-12" id="register">
+    <div class="col-xs-5 left">
+        <div class="info text-center">
+            <h2>If you have no account, please sign up one.</h2>
+        </div>
+    </div>
+    <div class="ellipse col-xs-offset-5">
+        <a href="#login" title="Sign In">
+            <img src="/stylesheets/front/image/ellipse_deep.png" />
+        </a>
+    </div>
+    <div class="col-xs-7 float right" ng-controller="userReg">
+        <form class="col-xs-6" name="regForm" ng-submit="processRegForm(regForm.$valid)" novalidate>
+            <h2 class="text-center">New Account &nbsp;<small class="text-danger hide" id="errorInfo"> Sing up failed.</small></h2>
             <div class="form-group">
                 <input type="text" class="form-control"  name="username" id="username" ng-minlength="2" ng-maxlength="16" ng-model="regFormData.username" placeholder="username" required/>
                 <label for="inputError" class="control-label text-danger" ng-show="regForm.username.$invalid && !regForm.username.$pristine"><i class="glyphicon glyphicon-info-sign"></i> 2-16 letters or numbers</label>
-            </div>
-            <div class="form-group">
-                <input type="email" class="form-control" name="email" placeholder="email" ng-model="regFormData.email" required/>
-                <label for="inputError" class="control-label text-danger" ng-show="regForm.email.$invalid && !regForm.email.$pristine"><i class="glyphicon glyphicon-info-sign"></i> Please enter a right email.</label>
             </div>
             <div class="form-group">
                 <input type="password" class="form-control" id="userPassword" name="password" ng-minlength="4" placeholder="password" ng-maxlength="18" ng-model="regFormData.password" required/>
@@ -52,22 +55,65 @@
                 <input type="password" class="form-control" pw-check="userPassword" name="confirmPassword" placeholder="comfirm password" ng-model="regFormData.confirmPassword" ng-minlength="4" ng-maxlength="18" required/>
                 <label for="inputError" class="control-label text-danger" ng-show="regForm.confirmPassword.$invalid && !regForm.confirmPassword.$pristine"><i class="glyphicon glyphicon-info-sign"></i> Twice password is not same.</label>
             </div>
+            <div class="form-group">
+                <input type="email" class="form-control" name="email" placeholder="email" ng-model="regFormData.email" required/>
+                <label for="inputError" class="control-label text-danger" ng-show="regForm.email.$invalid && !regForm.email.$pristine"><i class="glyphicon glyphicon-info-sign"></i> Please enter a right email.</label>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" name="phoneNum" placeholder="telephone" ng-pattern="/[0-9]{9,13}/" ng-model="regFormData.phoneNum" required/>
+                <label for="inputError" class="control-label text-danger" ng-show="regForm.phoneNum.$invalid && !regForm.phoneNum.$pristine"><i class="glyphicon glyphicon-info-sign"></i> Please enter a right phone.</label>
+            </div>
             <div>
                 <button class="btn btn-lg" role="button" ng-disabled="regForm.$invalid">Sign Up</button>
             </div>
+            <div class="tips text-center">
+                <p>If you have an account already, please <br/> <a class="sign" href="#login">Sign In</a> from here.</p>
+            </div>
         </form>
-    </div>
-    <div class="col-xs-4 float">
-        <div class="info text-center">
-            <h2>If you have no account, please sign up one.</h2>
-        </div>
     </div>
 </section>
 
 <script>
+
+    // console.log( window.location.hash );
+
+    $( function () {
+        // 根据url的#id属性，确定显示登录或者注册，默认显示登录
+        var hash = window.location.hash;
+        if ( hash === '#register' ) {
+            $( "#login" ).width( 0 );
+        } else {
+            $( "#register" ).width( 0 );
+        }
+
+        // 轮转动画，切换登录/注册界面
+        $( "a[href='#login']" ).click( function ( e ) {
+            e.preventDefault();
+
+            $( "#register" ).animate( {
+                'width': '0'
+            }, 'normal');
+            $( "#login" ).animate( {
+                'margin-left': '0',
+                'width': '100%'
+            }, 'normal');
+        });
+        $( "a[href='#register']" ).click( function ( e ) {
+            e.preventDefault();
+
+            $( "#login" ).animate( {
+                'margin-left': '100%',
+                'width': '0'
+            }, 'normal');
+            $( "#register" ).animate( {
+                'width': '100%'
+            }, 'normal');
+        });
+    });
+
     App.controller( "userLogin", function ( $scope, $http ) {
         $scope.processLogForm = function ( isValid ) {
-            if(isValid){
+            if ( isValid) {
                 $http({
                     method  : 'POST',
                     url     : "/user/login",

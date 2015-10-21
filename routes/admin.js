@@ -31,6 +31,7 @@ var AdminUtils = require('../utils/adminUtils');
 var system = require('../utils/system');
 
 
+/* Login / Logout */
 router.get( '/login', function ( req, res, next ) {
 	res.render('manage/adminLogin', AdminUtils.getSiteInfo());
 });

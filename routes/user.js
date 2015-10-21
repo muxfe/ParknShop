@@ -35,12 +35,33 @@ router.get( '/login', function ( req, res, next ) {
     }
 });
 
+router.get( '/logout', function ( req, res, next ) {
+    req.session.logined = false;
+    req.session.user = null;
+
+    res.redirect('/');
+});
+
 router.get( '/forget', function ( req, res, next ) {
 
 });
 
-roter.post( '/login', function ( req, res, next) {
+router.post( '/login', function ( req, res, next) {
+    var username = req.body.username,
+        password = req.body.password,
+        encryptedPwd = Db.encrypt(password, settings.encrypt_key);
 
+    User.findOne( { username: username, password: encryptedPwd }, function ( err, user ) {
+        if ( user ) {
+            req.session.logined = true;
+            req.session.user = user;
+
+            res.end( 'success' );
+        } else {
+            console.log( username + 'Login failed.' );
+            res.end( 'Username or password is wrong.' );
+        }
+    });
 });
 
 router.put( '/', function ( req, res, next ) {

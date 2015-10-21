@@ -4,6 +4,18 @@
  * Date: 20/10/2015
  */
 
+/* header */
+header {
+    height: 50px;
+    background-color: #022e77;
+    z-index: 100;
+}
+
+div.logo img {
+    height: 50px;
+}
+
+
 /* login_register page */
 section#login, section#register {
     height: 100%;
@@ -11,7 +23,6 @@ section#login, section#register {
     position: absolute;
     padding: 0 0;
     font-family: 'Century Gothic';
-    font-weight: bold;
     color: white;
     overflow: hidden;
 }
@@ -20,29 +31,31 @@ section#login > div, section#register > div {
     height: 100%;
 }
 
-section#login > div.col-xs-7, section#register > div.col-xs-7 {
+section#login > div.left, section#register > div.left {
     background-color: #a1cfe0;
 }
 
-section#login > div.col-xs-5, section#register > div.col-xs-5 {
+section#login > div.right, section#register > div.right {
     background-color: #5b8c9d;
 }
 
-section#login > div form {
-    margin-top: 10%;
-}
-
-section#register > div form {
-    margin-top: 10%;
+section#login > div form, section#register > div form {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 
 section#login div.info, section#register div.info {
-    margin-top: 50%;
+    width: 90%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 
-section#login div.tips {
+section div.tips {
     margin-top: 20%;
-    font-weight: normal;
     font-size: 1.3em;
 }
 
@@ -51,14 +64,13 @@ section#login .btn-lg, section#register .btn-lg {
     background-color: #f2884e;
 }
 
-section#login .btn-lg:hover, section#register .btn-lg:hover {
-    color: #eee;
+section#login .btn-lg:hover, section#register .btn-lg:hover, section#login .btn-lg:focus , section#register .btn-lg:focus {
+    color: #fff;
 }
 
 section#login a.forget {
     color: #959595;
     font-size: 1.2em;
-    font-weight: normal;
     text-decoration: none;
 }
 
@@ -66,41 +78,28 @@ section#login a.forget:hover {
     color: #333;
 }
 
-section#login a.sign-up {
+section a.sign {
     color: #f2884e;
     text-decoration: none;
-    font-weight: normal;
     font-size: 1.3em;
 }
 
-section#login a.sign-up:hover {
+section a.sign:hover {
     color: #ff994e;
 }
 
-section#login div.ellipse {
+section#login div.ellipse, section#register div.ellipse {
     position: absolute;
     z-index: 100;
-    top: 45%;
-    left: -20px;
-    -moz-user-select: none; /* for Firefox */
-    -webkit-user-select: none; /* for Chrome */
+    top: 48%;
+    left: -15px;
 }
 
-section#login div.ellipse a {
+section#login div.ellipse a, section#register div.ellipse a {
     cursor: pointer;
 }
 
-section#login div.ellipse span {
-    color: black;
-    display: block;
-    position: absolute;
-    z-index: 101;
-    top: 10px;
-    left: 18px;
-    font-size: 0.9em;
-}
-
-section#login div.ellipse img {
-    width: 40px;
-    height: 40px;
+section#login div.ellipse img, section#register div.ellipse img {
+    width: 30px;
+    height: 30px;
 }
