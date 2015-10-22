@@ -4,17 +4,152 @@
  * Date: 20/10/2015
  */
 
+/* body */
+body {
+    font-size: 1em;
+    font-family: 'Century Gothic';
+}
+
+
 /* header */
-header {
+header.login {
     height: 50px;
     background-color: #022e77;
     z-index: 100;
 }
 
-div.logo img {
+header.login div.logo img {
     height: 50px;
 }
 
+/* my info */
+header.mine {
+    padding: 12px 0;
+    top: 35px;
+    background-color: #022e77;
+}
+
+header.mine div.logo img {
+    height: 35px;
+}
+
+header.mine > div {
+    height: 35px;
+}
+
+div.search form {
+    padding: 0 0;
+}
+
+div.nav {
+    line-height: 35px;
+    font-size: 1.5em;
+}
+
+div.nav ul {
+    list-style: none;
+}
+
+div.nav ul li {
+    width: auto;
+    float: left;
+    padding: 0 15px;
+}
+
+div.nav ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+}
+
+div.nav ul li a:hover {
+    text-decoration: none;
+    color: #eee;
+}
+
+div.fixed {
+    position: fixed;
+}
+
+div.top {
+    height: 35px;
+    background-color: #f5f5f5;
+    z-index: 1000;
+    border-bottom: 1px solid #eee;
+}
+
+div.top div.btn-group a {
+    color: #333;
+}
+
+div.top div.btn-group a.red {
+    color: #f00;
+}
+
+div.top ul.dropdown-menu {
+    margin-top: 0;
+    left: auto;
+    right: auto;
+}
+
+div.top ul.dropdown-menu li {
+    padding: 0 10px;
+}
+
+li.user-header {
+    text-align: center;
+}
+
+a.btn-top:hover {
+    background-color: #eee;
+}
+
+/* user manage page */
+div.container {
+    top: 35px;
+    padding: 15px 15px;
+}
+
+div.sidebar ul.nav li {
+    border-top: 1px solid #eee;
+}
+
+div.sidebar ul.nav li a {
+    color: #333;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+div.sidebar ul.nav li a:hover {
+    background-color: #fff;
+    color: #999;
+}
+
+div.sidebar ul.nav li a.free-shop {
+    color: red;
+    font-size: 1.6em;
+    font-weight: bold;
+}
+
+/* new shop */
+div.light {
+    background-color: #eee;
+    padding: 15px 15px;
+}
+
+div.middle {
+    background-color: #a1cfe0;
+}
+
+div.deep {
+    background-color: #5b8c9d;
+}
+
+form.free-shop div.control-group {
+    width: 90%;
+    padding: 15px 15px;
+    margin: auto;
+}
 
 /* login_register page */
 section#login, section#register {
@@ -22,7 +157,6 @@ section#login, section#register {
     width: 100%;
     position: absolute;
     padding: 0 0;
-    font-family: 'Century Gothic';
     color: white;
     overflow: hidden;
 }

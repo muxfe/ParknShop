@@ -27,14 +27,25 @@ var Shop = require('../models/Shop');
 // 管理员工具
 var SiteUtils = require('../utils/siteUtils');
 
+// login page
 router.get( '/login', function ( req, res, next ) {
     if ( req.session.logined ) {
         res.redirect('/');
     } else {
-        res.render( 'front/login_register', SiteUtils.getData4User( req, res, 'Sign In' ) );
+        res.render( 'front/login_register', SiteUtils.getSiteInfo( 'Sign In' ) );
     }
 });
 
+router.get( '/manage', function ( req, res, next ) {
+    res.render( 'front/user/main', SiteUtils.getData4Index( req, res, 'User Home' ) );
+});
+
+router.get( '/manage/free_shop', function ( req, res, next ) {
+    res.render( 'front/user/free_shop', SiteUtils.getData4Index( req, res, 'Free Shop' ) );
+});
+
+
+// logout
 router.get( '/logout', function ( req, res, next ) {
     req.session.logined = false;
     req.session.user = null;
@@ -42,10 +53,12 @@ router.get( '/logout', function ( req, res, next ) {
     res.redirect('/');
 });
 
+// forget password
 router.get( '/forget', function ( req, res, next ) {
-
+    res.end( 'not development' );
 });
 
+// login
 router.post( '/login', function ( req, res, next) {
     var username = req.body.username,
         password = req.body.password,
@@ -64,6 +77,7 @@ router.post( '/login', function ( req, res, next) {
     });
 });
 
+// Register new user
 router.put( '/', function ( req, res, next ) {
     User.business.insert( req, res );
 });

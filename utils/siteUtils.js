@@ -31,11 +31,11 @@ var SiteUtils = {
         };
     },
 
-    getData4User: function ( req, res, title, token ) {
+    getData4Index: function ( req, res, title ) {
         return {
             siteConfig: SiteUtils.getSiteInfo( title ),
             userInfo: req.session.user,
-            token: token,
+            logined: req.session.logined,
             layout: 'front/public/defaultTpl'
         };
     }

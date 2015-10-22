@@ -1,5 +1,159 @@
-<header class="col-xs-12">
-    <div class="logo col-xs-offset-1">
-        <a href="/"><img src="/stylesheets/front/image/logo.jpg" /></a>
+<div class="col-xs-12 fixed top">
+    <div class="col-xs-10 col-xs-offset-1">
+    <% if ( logined ) { %>
+        <div class="btn-group">
+            <!-- username -->
+            <a class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+                <i class="fa fa-user"></i>
+                <%=userInfo.username%>
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu col-xs-2">
+                <li class="user-header">
+                    <img src="<%=userInfo.logo%>" alt="User Logo" />
+                </li>
+                <li role="separator" class="divider"></li>
+                <li><a href="/user/manage" class="btn">Profilo</a></li>
+                <li><a href="/user/logout" class="btn logout"><i class="fa fa-sign-out"></i>Logout</a></li>
+            </ul>
+        </div>
+        <!-- message -->
+        <div class="btn-group">
+            <a class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+                <i class="fa fa-envelope"></i>
+                Message
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="#">new message 1</a></li>
+                <li><a href="#">new message 2</a></li>
+                <li><a href="#">new message 3</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#" class="btn">More..</a></li>
+                <li><a href="#" class="btn">Mark</a></li>
+            </ul>
+        </div>
+    <% } else { %>
+        <!-- Sign in / up -->
+        <div class="btn-group">
+            <a class="btn btn-top" type="button" href="/user/login">
+                <i class="fa fa-sign-in"></i>
+                Sign In
+            </a>
+        </div>
+        /
+        <div class="btn-group">
+            <a class="btn btn-top red" type="button" href="/user/login#register">
+                Sign Up
+            </a>
+        </div>
+    <% } %>
+        <!-- right btn -->
+        <!-- sitemap -->
+        <div class="btn-group pull-right">
+            <a class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+                <i class="fa fa-map-marker"></i>
+                SiteMap
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="#"><b>Customer</a></b></li>
+                <li><a href="#">xxx</a></li>
+                <li><a href="#">xxx</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#"><b>Shop Owner</a></b></li>
+                <li><a href="#">xxx</a></li>
+                <li><a href="#">xxx</a></li>
+            </ul>
+        </div>
+        <!-- customer service -->
+        <div class="btn-group pull-right">
+            <a class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+                <i class="fa fa-phone"></i>
+                Service
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="#">Customer</a></li>
+                <li><a href="#">Shop Owner</a></li>
+            </ul>
+        </div>
+        <!-- shop owner center -->
+        <div class="btn-group pull-right">
+            <a class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+                <i class="fa fa-group"></i>
+                Shop Owner
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="#">New Store</a></li>
+                <li><a href="#">On Sale</a></li>
+                <li><a href="#">Sell</a></li>
+                <li><a href="#">Management</a></li>
+            </ul>
+        </div>
+        <!-- category -->
+        <div class="btn-group pull-right">
+            <a class="btn btn-top" type="button" href="category">
+                <i class="fa fa-sitemap"></i>
+                Category
+            </a>
+        </div>
+        <!-- cart -->
+        <div class="btn-group pull-right">
+            <a class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+                <i class="fa fa-shopping-cart"></i>
+                Cart
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="#">Product 1</a></li>
+                <li><a href="#">Product 2</a></li>
+                <li><a href="#">Product 3</a></li>
+            </ul>
+        </div>
+        <!-- my parknshop -->
+        <div class="btn-group pull-right">
+            <a class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+                <i class="fa fa-gear"></i>
+                Mine
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="#">Order</a></li>
+                <li><a href="#">Brought</a></li>
+                <li><a href="#">Configuration</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<header class="col-xs-12 mine">
+    <div class="col-xs-10 col-xs-offset-1">
+        <div class="logo col-xs-2">
+            <a href="/"><img src="/stylesheets/front/image/logo.jpg" /></a>
+        </div>
+        <div class="col-xs-5 nav">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/">Account</a></li>
+                <li><a href="/">Message</a></li>
+            </ul>
+        </div>
+        <div class="col-xs-4 search pull-right">
+            <form class="form-control">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="search..." />
+                    <span class="input-group-btn"><button class="btn btn-default" type="button">Search</button></span>
+                </div>
+            </form>
+        </div>
     </div>
 </header>
+
+<script>
+    $( function () {
+        $( "ul.dropdown-menu li a", "div.top" ).click( function () {
+            window.location = $( this ).attr( 'href' );
+        });
+    });
+</script>

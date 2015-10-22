@@ -5,12 +5,13 @@
  */
 
 var express = require('express'),
-	router = express.Router();
+	router = express.Router(),
+	SiteUtils = require('../utils/SiteUtils');
 
 
 
 router.get( '/', function (req, res, next) {
-	res.end('you are browsing the index page.');
+	res.render( 'front/index', SiteUtils.getData4Index( req, res, 'Main Page' ) );
 })
 
 

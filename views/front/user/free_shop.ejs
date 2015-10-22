@@ -1,0 +1,43 @@
+<div class="col-xs-10 col-xs-offset-1 container">
+    <div class="col-xs-2">
+        <% include sidebar.ejs %>
+    </div>
+    <div class="col-xs-8">
+        <div class="col-xs-12">
+            <form class="form form-horizontal col-xs-10 free-shop"  name="newShopForm" ng-controller="newShop" ng-submit="processForm(newShopForm.$valid)" novalidate>
+                <div class="light">
+                    <div class="control-group">
+                        <input type="text" class="form-control" name="name" ng-model="shopFormData.name" placeholder="shop name"  required>
+                    </div>
+                    <div class="control-group">
+                        <input type="text" class="form-control" name="phoneNum" ng-model="shopFormData.phoneNum" placeholder="telephone"  required>
+                    </div>
+                    <div class="control-group">
+                        <input type="email" class="form-control" name="email" ng-model="shopFormData.email" placeholder="email"  required>
+                    </div>
+                    <div class="control-group">
+                        <input type="text" class="form-control" name="address" ng-model="shopFormData.address" placeholder="address"  required>
+                    </div>
+                </div>
+                <div class="middle">
+                    <div class="control-group">
+                        Upload Logo
+                    </div>
+                    <div class="control-group">
+                        <textarea placeholder="description"></textarea>
+                    </div>
+                </div>
+                <div class="deep">
+                    <div class="control-group">
+                        <button type="submit" class="btn btn-primary">Apply New Store</button>
+                        <button type="clear"  class="btn btn-default">Clear</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+</script>

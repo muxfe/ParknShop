@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="<%=siteConfig.cmsDescription%>">
     <meta content="<%=siteConfig.keywords%>" name="keywords" />
-    <meta name="author" content="DoraCMS">
+    <meta name="author" content="x-web">
     <title><%=siteConfig.title%></title>
 
     <!-- Bootstrap 3.3.2 -->
@@ -27,6 +27,22 @@
 
     <script>
         var App = angular.module("App", []);
+
+        $(function () {
+            // Dropdown-auto-expand-collapse
+            $("a[data-toggle='dropdown']", "div.top").mouseenter( function () {
+                $( this ).siblings( 'ul' ).dropdown('toggle');
+            }).mouseleave( function () {
+                var a = this;
+                $( this ).siblings( 'ul' ).mouseleave( function () {
+                    $( this ).dropdown('toggle');
+                    var ul = this;
+                    $( a ).mouseleave( function () {
+                        $( ul ).dropdown('toggle');
+                    });
+                });
+            });
+        });
     </script>
 </head>
 

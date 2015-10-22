@@ -34,6 +34,14 @@ router.get( "/", function ( req, res, next ) {
     });
 });
 
+router.get( /^\/user\/manage(\/\w+)?$/, function ( req, res, next ) {
+    if ( req.session.logined ) {
+        next();
+    } else {
+        res.redirect('/user/login');
+    }
+});
+
 // 管理员权限验证
 router.get( /^\/admin\/?(logout)?$/, function ( req, res, next ) {
     if ( req.session.adminlogined ) {
@@ -48,7 +56,7 @@ router.get( /^\/admin\/manage(\/\w+)?$/, function ( req, res, next ) {
     if ( req.session.adminlogined ) {
         next();
     } else {
-        res.end('Permission Denied.');
+        res.redirect('/admin/login');
     }
 });
 
