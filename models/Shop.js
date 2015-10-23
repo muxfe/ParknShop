@@ -21,6 +21,11 @@ var shop = new Schema({
         _id: String,
         username: String
     },
+    // 状态 approving | reject | approved
+    state: {
+        type: String,
+        default: 'approving'
+    },
     // 联系方式
     contact: {
         phoneNum: String,
@@ -56,28 +61,7 @@ var shop = new Schema({
         type: Date,
         default: Date.now
     },
-    // 店铺自定义目录
-    category: [
-        new Schema({
-            _id: {
-                type: String,
-                unique: true,
-                'default': shortid.generate
-            },
-            name: String
-        })
-    ],
-    // 店铺广告
-    ads: [
-        new Schema({
-            title: String,
-            url: String,
-            image: {
-                type: String,
-                default: 'upload/images/default_shop_ad.jpg'
-            }
-        })
-    ]
+    approveDate: Date
 });
 
 var Shop = mongoose.model('Shop', shop);
@@ -87,8 +71,37 @@ Shop.business = {
     delete: function ( id, req, res ) {
         var Db = require('./db/Db');
         Db.delete( id, Shop, req, res, req.session.adminUserInfo.username + ' delete a shop(' + id + ')' );
-    }
+    },
 
+    insert: function ( req, res ) {
+        var SiteUtils = require('../utils/SiteUtils')
+        var shop = new Shop();
+        shop.shop_owner = {
+            _id: req.session.user._id,
+            username: req.session.user.username
+        };
+        shop.contact = {
+            email: req.body.email,
+            phoneNum: req.body.phoneNum,
+            address: req.body.address
+        };
+        shop.name = req.body.name;
+        shop.logo = req.body.logo;
+        shop.description = req.body.description;
+        shop.save(function (err) {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            SiteUtils.saveMessage(req.session.user._id, 'system', 'System Notify', 'Your application submit successfully, please wait the administrator approve it.');
+            SiteUtils.saveMessage('administrator', 'system', 'System Notify', req.session.user.username + ' apply to be a shop owner, please handle it.');
+            res.end('success');
+        });
+    },
+
+    update: function ( id, req, res ) {
+
+    }
 };
 
 module.exports = Shop;

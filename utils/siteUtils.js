@@ -11,7 +11,8 @@
      Product = require('../models/Product'),
      Category = require('../models/Category'),
      Ad = require('../models/Ad'),
-     Commission = require('../models/Commission');
+     Commission = require('../models/Commission'),
+     Message = require('../models/Message');
 
 
 var SiteUtils = {
@@ -21,6 +22,20 @@ var SiteUtils = {
         var auth_token = user._id + '$$$$';
         res.cookie(settings.auth_cookie_name, auth_token,
             { path: '/', maxAge: 1000 * 60 * 60 * 24, signed: true, httpOnly: true }); // cookie有效期 1 天
+    },
+
+    saveMessage: function ( receiver, sender, title, content ) {
+        var message = new Message({
+            receiver_id: receiver,
+            sender: sender,
+            title: title,
+            content: content
+        });
+        message.save(function (err) {
+            if (err) {
+                console.log(err);
+            }
+        });
     },
 
     getSiteInfo: function ( description ) {

@@ -77,14 +77,14 @@
             if ( isValid && $scope.isLogoUpload  ) {
                 $http({
                     method  : 'PUT',
-                    url     : "/shop",
+                    url     : "/api/v1/shop",
                     data    : $.param( $scope.shopFormData ),  // pass in data as strings
                     headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
                 })
                 .success( function ( data ) {
                     if ( data === "success" ) {
                         $( "div.alert-success" ).removeClass( 'hide' );
-                        $scope.clearData();
+                        $( "div.deep button" ).attr('disabled', 'disabled');
                     } else {
                         $( "div.alert-danger" ).removeClass( 'hide' ).find( 'span.errorInfo' ).text( data );
                     }

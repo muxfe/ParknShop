@@ -61,7 +61,7 @@ router.get( /^\/admin\/manage(\/\w+)?$/, function ( req, res, next ) {
 });
 
 // api验证
-router.get( /^\/admin\/api\/v[0-9]+\/\w+$/, function ( req, res, next ) {
+router.all( /^\/admin\/api\/v[0-9]+\/\w+$/, function ( req, res, next ) {
     if ( settings.debug || req.session.adminlogined ) {
         next();
     } else {

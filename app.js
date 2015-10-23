@@ -48,6 +48,8 @@ var admin = require('./routes/admin');
 var user = require('./routes/user');
 // validate
 var validate = require('./routes/validate');
+// api
+var api = require('./routes/api');
 
 /* 层次结构 */
 
@@ -100,6 +102,7 @@ app.use(function (req, res, next) {
 
 app.use('/admin', admin);
 app.use('/user', user);
+app.use('/api', api);
 app.use('/', routes);
 
 
