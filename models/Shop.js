@@ -99,8 +99,77 @@ Shop.business = {
         });
     },
 
-    update: function ( id, req, res ) {
+    updateByUser: function ( id, req, res ) {
+        if (req.session.user._id !== req.body['shop_owner[_id]']) {
+            res.end('Permission Denied.');
+            return;
+        }
+        var update = {
+            name: req.body.name,
+            contact: {
+                phoneNum: req.body['contact[phoneNum]'],
+                address: req.body['contact[address]'],
+                email: req.body['contact[email]']
+            },
+            logo: req.body.logo,
+            description: req.body.description
+        };
+        Shop.update({ _id: id }, { $set: update }, function (err) {
+            if (err) {
+                console.log(err);
+                res.end('error');
+                return;
+            }
+            res.end('success');
+        });
+    },
 
+    findMine: function ( req, res ) {
+        Shop.findOne({ 'shop_owner._id': req.session.user._id }, function (err, shop) {
+            if (shop) {
+                res.json(shop);
+            } else {
+                res.end('error');
+            }
+            if (err) {
+                console.log(err);
+                return;
+            }
+        });
+    },
+
+    findOne: function ( shop_id, req, res ) {
+        Shop.findOne({ _id: shop_id, state: 'approved' }, function (err, shop) {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            if (shop) {
+                res.json(shop);
+            } else {
+                res.end('Permission Denied.');
+            }
+        });
+    },
+
+    find: function ( req, res, keywords ) {
+        var Db = require('./db/Db');
+        var re = new RegExp(keywords, 'i');
+		Db.pagination(Shop, req, res, [{ // condtions
+			'state': 'approved',
+			$or: [
+				{ 'description': { $regex: re } },
+				{ 'name': { $regex: re } },
+				{ 'contact.address': { $regex: re } },
+				{ 'contact.phoneNum': { $regex: re } },
+				{ 'contact.email': { $regex: re } }
+			]
+		}], { // sort
+			'visits': -1,
+			'score': -1,
+			'nSales': -1,
+			'date': 1
+		});
     }
 };
 

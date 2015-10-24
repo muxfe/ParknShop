@@ -4,7 +4,7 @@
     </div>
     <div class="col-xs-10" ng-controller="newShop">
         <form class="form form-horizontal free-shop"  name="newShopForm"  ng-submit="processForm(newShopForm.$valid)" novalidate>
-            <legend>Apply to a new store</legend>
+            <legend><%=title%></legend>
             <div class="alert alert-success alert-dismissible hide" role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <strong>Success!</strong> Your Application submit successfully, waitting administrator approve.
@@ -14,26 +14,39 @@
                 <strong>Error!</strong> <span class="errorInfo">Something wrong.</span>
             </div>
             <div class="light">
-                <div class="control-group">
-                    <input type="text" class="form-control" name="name" ng-model="shopFormData.name" placeholder="shop name" ng-minlength="4" ng-maxlength="30" required>
-                    <label for="inputError" class="control-label text-danger" ng-show="newShopForm.name.$invalid && !newShopForm.name.$pristine"><i class="fa fa-times-circle-o"></i> 4-30, letter, number and other allowed characters.</label>
+                <div class="form-group">
+                    <label for="" class="col-sm-2 control-label">Shop Name</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="name" ng-model="shopFormData.name" placeholder="shop name" ng-minlength="4" ng-maxlength="30" required>
+                        <label for="inputError" class="control-label text-danger" ng-show="newShopForm.name.$invalid && !newShopForm.name.$pristine"><i class="fa fa-times-circle-o"></i> 4-30, letter, number and other allowed characters.</label>
+                    </div>
                 </div>
-                <div class="control-group">
-                    <input type="text" class="form-control" name="phoneNum" ng-model="shopFormData.phoneNum" placeholder="telephone" ng-minlength="7" ng-maxlength="13" ng-pattern="/^[0-9]{7,13}$/"  required>
-                    <label for="inputError" class="control-label text-danger" ng-show="newShopForm.phoneNum.$invalid && !newShopForm.phoneNum.$pristine"><i class="fa fa-times-circle-o"></i> 7-13 numbers</label>
+                <div class="form-group">
+                    <label for="" class="col-sm-2 control-label">Telephone</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="phoneNum" ng-model="shopFormData.contact.phoneNum" placeholder="telephone" ng-minlength="7" ng-maxlength="13" ng-pattern="/^[0-9]{7,13}$/"  required>
+                        <label for="inputError" class="control-label text-danger" ng-show="newShopForm.phoneNum.$invalid && !newShopForm.phoneNum.$pristine"><i class="fa fa-times-circle-o"></i> 7-13 numbers</label>
+                    </div>
                 </div>
-                <div class="control-group">
-                    <input type="email" class="form-control" name="email" ng-model="shopFormData.email" placeholder="email"  required>
-                    <label for="inputError" class="control-label text-danger" ng-show="newShopForm.email.$invalid && !newShopForm.email.$pristine"><i class="fa fa-times-circle-o"></i> e.g. abd@d.com</label>
+                <div class="form-group">
+                    <label for="" class="col-sm-2 control-label">E-mail</label>
+                    <div class="col-sm-4">
+                        <input type="email" class="form-control" name="email" ng-model="shopFormData.contact.email" placeholder="email"  required>
+                        <label for="inputError" class="control-label text-danger" ng-show="newShopForm.email.$invalid && !newShopForm.email.$pristine"><i class="fa fa-times-circle-o"></i> e.g. abd@d.com</label>
+                    </div>
                 </div>
-                <div class="control-group">
-                    <input type="text" class="form-control" name="address" ng-model="shopFormData.address" ng-minlength="5" ng-maxlength="100" placeholder="address"  required>
-                    <label for="inputError" class="control-label text-danger" ng-show="newShopForm.address.$invalid && !newShopForm.address.$pristine"><i class="fa fa-times-circle-o"></i> 5-100 characters</label>
+                <div class="form-group">
+                    <label for="" class="col-sm-2 control-label">Address</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" name="address" ng-model="shopFormData.contact.address" ng-minlength="5" ng-maxlength="100" placeholder="address"  required>
+                        <label for="inputError" class="control-label text-danger" ng-show="newShopForm.address.$invalid && !newShopForm.address.$pristine"><i class="fa fa-times-circle-o"></i> 5-100 characters</label>
+                    </div>
                 </div>
             </div>
             <div class="middle">
-                <div class="control-group">
-                    <div class="fileinput fileinput-new" data-provides="fileinput">
+                <div class="form-group">
+                    <label for="" class="col-sm-2 control-label">Logo</label>
+                    <div class="fileinput fileinput-new col-sm-4" data-provides="fileinput">
                         <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
                             <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTAiIGhlaWdodD0iMTQwIj48cmVjdCB3aWR0aD0iMTkwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9Ijk1IiB5PSI3MCIgc3R5bGU9ImZpbGw6I2FhYTtmb250LXdlaWdodDpib2xkO2ZvbnQtc2l6ZToxMnB4O2ZvbnQtZmFtaWx5OkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmO2RvbWluYW50LWJhc2VsaW5lOmNlbnRyYWwiPjE5MHgxNDA8L3RleHQ+PC9zdmc+" alt="Your Shop Logo (<5KB)">
                         </div>
@@ -47,9 +60,16 @@
                             <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
                         </div>
                     </div>
+                    <div id="uploaded" class="hide">
+                        <label for="" class="col-sm-2 control-label">Uploaded Logo</label>
+                        <div class="col-sm-4"><img src=""></div>
+                    </div>
                 </div>
-                <div class="control-group">
-                    <textarea name="description" ng-model="shopFormData.description" placeholder="description"></textarea>
+                <div class="form-group">
+                    <label for="" class="col-sm-2 control-label">Description</label>
+                    <div class="col-sm-8">
+                        <textarea class="form-control" name="description" ng-model="shopFormData.description" placeholder="description"></textarea>
+                    </div>
                 </div>
             </div>
             <div class="deep">
@@ -70,14 +90,41 @@
         $scope.isLogoUpload = false;
         // 上传图片大小限制
         $scope.logoLimit = 20480; // 20KB
+        // 判断修改还是新建
+        $scope.edit_id = '';
+
+        $scope.load = function () {
+            $http({
+                method: 'GET',
+                url: '/api/v1/shop/mine'
+            }).success( function (data) {
+                if ( data !== 'error' ) {
+                    $scope.shopFormData = data;
+                    $scope.edit_id = data._id;
+                    $( 'form.free-shop legend' ).text( 'Change Shop Information' );
+                    $( 'div.deep button' ).text( 'Update' );
+                    $( '#uploaded' ).removeClass( 'hide' ).find( 'img' ).attr( 'src', data.logo );
+                }
+            });
+        };
+
+        $scope.load();
 
         $scope.processForm = function ( isValid ) {
-            // console.log( 'form submit fired.' );
-            // console.log($scope.isLogoUpload);
-            if ( isValid && $scope.isLogoUpload  ) {
+            if ( isValid ) {
+                if ( !$scope.shopFormData.logo ) {
+                    alert( 'Logo image not upload.' );
+                    return;
+                }
+                var method = 'PUT',
+                    url = '/api/v1/shop';
+                if ( $scope.shopFormData._id ) {
+                    method = 'POST';
+                    url = url + '/' + $scope.shopFormData._id;
+                }
                 $http({
-                    method  : 'PUT',
-                    url     : "/api/v1/shop",
+                    method  : method,
+                    url     : url,
                     data    : $.param( $scope.shopFormData ),  // pass in data as strings
                     headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
                 })
@@ -85,12 +132,11 @@
                     if ( data === "success" ) {
                         $( "div.alert-success" ).removeClass( 'hide' );
                         $( "div.deep button" ).attr('disabled', 'disabled');
+                        $scope.load();
                     } else {
                         $( "div.alert-danger" ).removeClass( 'hide' ).find( 'span.errorInfo' ).text( data );
                     }
                 });
-            } else {
-                alert( 'Logo image not upload.' );
             }
         };
 
@@ -116,12 +162,15 @@
                 $( this ).fileinput( 'clear' );
                 return;
             }
-            $scope.isLogoUpload = true;
             $scope.shopFormData.logo = logoDUS;
         });
         $( 'div.fileinput' ).on( 'clear.bs.fileinput', function () {
             // console.log('file clear');
-            $scope.isLogoUpload = false;
+            if ( $scope.edit_id ) {
+                $scope.shopFormData.logo = $( "#uploaded img" ).attr( 'src' );
+            } else {
+                $scope.shopFormData.logo = '';
+            }
         });
     });
 </script>

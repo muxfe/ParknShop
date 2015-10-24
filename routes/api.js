@@ -24,6 +24,11 @@ var Shop = require('../models/Shop'),
 var	SiteUtils = require('../utils/SiteUtils'),
     Auth = require('../utils/Auth');
 
+/*
+ * PUT Shop
+ * @pre-condition: must be logined
+ * @data: name, contact, description, logo
+ */
 router.put('/v1/shop', function (req, res, next) {
     if ( Auth.isShopOwner(req) ) {
         res.end('You have applied.');
@@ -42,8 +47,43 @@ router.put('/v1/shop', function (req, res, next) {
     }
 });
 
-router.get('/v1/shop', function (req, res, next) {
-    
+/*
+ * GET Shop
+ * @param: shop_id ( shortid | 'mine' )
+ * @query: start, limit, current, keywords
+ */
+router.get('/v1/shop/:shop_id?', function (req, res, next) {
+	var query = url.parse(req.url, true),
+		shop_id = req.params.shop_id,
+		keywords = query.keywords || '';
+
+	if (shop_id) {
+		if (shop_id === 'mine') { // 登录用户的店铺
+			if (Auth.isLogin(req)) {
+				Shop.business.findMine(req, res);
+			} else {
+				res.end('Permission Denied.');
+			}
+		} else { // 公开信息的店铺
+			Shop.business.findOne(shop_id, req, res);
+		}
+	} else { // 店铺列表
+		Shop.business.find(req, res, keywords);
+	}
+});
+
+/*
+ * POST Shop
+ * @param: shop_id ( shortid )
+ * @body: name, logo, description, contact[phoneNum | email | address]
+ */
+router.post('/v1/shop/:shop_id', function (req, res, next) {
+	if (!Auth.isLogin(req)) {
+		res.end('Permission Denied.');
+		return;
+	}
+	var shop_id = req.params.shop_id;
+	Shop.business.updateByUser(shop_id, req, res);
 });
 
 module.exports = router;

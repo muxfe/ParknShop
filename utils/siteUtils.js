@@ -15,6 +15,26 @@
      Message = require('../models/Message');
 
 
+var _CustomerCategory = [
+    { name: 'Home', url: '/user/manage', childs: [] },
+    { name: 'Account', url: '#', childs: [
+        { name: 'Change Password', url: '/user/manage/config#password', childs: [] },
+        { name: 'Change Profile', url: '/user/manage/config#profile', childs: [] },
+        { name: 'Message Config', url: '/user/manage/config#message', childs: [] }
+    ]},
+    { name: 'Message', url: '/user/manage/message', childs: [] },
+];
+
+var _IndexCategory = [
+    { name: 'Home', url: '/', childs: [] },
+    { name: 'Category', url: '/category', childs: [
+        { name: 'Change Password', url: '/user/manage/config#password', childs: [] },
+        { name: 'Change Profile', url: '/user/manage/config#profile', childs: [] },
+        { name: 'Message Config', url: '/user/manage/config#message', childs: [] }
+    ]},
+    { name: 'Shop', url: '/shop', childs: [] },
+];
+
 var SiteUtils = {
 
     // 设置cookie
@@ -38,17 +58,29 @@ var SiteUtils = {
         });
     },
 
-    getSiteInfo: function ( description ) {
+    getSiteInfo: function ( ) {
         return {
             title: settings.SITE_TITLE,
-            description: description,
+            description: settings.SITE_DESCRIPTION,
             keywords: settings.SITE_KEYWORDS
         };
     },
 
     getData4Index: function ( req, res, title ) {
         return {
-            siteConfig: SiteUtils.getSiteInfo( title ),
+            siteConfig: SiteUtils.getSiteInfo( ),
+            category: _IndexCategory,
+            userInfo: req.session.user,
+            logined: req.session.logined,
+            layout: 'front/public/defaultTpl'
+        };
+    },
+
+    getData4Customer: function ( req, res, title ) {
+        return {
+            siteConfig: SiteUtils.getSiteInfo( ),
+            title: title,
+            category: _CustomerCategory,
             userInfo: req.session.user,
             logined: req.session.logined,
             layout: 'front/public/defaultTpl'

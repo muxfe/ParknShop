@@ -41,7 +41,10 @@ router.get( '/manage', function ( req, res, next ) {
 });
 
 router.get( '/manage/free_shop', function ( req, res, next ) {
-    res.render( 'front/user/free_shop', SiteUtils.getData4Index( req, res, 'Free Shop' ) );
+    if ( req.session.user.group === 'shop_owner' ) {
+        res.redirect('/');
+    }
+    res.render( 'front/user/free_shop', SiteUtils.getData4Customer( req, res, 'Apply for a Free Shop' ) );
 });
 
 
