@@ -69,6 +69,10 @@ router.post( '/login', function ( req, res, next) {
 
     User.findOne( { username: username, password: encryptedPwd }, function ( err, user ) {
         if ( user ) {
+            if ( user.group === 'blacklist' ) {
+                res.end('You are in blacklist, please contact the administrator.');
+                return;
+            }
             req.session.logined = true;
             req.session.user = user;
 

@@ -60,6 +60,14 @@ router.get( /^\/admin\/manage(\/\w+)?$/, function ( req, res, next ) {
     }
 });
 
+router.get( /^\/admin\/manage\/users(\/\w+)?$/, function ( req, res, next ) {
+    if ( req.session.adminlogined ) {
+        next();
+    } else {
+        res.redirect('/admin/login');
+    }
+});
+
 // api验证
 router.all( /^\/admin\/api\/v[0-9]+\/\w+$/, function ( req, res, next ) {
     if ( settings.debug || req.session.adminlogined ) {

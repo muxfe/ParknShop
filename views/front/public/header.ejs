@@ -13,7 +13,7 @@
                     <img src="<%=userInfo.logo%>" alt="User Logo" />
                 </li>
                 <li role="separator" class="divider"></li>
-                <li><a href="/user/manage" class="btn">Profilo</a></li>
+                <li><a href="/user/manage" class="btn">Profile</a></li>
                 <li><a href="/user/logout" class="btn logout"><i class="fa fa-sign-out"></i>Logout</a></li>
             </ul>
         </div>
@@ -21,7 +21,7 @@
         <div class="btn-group">
             <a class="btn dropdown-toggle" type="button" data-toggle="dropdown">
                 <i class="fa fa-envelope"></i>
-                Message
+                Message <span class="badge">3</span>
                 <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
@@ -86,7 +86,7 @@
                 <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-                <li><a href="#">New Store</a></li>
+                <li><a href="/user/manage/free_shop">New Store</a></li>
                 <li><a href="#">On Sale</a></li>
                 <li><a href="#">Sell</a></li>
                 <li><a href="#">Management</a></li>
@@ -103,7 +103,7 @@
         <div class="btn-group pull-right">
             <a class="btn dropdown-toggle" type="button" data-toggle="dropdown">
                 <i class="fa fa-shopping-cart"></i>
-                Cart
+                Cart <span class="badge">3</span>
                 <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
@@ -134,9 +134,23 @@
         </div>
         <div class="col-xs-5 nav">
             <ul>
-                <li><a href="/">Home</a></li>
+                <% for (var i = 0; i < category.length; i++) { %>
+                    <% if (category[i].childs.length > 0) { %>
+                        <li><a href="<%=category[i].url%>" class="dropdown-toggle" data-toggle="dropdown"><%=category[i].name%><span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <% for (var j = 0; j < category[i].childs.length; j++) { %>
+                                    <li><a href="<%=category[i].childs[j].url%>"><%=category[i].childs[j].name%></a></li>
+                                <% } %>
+                            </ul>
+                        </li>
+                    <% } else { %>
+                        <li><a href="<%=category[i].url%>"><%=category[i].name%></a></li>
+                    <% } %>
+                <% } %>
+                <!--
                 <li><a href="/">Account</a></li>
                 <li><a href="/">Message</a></li>
+            -->
             </ul>
         </div>
         <div class="col-xs-4 search pull-right">
@@ -152,6 +166,22 @@
 
 <script>
     $( function () {
+
+        // Dropdown-auto-expand-collapse
+        $("a[data-toggle='dropdown']", "div.top, div.nav").mouseenter( function () {
+            $( this ).siblings( 'ul' ).dropdown('toggle');
+        }).mouseleave( function () {
+            var a = this;
+            $( this ).siblings( 'ul' ).mouseleave( function () {
+                $( this ).dropdown('toggle');
+                var ul = this;
+                $( a ).mouseleave( function () {
+                    $( ul ).dropdown('toggle');
+                });
+            });
+        });
+
+        // resolve dropdown anchor disabled
         $( "ul.dropdown-menu li a", "div.top" ).click( function () {
             window.location = $( this ).attr( 'href' );
         });

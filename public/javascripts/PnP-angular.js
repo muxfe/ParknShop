@@ -254,6 +254,7 @@ function initCheckIfDo( $scope, targetId, msg, callback ){
     // 确认执行删除
     $scope.confirmDo = function (currentID) {
         callback( currentID );
+        $( '#checkIfDo' ).modal( 'hide' );
     };
 }
 

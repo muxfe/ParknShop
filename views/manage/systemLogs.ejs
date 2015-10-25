@@ -10,13 +10,11 @@
             <div class="box-body table-responsive no-padding" >
                 <table class="table table-hover">
                     <tr>
-                        <th><input type="checkbox" class="mini" id="selectAll"/></th>
                         <th>Type</th>
                         <th>Log</th>
                         <th>Date</th>
                     </tr>
                     <tr class="datalist" ng-repeat="opt in data">
-                        <td><input type="checkbox" name="listItem" class="mini" value="{{opt._id}}" ng-click="getNewIds()"/></td>
                         <td>{{opt.type}}</td>
                         <td>{{opt.log}}</td>
                         <td class=" ">{{opt.date | date : "yyyy-MM-dd HH:mm:ss"}}</td>

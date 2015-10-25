@@ -55,6 +55,11 @@ div.nav ul li {
     padding: 0 15px;
 }
 
+div.nav ul li ul.dropdown-menu {
+    width: 100%;
+    min-width: auto;
+}
+
 div.nav ul li ul.dropdown-menu li a {
     color: #333;
 }
@@ -67,6 +72,7 @@ div.nav ul li.open > a, div.nav ul li.open > a:hover, div.nav ul li.open > a:foc
 div.nav ul li a {
     text-decoration: none;
     color: #fff;
+    display: block;
 }
 
 div.nav ul li a:hover {

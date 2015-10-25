@@ -58,6 +58,10 @@ var SiteUtils = {
         });
     },
 
+    getCategory: function ( ) {
+        Category.business.
+    },
+
     getSiteInfo: function ( ) {
         return {
             title: settings.SITE_TITLE,

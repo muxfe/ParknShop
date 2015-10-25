@@ -86,12 +86,17 @@ var AdminUtils = {
         });
     },
 
-    getTarget: function ( type, keywords ) {
+    getTarget: function ( type, req ) {
         var ret = {
             obj: null,
             key: [],
             group: ''
         };
+        var keywords = '';
+        if ( req ) {
+            var query = url.parse( req.url, true ).query,
+                keywords = query.searchKey || '';
+        }
         var re = keywords && new RegExp( keywords, 'i' );
 
         switch ( type ) {
@@ -150,8 +155,16 @@ var AdminUtils = {
                 break;
             case 'shop':
                 ret.obj = Shop;
-                ret.key.push( { 'name': { $regex: re } } );
-                ret.key.push( { 'description': { $regex: re } } );
+                ret.key.push( {
+                    $or: [
+                        { 'state': { $regex: re } },
+                        { 'name': { $regex: re } },
+                        { 'description': { $regex: re } },
+                        { 'contact.phoneNum': { $regex: re } },
+                        { 'contact.address': { $regex: re } },
+                        { 'contact.email': { $regex: re } }
+                    ]
+                });
                 break;
             case 'product':
                 ret.obj = Product;

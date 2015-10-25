@@ -77,16 +77,12 @@ var Db = {
 		});
 	},
 
-	pagination: function (obj, req, res, conditions) {
+	pagination: function (obj, req, res, conditions, sort) {
 		var params = url.parse(req.url, true),
-			startNum = (params.query.currentPage - 1) * params.query.limit + 1,
-			currentPage = Number(params.query.currentPage),
-			limit = Number(params.query.limit),
+			currentPage = Number(params.query.currentPage) || 1,
+			limit = Number(params.query.limit) || 10,
+			startNum = (currentPage - 1) * limit + 1,
 			pageInfo = null;
-
-		startNum = isNaN(startNum) ? 0 : startNum;
-		limit = isNaN(limit) ? 10 : limit;
-		currentPage = isNaN(currentPage) ? 1 : currentPage;
 
 		var query = null;
 		if (conditions && conditions.length > 1 ) {
@@ -97,7 +93,11 @@ var Db = {
 			query = obj.find({});
 		}
 
-		query.sort({ "date": -1 });
+		if (sort) {
+			query.sort(sort);
+		} else {
+			query.sort({ "date": -1 });
+		}
 		query.exec(function (err, docs) {
 			if (err) {
 				console.error(err);

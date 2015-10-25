@@ -81,9 +81,9 @@ Shop.business = {
             username: req.session.user.username
         };
         shop.contact = {
-            email: req.body.email,
-            phoneNum: req.body.phoneNum,
-            address: req.body.address
+            phoneNum: req.body['contact[phoneNum]'],
+            address: req.body['contact[address]'],
+            email: req.body['contact[email]']
         };
         shop.name = req.body.name;
         shop.logo = req.body.logo;
@@ -96,6 +96,37 @@ Shop.business = {
             SiteUtils.saveMessage(req.session.user._id, 'system', 'System Notify', 'Your application submit successfully, please wait the administrator approve it.');
             SiteUtils.saveMessage('administrator', 'system', 'System Notify', req.session.user.username + ' apply to be a shop owner, please handle it.');
             res.end('success');
+        });
+    },
+
+    update: function ( id, req, res ) {
+        var state = req.body.state;
+
+        Shop.update({ _id: id }, { $set: req.body }, function (err) {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            if (state === 'approved') {
+                Shop.findOne({ _id: id }, function (err, shop) {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+                    if (shop) {
+                        var User = require('./User');
+                        User.update({ _id: shop.shop_owner._id }, { $set: { group: 'shop_owner' } }, function (err) {
+                            if (err) {
+                                console.log(err);
+                                return;
+                            }
+                            res.end('success');
+                        })
+                    }
+                });
+            } else {
+                res.end('success');
+            }
         });
     },
 

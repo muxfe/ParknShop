@@ -4,8 +4,8 @@
  * Date: 23/10/2015
  */
 
- var User = require('../models/User'),
-     Shop = require('../models/Shop');
+var User = require('../models/User'),
+    Shop = require('../models/Shop');
 
 var Auth = {
 
@@ -14,11 +14,11 @@ var Auth = {
     },
 
     isCustomer: function ( req ) {
-        return isLogin( req ) && req.session.user.group === 'customer';
+        return Auth.isLogin( req ) && req.session.user.group === 'customer';
     },
 
     isShopOwner: function ( req ) {
-        return isLogin( req ) && req.session.user.group === 'shop_owner';
+        return Auth.isLogin( req ) && req.session.user.group === 'shop_owner';
     },
 
     isAdminLogin: function ( req ) {
