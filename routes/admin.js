@@ -162,11 +162,9 @@ router.get( '/api/v1/system_logs', function ( req, res, next ) {
 
 // 获取对象信息
 router.get( '/api/v1/:object_type/:_id?', function ( req, res, next ) {
-	var params = url.parse( req.url, true ),
-		object_type = req.params.object_type,
+	var object_type = req.params.object_type,
 		_id = req.params._id,
-		keywords = params.query.searchKey,
-		target = AdminUtils.getTarget( object_type, keywords );
+		target = AdminUtils.getTarget( object_type, req );
 
 	if ( target ) {
 		if ( _id ) {

@@ -1,5 +1,5 @@
-<div class="col-xs-12 fixed top">
-    <div class="col-xs-10 col-xs-offset-1">
+<div class="bg-light">
+    <div class="wrap1190 top bg-f5">
     <% if ( logined ) { %>
         <div class="btn-group">
             <!-- username -->
@@ -8,7 +8,7 @@
                 <%=userInfo.username%>
                 <span class="caret"></span>
             </a>
-            <ul class="dropdown-menu col-xs-2">
+            <ul class="dropdown-menu col-md-2">
                 <li class="user-header">
                     <img src="<%=userInfo.logo%>" alt="User Logo" />
                 </li>
@@ -127,12 +127,12 @@
         </div>
     </div>
 </div>
-<header class="col-xs-12 mine">
-    <div class="col-xs-10 col-xs-offset-1">
-        <div class="logo col-xs-2">
+<header class="nav bg-default">
+    <div class="wrap1190">
+        <div class="logo col-md-2 pull-left">
             <a href="/"><img src="/stylesheets/front/image/logo.jpg" /></a>
         </div>
-        <div class="col-xs-5 nav">
+        <div class="nav pull-left">
             <ul>
                 <% for (var i = 0; i < category.length; i++) { %>
                     <% if (category[i].childs.length > 0) { %>
@@ -147,13 +147,9 @@
                         <li><a href="<%=category[i].url%>"><%=category[i].name%></a></li>
                     <% } %>
                 <% } %>
-                <!--
-                <li><a href="/">Account</a></li>
-                <li><a href="/">Message</a></li>
-            -->
             </ul>
         </div>
-        <div class="col-xs-4 search pull-right">
+        <div class="search pull-right">
             <form class="form-control">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="search..." />

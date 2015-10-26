@@ -27,11 +27,7 @@ var _CustomerCategory = [
 
 var _IndexCategory = [
     { name: 'Home', url: '/', childs: [] },
-    { name: 'Category', url: '/category', childs: [
-        { name: 'Change Password', url: '/user/manage/config#password', childs: [] },
-        { name: 'Change Profile', url: '/user/manage/config#profile', childs: [] },
-        { name: 'Message Config', url: '/user/manage/config#message', childs: [] }
-    ]},
+    { name: 'Commodity', url: '/category', childs: [] },
     { name: 'Shop', url: '/shop', childs: [] },
 ];
 
@@ -59,7 +55,7 @@ var SiteUtils = {
     },
 
     getCategory: function ( ) {
-        Category.business.
+        return Category.find({ type: 'system', parentId: 'top' }, 'name url').sort({ sortId: 1 }).find();
     },
 
     getSiteInfo: function ( ) {
@@ -73,6 +69,7 @@ var SiteUtils = {
     getData4Index: function ( req, res, title ) {
         return {
             siteConfig: SiteUtils.getSiteInfo( ),
+            classify: SiteUtils.getCategory(),
             category: _IndexCategory,
             userInfo: req.session.user,
             logined: req.session.logined,
