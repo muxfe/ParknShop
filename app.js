@@ -46,6 +46,8 @@ var routes = require('./routes/index');
 var admin = require('./routes/admin');
 // User
 var user = require('./routes/user');
+// Shop
+var shop = require('./routes/shop');
 // validate
 var validate = require('./routes/validate');
 // api
@@ -102,6 +104,7 @@ app.use(function (req, res, next) {
 
 app.use('/admin', admin);
 app.use('/user', user);
+app.use('/shop', shop);
 app.use('/api', api);
 app.use('/', routes);
 

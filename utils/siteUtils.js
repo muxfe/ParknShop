@@ -25,6 +25,10 @@ var _CustomerCategory = [
     { name: 'Message', url: '/user/manage/message', childs: [] },
 ];
 
+var _ShopOwnerCategory = [
+    { name: 'Home', url: '/shop/manage', childs: [] }
+];
+
 var _IndexCategory = [
     { name: 'Home', url: '/', childs: [] },
     { name: 'Commodity', url: '/category', childs: [] },
@@ -84,6 +88,18 @@ var SiteUtils = {
             category: _CustomerCategory,
             userInfo: req.session.user,
             logined: req.session.logined,
+            layout: 'front/public/defaultTpl'
+        };
+    },
+
+    getData4ShopOwner: function ( req, res, title ) {
+        return {
+            siteConfig: SiteUtils.getSiteInfo( ),
+            title: title,
+            category: _ShopOwnerCategory,
+            userInfo: req.session.user,
+            logined: req.session.logined,
+            home: '/shop/manage/',
             layout: 'front/public/defaultTpl'
         };
     }

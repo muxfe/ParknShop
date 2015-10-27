@@ -7,7 +7,8 @@
 var express = require('express'),
     router = express.Router(),
     settings = require('../models/db/settings'),
-    User = require('../models/User');
+    User = require('../models/User'),
+    Auth = require('../utils/Auth');
 
 // 用户登录权限验证
 router.get( "/", function ( req, res, next ) {
@@ -34,9 +35,21 @@ router.get( "/", function ( req, res, next ) {
     });
 });
 
+// 个人管理验证
 router.get( /^\/user\/manage(\/\w+)?$/, function ( req, res, next ) {
-    if ( req.session.logined ) {
+    if ( Auth.isLogin(req) ) {
         next();
+    } else {
+        res.redirect('/user/login');
+    }
+});
+
+// 店铺管理验证
+router.get( /^\/shop\/manage(\/\w+)?$/, function ( req, res, next ) {
+    if ( Auth.isShopOwner(req) ) {
+        next();
+    } else if ( Auth.isLogin(req) ) {
+        res.redirect('/user/manage/free_shop');
     } else {
         res.redirect('/user/login');
     }

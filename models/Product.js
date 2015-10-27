@@ -18,6 +18,8 @@ var product = new Schema({
     name: String,
     // 分类目录ID
     category_id: String,
+    // 店铺分类目录
+    shop_category_id: String,
     // 属于的店家
     shop: {
         _id: String,
@@ -33,6 +35,11 @@ var product = new Schema({
         color: String,
         manufacturer: String,
         brand: String
+    },
+    // 状态： on_sale | off_sale
+    state: {
+        type: String,
+        default: 'on_sale'
     },
     // 售价
     price: Number,

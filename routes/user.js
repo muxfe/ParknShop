@@ -9,27 +9,25 @@ var express = require('express'),
     crypto = require('crypto'),
     router = express.Router();
 
-// 站点配置
-var settings = require('../models/db/settings');
-// 数据库操作对象
+// DB
 var Db = require('../models/db/Db');
-// 用户对象
-var User = require('../models/User');
-// 分类对象
-var Category = require('../models/Category');
-// 产品对象
-var Product = require('../models/Product');
-// 订单对象
-var Order = require('../models/Order');
-// 店铺对象
-var Shop = require('../models/Shop');
-
-// 管理员工具
-var SiteUtils = require('../utils/siteUtils');
+// settings
+var settings = require('../models/db/settings');
+// Model
+var Shop = require('../models/Shop'),
+    Product = require('../models/Product'),
+    User = require('../models/User'),
+    Message = require('../models/Message'),
+    Category = require('../models/Category'),
+    Order = require('../models/Order'),
+    Ad = require('../models/Ad');
+// 工具类
+var	SiteUtils = require('../utils/SiteUtils'),
+    Auth = require('../utils/Auth');
 
 // login page
 router.get( '/login', function ( req, res, next ) {
-    if ( req.session.logined ) {
+    if ( Auth.isLogin(req) ) {
         res.redirect('/');
     } else {
         res.render( 'front/login_register', SiteUtils.getSiteInfo( 'Sign In' ) );
@@ -41,7 +39,7 @@ router.get( '/manage', function ( req, res, next ) {
 });
 
 router.get( '/manage/free_shop', function ( req, res, next ) {
-    if ( req.session.user.group === 'shop_owner' ) {
+    if ( Auth.isShopOwner(req) ) {
         res.redirect('/');
     }
     res.render( 'front/user/free_shop', SiteUtils.getData4Customer( req, res, 'Apply for a Free Shop' ) );
