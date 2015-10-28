@@ -4,8 +4,21 @@
         <div class="panel">
             <input type="hidden" id="targetIds"/>
             <button class="btn btn-danger btn-sm" ng-click="batchDel()" role="button"><span class="fa fa-fw fa-trash-o" aria-hidden="true">&nbsp;</span>Delete Selected</button>
+            <button class="btn btn-primary btn-sm" ng-click="approve()" role="button"><span class="fa fa-fw fa-check" aria-hidden="true">&nbsp;</span>Approve Selected</button>
+            <button class="btn btn-warning btn-sm" ng-click="reject()" role="button"><span class="fa fa-fw fa-close" aria-hidden="true">&nbsp;</span>Reject Selected</button>
+            <!-- search or filter -->
             <div class="pull-right">
                 <% include public/searchBox %>
+            </div>
+            <div class="form-group pull-right">
+                <div class="control-group">
+                    <select class="form-control input-sm select-state" name="state">
+                        <option value="" selected="selected">choose shop state</option>
+                        <option value="approving">approving</option>
+                        <option value="reject">reject</option>
+                        <option value="approved">approved</option>
+                    </select>
+                </div>
             </div>
         </div>
         <div class="box">
@@ -14,6 +27,7 @@
                     <tr>
                         <th><input type="checkbox" class="mini" id="selectAll"/></th>
                         <th>Name</th>
+                        <th>State</th>
                         <th>Shop Owner</th>
                         <th>Contact</th>
                         <th>Visits</th>
@@ -24,13 +38,16 @@
                     <tr class="datalist" ng-repeat="shop in data">
                         <td><input type="checkbox" name="listItem" class="mini" value="{{shop._id}}" ng-click="getNewIds()"/></td>
                         <td class="  ">{{shop.name}}</td>
+                        <td class="  ">{{shop.state}}</td>
                         <td class="  ">{{shop.shop_owner.username}}</td>
-                        <td class=" ">Telephone: {{shop.contact.phoneNum}}<br/>Address: {{shop.contact.address}}</td>
+                        <td class=" ">Telephone: {{shop.contact.phoneNum}}<br/>Address: {{shop.contact.address}}<br/>E-mail: {{shop.contact.email}}</td>
                         <td class=" ">{{shop.visits}}</td>
                         <td class=" ">Products: {{shop.nProducts}} <br/> Sales: {{shop.nSales}}</td>
-                        <td class=" ">{{shop.date | date : "yy-MM-dd"}}</td>
+                        <td class=" ">{{shop.date | date : "yyyy-MM-dd"}}</td>
                         <td class=" ">
-                            <button class="btn btn-danger btn-xs" ng-click="delOneItem(shop._id)"><span class="fa fa-fw fa-trash-o" aria-hidden="true"></span>Delete</button>
+                            <button class="btn btn-primary btn-xs" ng-click="approve(shop._id)" ng-show="shop.state === 'approving'"><span class="fa fa-fw fa-check" aria-hidden="true"></span>Approve</button>
+                            <button class="btn btn-warning btn-xs" ng-click="reject(shop._id)" ng-show="shop.state === 'approving'"><span class="fa fa-fw fa-close" aria-hidden="true"></span>Reject</button>
+                            <button class="btn btn-danger btn-xs" ng-click="delOneItem(shop._id)" ng-show="shop.state !== 'approving'"><span class="fa fa-fw fa-trash-o" aria-hidden="true"></span>Delete</button>
                         </td>
                     </tr>
                 </table>
@@ -50,6 +67,12 @@
 
 <script>
 
+    $(function () {
+        $( "select.select-state" ).change( function ( e ) {
+            $( "#searchInput" ).val( $( this ).val() ).closest( 'form' ).submit();
+        });
+    });
+
     App.controller( "shops", function ( $scope, $http ) {
         $scope.formData = {};
 
@@ -61,6 +84,47 @@
         //删除
         initDelOption( $scope, $http, $scope.object_type, "<%=searchKey%>", 'Are you sure you want to delete the selected shops? ' );
 
+        $scope.approve = function ( id ) {
+            postState( 'approved', id );
+        };
+
+        $scope.reject = function ( id ) {
+            postState( 'reject', id );
+        };
+
+        function postState( state, id ) {
+            if ( id ) {
+                initCheckIfDo($scope, id, 'Are you sure to handle this shop?', function ( currentID ) {
+                    angularPost( currentID, state );
+                });
+            } else {
+                var targetIds = $( '#targetIds' ).val();
+                if ( targetIds && targetIds.split(',').length > 0 ) {
+		            initCheckIfDo( $scope, $('#targetIds').val(), 'Are you sure to handle selected shops?', function ( currentID ) {
+		                var ida = currentID.split(',');
+		                for ( var i = 0; i < ida.length; i++ ) {
+		                    angularPost( ida[i], state );
+		                }
+		            });
+		        } else {
+		            alert('Please choose one at least.');
+		        }
+            }
+
+            function angularPost( id, state ) {
+                $http({
+                    url: '/admin/api/v1/' + $scope.object_type + '/' + id,
+                    method: 'POST',
+                    data: { 'state': state }
+                }).success(function (data) {
+                    if (data === 'success') {
+                        initPagination( $scope, $http, $scope.object_type, "<%=searchKey%>" );
+                    } else {
+                        showErrorInfo( data );
+                    }
+                });
+            }
+        }
     });
 
 </script>

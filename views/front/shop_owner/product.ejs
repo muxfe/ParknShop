@@ -1,0 +1,182 @@
+<div class="container">
+    <div class="col-xs-2">
+        <% include sidebar.ejs %>
+    </div>
+    <div class="col-xs-10" ng-controller="shopProduct">
+        <div class="panel panel-info">
+            <div class="panel-body">
+                <form class="form-inline" name="filterForm">
+                    <div class="form-group keywords">
+                        <label for="">Keywords:</label>
+                        <input type="text" class="form-control input-sm" name="keywords" ng-model="filterData.keywords" placeholder="keywords.."/>
+                    </div>
+                    <div class="form-group price">
+                        <label for="">Price:</label>
+                        <div class="input-group">
+                            <div class="input-group-addon">$</div>
+                            <input type="text" class="form-control input-sm" name="startPrice" ng-model="filterData.startPrice" style="width:100px;"/>
+                        </div>
+                        -
+                        <div class="input-group">
+                            <div class="input-group-addon">$</div>
+                            <input type="text" class="form-control input-sm" name="endPrice" ng-model="filterData.endPrice" style="width:100px;"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Date:</label>
+                        <div class="input-group input-daterange">
+                            <input type="text" class="form-control" name="startDate" ng-model="filterData.startDate" style="width:100px;"/>
+                            <span class="input-group-addon">to</span>
+                            <input type="text" class="form-control" name="endDate" ng-model="filterData.endDate" style="width:100px;"/>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-default btn-sm" ng-click="load()">Go!</button>
+                </form>
+            </div>
+        </div><!-- End panel -->
+        <div class="panel panel-warning">
+            <a class="btn btn-primary btn-sm" href="#productModal" data-toggle="modal"><span class="fa fa-plus-square" aria-hidden="true">&nbsp;</span> New Product</a>
+            <a class="btn btn-info btn-sm"><span class="fa fa-level-up" aria-hidden="true">&nbsp;</span> Upcarriage</a>
+            <a class="btn btn-danger btn-sm"><span class="fa fa-trash" aria-hidden="true">&nbsp;</span> Delete</a>
+            <a class="btn btn-warning btn-sm"><span class="fa fa-level-down" aria-hidden="true">&nbsp;</span> Undercarriage</a>
+            <input type="hidden" id="targetIds" value=""/>
+        </div>
+        <div class="box">
+            <div class="box-body table-responsive no-padding" >
+                <table class="table table-hover">
+                    <tr>
+                        <th><input type="checkbox" class="mini" id="selectAll"/></th>
+                        <th>Name</th>
+                        <th>State</th>
+                        <th>Shop Owner</th>
+                        <th>Contact</th>
+                        <th>Visits</th>
+                        <th>Sale Data</th>
+                        <th>Date</th>
+                        <th>Operation</th>
+                    </tr>
+                    <tr class="datalist" ng-repeat="item in data">
+                        <td><input type="checkbox" name="listItem" class="mini" value="" ng-click=""/></td>
+
+                    </tr>
+                </table>
+            </div><!-- /.box-body -->
+            <div class="box-footer">
+                <!--分页-->
+                <% include ../public/pagination %>
+            </div>
+            <div class="overlay hide" id="dataLoading">
+                <i class="fa fa-refresh fa-spin"></i>
+            </div>
+        </div><!-- /.box -->
+    </div>
+    <!--添加新用户模态窗口-->
+    <div class="modal fade" id="productModal">
+        <div class="modal-dialog" style="width:1100px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">New Administrator</h4>
+                </div>
+                <div class="modal-body">
+                    <form role="form" class="form-horizontal" name="productForm" ng-submit="processForm(productForm.$valid)" novalidate>
+                        <div class="alert alert-danger alert-dismissible hide" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <strong>Error!</strong> <span class="errorInfo">Some fields are invalid.</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Name</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="name" ng-model="formData.name" ng-minlength="2" ng-maxlength="30" required/>
+                                <label for="inputError" class="control-label text-danger" ng-show="productForm.name.$invalid && !productForm.name.$pristine"><i class="fa fa-times-circle-o"></i> 2-30 letters</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Description</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="description" ng-minlength="4" ng-maxlength="100" ng-model="formData.description" required/>
+                                <label for="inputError" class="control-label text-danger" ng-show="productForm.password.$invalid && !productForm.password.$pristine"><i class="fa fa-times-circle-o"></i>4-100 letters</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Classify</label>
+                            <div class="col-sm-6">
+                                <select class="form-control input-sm">
+                                    <option value="" ng-show="cate_options">Choose a class</option>
+                                    <option value="" ng-show="!cate_options">There's no Classification.</option>
+                                    <option value="opt._id" ng-repeat="opt in cate_options">{{opt.name}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Category</label>
+                            <div class="col-sm-6">
+                                <select class="form-control input-sm">
+                                    <option value="">Choose a category</option>
+                                    <option value="opt._id" ng-repeat="opt in shop_cate_options">{{opt.name}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Storage</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="storage" ng-model="formData.storage" ng-pattern="/^[0-9][1-9]{1,11}$/" required/>
+                                <label for="inputError" class="control-label text-danger" ng-show="productForm.storage.$invalid && !productForm.storage.$pristine"><i class="fa fa-times-circle-o"></i> 1-12 numbers</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Price</label>
+                            <div class="col-sm-6">
+                                <div class="input-group">
+                                    <div class="input-group-addon">$</div>
+                                    <input type="text" class="form-control input" name="startPrice" ng-model="formData.price"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Content</label>
+                            <div class="col-sm-6">
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary" ng-disabled="productForm.$invalid">Submit</button>
+                        </div>
+                    </form>
+                </div><!-- /.modal-body -->
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+
+<script>
+    $(function () {
+        $("div.input-daterange input").each(function () {
+            $(this).datepicker({format: 'mm/dd/yyyy'});
+            if ($(this).attr('name') === 'startDate') {
+                $(this).datepicker('setDate', new Date());
+            }
+        });
+    });
+
+    App.controller('shopProduct', function ($scope, $http) {
+        $scope.filterData = {};
+        $scope.sortData = {};
+        url = '/api/v1/product';
+
+        initPage($scope, $http, url, true);
+
+        $scope.load = function () {
+            loadData($scope, $http, url);
+        }
+
+        $scope.processForm = function (isValid) {
+            if (isValid) {
+                
+            } else {
+                $("form[name='productForm'] div.alert").removeClass('hide');
+                return false;
+            }
+        }
+    });
+</script>

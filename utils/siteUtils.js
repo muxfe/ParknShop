@@ -64,7 +64,7 @@ var SiteUtils = {
 
     getCommission: function ( ) {
         return Commission.find({ endDate: null }, 'rate').find();
-    }
+    },
 
     getSiteInfo: function ( ) {
         return {

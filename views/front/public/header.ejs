@@ -87,9 +87,9 @@
             </a>
             <ul class="dropdown-menu">
                 <li><a href="/user/manage/free_shop">New Store</a></li>
-                <li><a href="#">On Sale</a></li>
-                <li><a href="#">Sell</a></li>
-                <li><a href="#">Management</a></li>
+                <li><a href="/shop/manage/product">On Sale</a></li>
+                <li><a href="/shop/manage/history">Sell</a></li>
+                <li><a href="/shop/manage">Management</a></li>
             </ul>
         </div>
         <!-- category -->
@@ -152,7 +152,7 @@
         <div class="search pull-right">
             <form class="form-control">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="search..." />
+                    <input type="text" class="form-control" placeholder="search..." style="width: 200px;" />
                     <span class="input-group-btn"><button class="btn btn-default" type="button">Search</button></span>
                 </div>
             </form>
@@ -180,6 +180,13 @@
         // resolve dropdown anchor disabled
         $( "ul.dropdown-menu li a", "div.top" ).click( function () {
             window.location = $( this ).attr( 'href' );
+        });
+
+        // search box large
+        $( "div.search input" ).focus( function () {
+            $( this ).animate( { "width": "400" } );
+        }).blur( function () {
+            $( this ).animate( { "width": "200" } );
         });
     });
 </script>
