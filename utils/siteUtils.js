@@ -62,6 +62,10 @@ var SiteUtils = {
         return Category.find({ type: 'system', parentId: 'top' }, 'name url').sort({ sortId: 1 }).find();
     },
 
+    getCommission: function ( ) {
+        return Commission.find({ endDate: null }, 'rate').find();
+    }
+
     getSiteInfo: function ( ) {
         return {
             title: settings.SITE_TITLE,
@@ -102,6 +106,49 @@ var SiteUtils = {
             home: '/shop/manage/',
             layout: 'front/public/defaultTpl'
         };
+    },
+
+    data2tree: function ( data ) {
+        var d = { }, // 生成树的中间结果，利用了对象属性的哈希特性
+            da = [ ], // 返回的结果数组，内容为Category对象
+            keys = [ ]; // 为了保证SortId的有序，先保存所有已排序Top目录的_id，后面用此_id遍历对象属性
+        for ( var i = 0; i < data.length; i++ ) {
+            if ( data[i].parentId === 'top' ) {
+                if ( typeof d[data[i]._id] === 'undefined' ) {
+                    d[data[i]._id] = { };
+                    if ( keys.join(',').indexOf( data[i]._id ) < 0 ) {
+                        keys.push( data[i]._id );
+                    }
+                }
+                d[data[i]._id].me = data[i];
+            } else {
+                if ( typeof d[data[i].parentId] === 'undefined' ) {
+                    d[data[i].parentId] = { };
+                    if ( keys.join(',').indexOf( data[i].parentId ) < 0 ) {
+                        keys.push( data[i].parentId );
+                    }
+                }
+                if ( typeof d[data[i].parentId].children === 'undefined' ) {
+                    d[data[i].parentId].children = [];
+                }
+                d[data[i].parentId].children.push(data[i]);
+            }
+        }
+        // console.log(d);
+        for ( var j = 0; j < keys.length; j++ ) {
+            var top = {
+                me: d[keys[j]].me,
+                children: []
+            };
+            if ( typeof d[keys[j]].children !== 'undefined' ) {
+                for ( var i = 0; i < d[keys[j]].children.length; i++ ) {
+                    top.children.push(d[keys[j]].children[i]); // 依次将子目录加在父目录后面
+                }
+            }
+            da.push(top);
+        }
+        // console.log(da);
+        return da;
     }
 
 }

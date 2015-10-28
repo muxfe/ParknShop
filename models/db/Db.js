@@ -21,8 +21,10 @@ var Db = {
 			if (err) {
 				res.end(err);
 			} else {
-				console.log(logMsg + ' success!');
-				AdminUtils.saveSystemLog( 'delete', logMsg );
+				if (logMsg) {
+					console.log(logMsg + ' success!');
+					AdminUtils.saveSystemLog( 'delete', logMsg );
+				}
 				res.end('success');
 			}
 		});
@@ -44,7 +46,9 @@ var Db = {
 			if (err) {
 				res.next(err);
 			} else {
-				console.log(logMsg + ' success!');
+				if (logMsg) {
+					console.log(logMsg + ' success!');
+				}
 				return res.json(result);
 			}
 		});
@@ -57,8 +61,10 @@ var Db = {
 			if (err) {
 				res.end(err);
 			} else {
-				console.log(logMsg + ' success!');
-				AdminUtils.saveSystemLog( 'update', logMsg );
+				if (logMsg) {
+					console.log(logMsg + ' success!');
+					AdminUtils.saveSystemLog( 'update', logMsg );
+				}
 				res.end('success');
 			}
 		});
@@ -70,8 +76,10 @@ var Db = {
 			if (err) {
 				res.end(err);
 			} else {
-				console.log(logMsg + ' success!');
-				AdminUtils.saveSystemLog( 'insert', logMsg );
+				if (logMsg) {
+					console.log(logMsg + ' success!');
+					AdminUtils.saveSystemLog( 'insert', logMsg );
+				}
 				res.end('success');
 			}
 		});

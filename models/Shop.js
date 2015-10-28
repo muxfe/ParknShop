@@ -6,6 +6,7 @@
 
  var mongoose = require('mongoose'),
      shortid = require('shortid'),
+     url = require('url'),
      Schema = mongoose.Schema;
 
 var shop = new Schema({
@@ -122,6 +123,8 @@ Shop.business = {
                             }
                             res.end('success');
                         })
+                    } else {
+                        res.end('error');
                     }
                 });
             } else {
@@ -145,7 +148,7 @@ Shop.business = {
             logo: req.body.logo,
             description: req.body.description
         };
-        Shop.update({ _id: id }, { $set: update }, function (err) {
+        Shop.update({ _id: id, 'shop_owner._id': req.session.user._id }, { $set: update }, function (err) {
             if (err) {
                 console.log(err);
                 res.end('error');
@@ -159,12 +162,11 @@ Shop.business = {
         Shop.findOne({ 'shop_owner._id': req.session.user._id }, function (err, shop) {
             if (shop) {
                 res.json(shop);
-            } else {
-                res.end('error');
-            }
-            if (err) {
+            } else if (err) {
                 console.log(err);
-                return;
+                res.end('error');
+            } else {
+                res.end('You have no shop.');
             }
         });
     },
@@ -183,8 +185,9 @@ Shop.business = {
         });
     },
 
-    find: function ( req, res, keywords ) {
+    find: function ( req, res ) {
         var Db = require('./db/Db');
+        var keywords = url.parse(req.url, true).query.keywords;
         var re = new RegExp(keywords, 'i');
 		Db.pagination(Shop, req, res, [{ // condtions
 			'state': 'approved',

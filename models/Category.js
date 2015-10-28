@@ -7,7 +7,8 @@
 var mongoose = require('mongoose'),
     shortid = require('shortid'),
     url = require('url'),
-    Schema = mongoose.Schema;
+    Schema = mongoose.Schema,
+    Auth = require('../utils/Auth');
 
 var category = new Schema({
     _id: {
@@ -52,13 +53,20 @@ var Category = mongoose.model('Category', category);
 
 Category.business = {
 
-    query: function ( req, res ) {
+    query: function ( req, res, shop_id ) {
         var query = url.parse( req.url, true ).query,
             keyword = query.searchKey,
             re = new RegExp( keyword, 'i' ),
-            key = [ ];
+            key = [ ],
+            type = 'system';
+        if (shop_id) {
+            type = "shop";
+        } else {
+            shop_id = null;
+        }
         Category.find( {
-                type: 'system',
+                type: type,
+                shop_id: shop_id,
                 $or: [
                     { name: { $regex: re } },
                     { description: { $regex: re } },
@@ -87,21 +95,53 @@ Category.business = {
             if ( result.length > 0 ) {
                 res.end('Cannot delete this category that has childs.Please delete these first.');
             } else {
-                Db.delete( id, Category, req, res, req.session.adminUserInfo.username + ' delete the category(' + id + ')');
+                var username = '';
+                if (Auth.isAdminLogin(req)) {
+                    username = req.session.adminUserInfo.username;
+                } else if (Auth.isShopOwner(req)) {
+                    username = req.session.user.username;
+                }
+                Db.delete( id, Category, req, res, username + ' delete the category(' + id + ')');
             }
         });
     },
 
     insert: function ( req, res ) {
         var Db = require('./db/Db');
+        var username = '';
         req.body.keywords = req.body.keywords.split(';');
-        req.body.type = 'system';
-        Db.addOne( Category, req, res, req.session.adminUserInfo.username + ' insert a category.' );
+        if (req.body.shop_id) {
+            username = req.session.user.username;
+        } else {
+            username = req.session.adminUserInfo.username;
+            req.body.type = 'system';
+        }
+        Db.addOne( Category, req, res, username + ' insert a category.' );
     },
 
     update: function ( id, req, res ) {
         var Db = require('./db/Db');
-        Db.updateOneById( id, Category, req, res, req.session.adminUserInfo.username + ' update the category(' + id + ')' );
+        var username = '';
+        if (Auth.isAdminLogin(req)) {
+            username = req.session.adminUserInfo.username;
+        } else if (Auth.isShopOwner(req)) {
+            username = req.session.user.username;
+        }
+        Db.updateOneById( id, Category, req, res, username + ' update the category(' + id + ')' );
+    },
+
+    find: function ( req, res, condition ) {
+        var SiteUtils = require('../utils/SiteUtils');
+        Category.find(condition)
+            .sort({ sortId: 1 })
+            .exec(function (err, data) {
+                if (err) {
+                    console.log(err);
+                    res.end('error');
+                    return;
+                }
+                res.json(SiteUtils.data2tree(data));
+            });
     }
 
 };
