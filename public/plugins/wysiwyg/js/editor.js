@@ -1,5 +1,5 @@
 $(function(){
-
+	'use strict';
 	var index = 0, element = $("#editor");
     $(element).wysiwyg({
         classes: 'editor',
@@ -54,7 +54,7 @@ $(function(){
                 showselection: index == 0 ? true : false    // wanted on selection
             },
             // Fontsize plugin
-            fontsize: index != 1 ? false : {
+            fontsize: index == 1 ? false : {
                 title: 'Size',
                 image: '\uf034', // <img src="path/to/image.png" width="16" height="16" alt="" />
                 popup: function( $popup, $button ) {
@@ -91,7 +91,7 @@ $(function(){
                 //showselection: true    // wanted on selection
             },
             // Header plugin
-            header: index != 1 ? false : {
+            header: index == 1 ? false : {
                 title: 'Header',
                 image: '\uf1dc', // <img src="path/to/image.png" width="16" height="16" alt="" />
                 popup: function( $popup, $button ) {
@@ -152,42 +152,6 @@ $(function(){
             highlight: {
                 title: 'Background color',
                 image: '\uf043' // <img src="path/to/image.png" width="16" height="16" alt="" />
-            },
-            alignleft: index != 0 ? false : {
-                title: 'Left',
-                image: '\uf036', // <img src="path/to/image.png" width="16" height="16" alt="" />
-                //showstatic: true,    // wanted on the toolbar
-                showselection: false    // wanted on selection
-            },
-            aligncenter: index != 0 ? false : {
-                title: 'Center',
-                image: '\uf037', // <img src="path/to/image.png" width="16" height="16" alt="" />
-                //showstatic: true,    // wanted on the toolbar
-                showselection: false    // wanted on selection
-            },
-            alignright: index != 0 ? false : {
-                title: 'Right',
-                image: '\uf038', // <img src="path/to/image.png" width="16" height="16" alt="" />
-                //showstatic: true,    // wanted on the toolbar
-                showselection: false    // wanted on selection
-            },
-            alignjustify: index != 0 ? false : {
-                title: 'Justify',
-                image: '\uf039', // <img src="path/to/image.png" width="16" height="16" alt="" />
-                //showstatic: true,    // wanted on the toolbar
-                showselection: false    // wanted on selection
-            },
-            indent: index != 0 ? false : {
-                title: 'Indent',
-                image: '\uf03c', // <img src="path/to/image.png" width="16" height="16" alt="" />
-                //showstatic: true,    // wanted on the toolbar
-                showselection: false    // wanted on selection
-            },
-            outdent: index != 0 ? false : {
-                title: 'Outdent',
-                image: '\uf03b', // <img src="path/to/image.png" width="16" height="16" alt="" />
-                //showstatic: true,    // wanted on the toolbar
-                showselection: false    // wanted on selection
             },
             orderedList: index != 0 ? false : {
                 title: 'Ordered list',

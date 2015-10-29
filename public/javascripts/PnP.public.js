@@ -3,7 +3,7 @@
  * Author: x-web
  * Date: 27/10/2015
  */
-
+'use strict';
 $( function ( ) {
     // 全选
     $( ':checkbox' ).prop( 'checked', false );
@@ -77,7 +77,6 @@ function initPage($scope, $http, url, isPage) {
             $scope.limit = Number( $scope.limitNum );
             loadData($scope, $http, url);
         };
-
     }
     loadData($scope, $http, url);
 }
@@ -90,7 +89,7 @@ function loadData($scope, $http, url) {
          pageStr = '';
 
      if (typeof $scope.filterData !== 'undefined') {
-         for (key in $scope.filterData) {
+         for (var key in $scope.filterData) {
              filterStr += key + '=' + $scope.filterData[key] + '&';
          }
          filterStr = filterStr.substring(0, filterStr.length - 1);
@@ -163,10 +162,13 @@ function angularHttp( $http, method, url, data, callback ) {
         $( '.modal' ).each(function () {
             $( this ).modal( "hide" );
         });
-        if (data == 'success') {
-            callback(result);
+        if (result === 'success') {
+            showSuccessInfo(reuslt);
         } else {
             showErrorInfo(result);
+        }
+        if (callback) {
+            callback(result);
         }
     });
 }
@@ -184,16 +186,25 @@ function angularHttpPost($http, url, data, callback) {
     angularHttp($http, 'POST', url, data, callback);
 }
 
-// 错误信息
-function showErrorInfo( info ) {
-    $( '#error-info' ).removeClass( 'hide' ).css( 'opacity', 1 ).html( "<i class='icon fa fa-warning'></i>&nbsp" + info );
-    setTimeout( function () {
-        $( '#error-info' ).animate({
+function showInfo(selector, info) {
+    $(selector).removeClass('hide').css({ 'opacity': 1 }).text(info);
+    setTimeout(function () {
+        $(selector).animate({
             'opacity': 0
         }, 1000, function () {
-            $('#error-info').addClass('hide');
+            $(selector).addClass('hide');
         });
     }, 5000);
+}
+
+// 错误信息
+function showErrorInfo(info) {
+    showInfo('#errorInfo', info);
+}
+
+// 错误信息
+function showSuccessInfo(info) {
+    showInfo('#successInfo', info);
 }
 
 // 提示用户操作窗口
