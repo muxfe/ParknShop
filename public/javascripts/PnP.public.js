@@ -36,6 +36,34 @@ function getSelectIds(){
     }
 }
 
+function initDelete($scope, $http, url, msg) {
+    msg = msg || 'Do you want to delete the item?';
+
+    $scope.deleteItems = function (id) {
+        var targetId = id || $('#targetIds').val();
+        targetId = targetId ? targetId : '';
+
+        initCheckIfDo( $scope, targetId, msg, function (currentID) {
+            if (currentID.indexOf(',') > 0) {
+                var ida = currentID.split(',');
+                for ( var i = 0; i < ida.length; i++ ) {
+                    angularHttpDelete( $http, url + "/" + ida[i], function () {
+                        $scope.load();
+                    });
+                }
+            } else {
+                angularHttpDelete( $http, url + "/" + currentID, function () {
+                    $scope.load();
+                });
+            }
+        });
+    };
+
+    $scope.getNewIds = function () {
+        getSelectIds();
+    };
+}
+
 function initPage($scope, $http, url, isPage) {
     $scope.isPage = isPage;
     if (isPage) {
@@ -163,7 +191,7 @@ function angularHttp( $http, method, url, data, callback ) {
             $( this ).modal( "hide" );
         });
         if (result === 'success') {
-            showSuccessInfo(reuslt);
+            showSuccessInfo(result);
         } else {
             showErrorInfo(result);
         }

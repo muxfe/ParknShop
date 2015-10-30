@@ -142,7 +142,7 @@ router.post('/v1/product/:product_id', function (req, res, next) {
  * DELETE Product
  * @params: product_id
  */
-router.post('/v1/product/:product_id', function (req, res, next) {
+router.delete('/v1/product/:product_id', function (req, res, next) {
 	if (Auth.isShopOwner(req)) {
 		var product_id = req.params.product_id;
 		Product.business.delete(product_id, req, res);
