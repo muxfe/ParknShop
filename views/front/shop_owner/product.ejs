@@ -153,6 +153,27 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="control-label col-sm-4"><span class="text-danger">*</span> Logo</label>
+                            <div class="fileinput fileinput-new col-sm-4" data-provides="fileinput">
+                                <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
+                                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTAiIGhlaWdodD0iMTQwIj48cmVjdCB3aWR0aD0iMTkwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9Ijk1IiB5PSI3MCIgc3R5bGU9ImZpbGw6I2FhYTtmb250LXdlaWdodDpib2xkO2ZvbnQtc2l6ZToxMnB4O2ZvbnQtZmFtaWx5OkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmO2RvbWluYW50LWJhc2VsaW5lOmNlbnRyYWwiPjE5MHgxNDA8L3RleHQ+PC9zdmc+" alt="Your Product Logo (<5KB)">
+                                </div>
+                                <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
+                                <div>
+                                    <span class="btn btn-default btn-file">
+                                        <span class="fileinput-new">Select Logo</span>
+                                        <span class="fileinput-exists">Change</span>
+                                        <input type="file" />
+                                   </span>
+                                    <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+                                </div>
+                            </div>
+                            <div id="uploaded" class="hide">
+                                <label class="control-label">Uploaded Logo</label>
+                                <div class="col-sm-4"><img style="max-width:200px;max-height:150px;" src=""></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label class="control-label col-sm-4">Content</label>
                             <div class="col-sm-7">
                                 <textarea id="editor" name="editor" placeholder="product content..."></textarea>
@@ -232,6 +253,11 @@
 
         $scope.processForm = function (isValid) {
             if (isValid) {
+                if (!$scope.formData.logo) {
+                    showFormErrorInfo('You must choose one logo.');
+                    return;
+                }
+                console.log($scope.formData);
                 // content
                 $scope.formData.content = $.trim($('.wysiwyg-editor').html());
                 // category
@@ -267,7 +293,7 @@
             $("th.sortable i").each(function () {
                 $(this).removeClass();
             });
-            console.log($scope.sortData);
+            // console.log($scope.sortData);
             if (typeof $scope.sortData[field] !== 'undefined') {
                 $scope.sortData[field] = $scope.sortData[field] === 1 ? -1 : 1;
             } else {
@@ -279,10 +305,11 @@
             $scope.load();
         };
 
+        // modal
         $("#productModal").on('show.bs.modal', function (event) {
-            var obj = $( event.relatedTarget );
-            var editId = obj.data( 'whatever' );
-            var modalTitle = $( this ).find( '.modal-title' );
+            var obj = $(event.relatedTarget);
+            var editId = obj.data('whatever');
+            var modalTitle = $(this).find('.modal-title');
             if (editId) {
                 modalTitle.text('Edit Product');
                 $http.get(url + '/' + editId).success(function (data) {
@@ -290,6 +317,7 @@
                         $scope.formData = data;
                         $scope.targetId = editId;
                         $(".wysiwyg-editor").html(data.content);
+                        $('#uploaded').removeClass('hide').find('img').attr('src', data.logo);
                     } else {
                         showFormErrorInfo('Get product(' + editId + ') failed.');
                     }
@@ -306,6 +334,20 @@
             $scope.formData = {};
             $scope.targetId = '';
             $('.wysiwyg-editor').html('');
+            $('div.fileinput').fileinput('clear');
+            $('#uploaded').addClass('hide').find('img').attr('src', '');
+            $("div.alert-danger").addClass('hide');
+        });
+
+        // file-input
+        $('div.fileinput').on('change.bs.fileinput', function () {
+            // console.log('file selected');
+            var logoDUS = $(this).find("div.fileinput-preview img").attr('src');
+            $scope.formData.logo = logoDUS;
+        });
+        $( 'div.fileinput' ).on( 'clear.bs.fileinput', function () {
+            // console.log('file clear');
+            $scope.formData.logo = $scope.targetId ? $("#uploaded img").attr('src') : '';
         });
 
         function showFormErrorInfo(info) {

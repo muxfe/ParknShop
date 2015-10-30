@@ -56,7 +56,7 @@ var product = new Schema({
         default: 0
     },
     // 商品图片
-    images: [ String ],
+    logo: String,
     // 运费说明
     transport: String,
     // 标签
@@ -145,7 +145,7 @@ Product.business = {
             sort.date = -1;
         }
         // console.log(conditions);
-        console.log(sort);
+        // console.log(sort);
         Db.pagination(Product, req, res, [conditions], sort);
     },
 
