@@ -1,0 +1,236 @@
+<div class="container" ng-controller="productDetail">
+    <!-- <div class="path">
+        <legend><a href="/">Home</a> > <a href="/">Category</a></legend>
+    </div> -->
+    <div class="product-header">
+        <div class="logo"><img class="img-thumbnail" src="{{productData.logo}}" /></div>
+        <div class="col-sm-9 detail pull-right">
+            <legend>{{productData.name}}</legend>
+            <div class="col-sm-9 product-info">
+                <form class="form-horizontal" name="buyForm" ng-submit="processBuyForm($buyForm.$valid)">
+                    <div class="" style="background-color:#e4e9f1;">
+                        <div class="form-group col-sm-6">
+                            <label class="col-sm-4 control-label">Price: </label>
+                            <div class="col-sm-8">
+                                <p class="form-control-static" style="color:#c13333;font-weight:bold;">{{productData.price | currency: '$'}}</p>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label class="col-sm-4 control-label">{{productData.visits}}</label>
+                            <div class="col-sm-8">
+                                <p class="form-control-static">views</p>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label class="col-sm-4 control-label">Quantity: </label>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <input type="text" name="quantity" ng-model="buyData.quantity" class="form-control input-sm" placeholder="1" value="1" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default btn-sm" type="button" ng-click="minus()">-</button>
+                                    </span>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default btn-sm" type="button" ng-click="inc()">+</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <div class="col-sm-10">
+                                <p class="form-control-static">{{productData.storage}} Storage / <span style="color:#c13333;">{{productData.nSaled}} Saled</span></p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Type: </label>
+                            <div class="col-sm-10">
+                                <p class="form-control-static">New</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Shipping: </label>
+                            <div class="col-sm-10">
+                                <p class="form-control-static">PARKnSHOP</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Payment: </label>
+                            <div class="col-sm-10">
+                                <p class="form-control-static">
+                                    <i class="fa fa-paypal"></i>
+                                    <i class="fa fa-cc-paypal"></i>
+                                    <i class="fa fa-credit-card"></i>
+                                    <i class="fa fa-google-wallet"></i>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-6 left-button">
+                                <button class="form-control btn" style="background-color:#a8b8d5;">Buy It Now</button>
+                            </div>
+                            <div class="col-sm-6 right-button">
+                                <button class="form-control btn" style="background-color:#8aa5d6;">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div><!-- End .product-info -->
+            <div class="col-sm-3 shop-info">
+                <div class="shop-logo text-center">
+                    <img src="{{shopData.logo}}" />
+                </div>
+                <h4>{{shopData.name}} <small class="label label-warning pull-right">Not-official</small></h4>
+                <p>{{shopData.score}} Score, 99.7% Feedback</p>
+                <!-- <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span> -->
+                <ul class="fa-ul" style="border-bottom: 1px solid #eee;">
+                    <li><i class="fa-li fa fa-check"></i> Hignest Customer Comment</li>
+                    <li><i class="fa-li fa fa-check"></i> Hignest Speed of Delivery</li>
+                    <li><i class="fa-li fa fa-check"></i> Great Service</li>
+                </ul>
+                <button class="btn" style="background-color:#a8b8d5;padding:0 5px;"><i class="fa fa-plus"></i> Follow this Shop</button>
+            </div><!-- End .shop-info -->
+        </div><!-- End .detail -->
+    </div><!-- End .product-header -->
+    <div class="product-body">
+        <div class="tab">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#pContent" aria-controls="pContent" role="tab" data-toggle="tab">Content</a></li>
+                <li role="presentation"><a href="#pComment" aria-controls="pComment" role="tab" data-toggle="tab">Comment</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="pContent">
+                    <div></div>
+                    <div class="content">
+                        <h3>Product Details:</h3>
+                        <ul>
+                            <li>color: black</li>
+                            <li>Brand: Nikon</li>
+                            <li>Series: Nikon D</li>
+                            <li>....</li>
+                        </ul>
+                    </div>
+                    <div class="content" ng-bind-html="productData.content | to_trusted"></div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="pComment">
+                    <div class="col-md-4 text-center">
+                        <h1 class="">4.9</h1>
+                        <h3 class="">10 rating</h3>
+                    </div>
+                    <div class="col-md-8">
+                        <legend>Comments <small class="label label-info pull-right"><a href="#">View all comments</a></small></legend>
+                        <div class="comment col-md-12">
+                            <div class="col-md-6">
+                                <h2>Title</h2>
+                                <p>content</p>
+                                <span>Score</span>
+                            </div>
+                            <div class="col-md-3">
+                                <p>By <a href="#">test1</a></p>
+                                <p>10/31/2015 22:04</p>
+                                <p>Type: New</p>
+                            </div>
+                            <div class="col-md-3">
+                                <p><a href="#">Helpful(0)</a></p>
+                                <p><a href="#">Unhelpful(0)</a></p>
+                                <p>Report</p>
+                            </div>
+                        </div>
+                        <div class="comment col-md-12">
+                            <div class="col-md-6">
+                                <h2>Title</h2>
+                                <p>content</p>
+                                <span>Score</span>
+                            </div>
+                            <div class="col-md-3">
+                                <p>By <a href="#">test1</a></p>
+                                <p>10/31/2015 22:04</p>
+                                <p>Type: New</p>
+                            </div>
+                            <div class="col-md-3">
+                                <p><a href="#">Helpful(0)</a></p>
+                                <p><a href="#">Unhelpful(0)</a></p>
+                                <p>Report</p>
+                            </div>
+                        </div>
+                        <div class="comment col-md-12">
+                            <div class="col-md-6">
+                                <h2>Title</h2>
+                                <p>content</p>
+                                <span>Score</span>
+                            </div>
+                            <div class="col-md-3">
+                                <p>By <a href="#">test1</a></p>
+                                <p>10/31/2015 22:04</p>
+                                <p>Type: New</p>
+                            </div>
+                            <div class="col-md-3">
+                                <p><a href="#">Helpful(0)</a></p>
+                                <p><a href="#">Unhelpful(0)</a></p>
+                                <p>Report</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(function () {
+        $("input[name='quantity']").keydown(function (e) {
+            if ((e.which >= 48 && e.which < 58) || e.which === 8) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+    });
+
+    App.filter('to_trusted', [ '$sce', function ($sce) {
+        return function (text) {
+            return $sce.trustAsHtml(text);
+        };
+    }]);
+
+    App.controller('productDetail', function ($scope, $http) {
+        'use strict';
+        var product_id = '<%=productId%>',
+            url = '/api/v1/product/' + product_id,
+            shopUrl = '/api/v1/shop/';
+
+        $scope.productData = {};
+        $scope.shopData = {};
+        $scope.buyData = {
+            quantity: 1
+        };
+
+        $http.get(url).success(function (product) {
+            if (typeof product === 'object') {
+                $scope.productData = product;
+                $http.get(shopUrl + product.shop._id).success(function (shop) {
+                    if (typeof shop === 'object') {
+                        $scope.shopData = shop;
+                    }
+                });
+            } else {
+                console.error(data);
+            }
+        });
+
+        $scope.inc = function () {
+            if ($scope.buyData.quantity < $scope.productData.storage) {
+                $scope.buyData.quantity++;
+            }
+        };
+        $scope.minus = function () {
+            if ($scope.buyData.quantity > 0) {
+                $scope.buyData.quantity--;
+            }
+        };
+    });
+
+</script>

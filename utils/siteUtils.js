@@ -85,6 +85,18 @@ var SiteUtils = {
         };
     },
 
+    getData4Product: function ( req, res, id, title ) {
+        return {
+            siteConfig: SiteUtils.getSiteInfo(),
+            productId: id,
+            category: _IndexCategory,
+            userInfo: req.session.user,
+            logined: req.session.logined,
+            title: title,
+            layout: 'front/public/defaultTpl'
+        };
+    },
+
     getData4Customer: function ( req, res, title ) {
         return {
             siteConfig: SiteUtils.getSiteInfo( ),
@@ -149,6 +161,14 @@ var SiteUtils = {
         }
         // console.log(da);
         return da;
+    },
+
+    incVisits: function (obj, id) {
+        obj.update({ _id: id }, { $inc: { visits: 1 } }, function (err) {
+            if (err) {
+                console.log(err);
+            }
+        });
     }
 
 }

@@ -250,7 +250,7 @@ header.nav div.nav {
     max-width: 700px;
 }
 
-div.logo img {
+header.nav div.logo img {
     height: 35px;
 }
 
@@ -345,16 +345,18 @@ div.sidebar ul.nav li a.free-shop {
     font-weight: bold;
 }
 
-/* new shop */
-div.light {
+/*
+ * new shop
+ */
+.light {
     background-color: #eee;
 }
 
-div.middle {
+.middle {
     background-color: #a1cfe0;
 }
 
-div.deep {
+.deep {
     background-color: #5b8c9d;
 }
 
@@ -375,7 +377,121 @@ form.free-shop .close {
     top: 0;
 }
 
-/* login_register page */
+/*
+ * product page
+ */
+div.product-header {
+    height: 300px;
+}
+
+div.product-header div.logo {
+    height: 300px;
+    width: 280px;
+    text-align: center;
+    vertical-align: middle;
+    display: inline-flex;
+}
+
+div.product-header div.logo img {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+div.product-header div.detail {
+    height: inherit;
+    display: inline-block;
+}
+
+div.product-header div.detail form div.form-group {
+    margin-bottom: 5px;
+}
+
+div.product-header div.detail form div.form-group:last-child button {
+    height: 50px;
+    border-radius: 0px;
+    font-size: 1.4em;
+}
+
+div.left-button {
+    padding-right: 0px;
+}
+
+div.right-button {
+    padding-left: 0px;
+}
+
+div.product-info, div.shop-info {
+    border: 1px solid #eee;
+    padding: 0 0;
+    height: 245px;
+}
+
+div.shop-info {
+    padding: 0 10px;
+}
+
+div.shop-info ul {
+    font-size: 0.9em;
+}
+
+div.shop-info ul li i {
+    color: green;
+}
+
+div.shop-logo img {
+    max-width: 100px;
+    max-height: 40px;
+}
+
+div.product-body {
+    margin: 50px 0;
+}
+
+div.product-body div.tab ul.nav {
+    padding: 0 100px;
+}
+
+#pContent, #pComment {
+    border: 1px solid #eee;
+    border-top: 0;
+    overflow: auto;
+}
+
+#pContent {
+    padding: 30px 100px;
+}
+
+#pContent div.content {
+    background-color: #f3f5f7;
+    padding: 30px 100px;
+    margin-top: 20px;
+}
+
+#pComment > div:first-child {
+    border-right: 1px solid #eee;
+}
+
+#pComment > div:first-child h1 {
+    font-size: 6em;
+    margin-top: 50px;
+}
+
+#pComment > div:last-child {
+    padding: 20px 50px;
+}
+
+#pComment div.comment {
+    border-bottom: 1px solid #eee;
+    padding: 10px 10px;
+}
+
+#pComment div.comment div:nth-child(n+2) {
+    padding-top: 30px;
+}
+
+/*
+ * login_register page
+ */
 section#login, section#register {
     height: 100%;
     width: 100%;
