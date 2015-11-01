@@ -18,9 +18,9 @@
 var _CustomerCategory = [
     { name: 'Home', url: '/user/manage', childs: [] },
     { name: 'Account', url: '#', childs: [
-        { name: 'Change Password', url: '/user/manage/config#password', childs: [] },
-        { name: 'Change Profile', url: '/user/manage/config#profile', childs: [] },
-        { name: 'Message Config', url: '/user/manage/config#message', childs: [] }
+        { name: 'Change Password', url: '/user/manage/profile#password', childs: [] },
+        { name: 'Change Profile', url: '/user/manage/profile#profile', childs: [] },
+        { name: 'Message Config', url: '/user/manage/profile#message', childs: [] }
     ]},
     { name: 'Message', url: '/user/manage/message', childs: [] },
 ];

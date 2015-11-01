@@ -35,7 +35,11 @@ router.get( '/login', function ( req, res, next ) {
 });
 
 router.get( '/manage', function ( req, res, next ) {
-    res.render( 'front/user/main', SiteUtils.getData4Index( req, res, 'User Home' ) );
+    res.render( 'front/user/main', SiteUtils.getData4Customer( req, res, 'User Home' ) );
+});
+
+router.get('/manage/profile', function ( req, res, next ) {
+    res.render('front/user/profile', SiteUtils.getData4Customer(req, res, 'My Profile'));
 });
 
 router.get( '/manage/free_shop', function ( req, res, next ) {

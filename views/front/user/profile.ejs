@@ -1,0 +1,157 @@
+<div class="container" ng-controller="MyProfile">
+    <div class="col-xs-2">
+        <% include sidebar.ejs %>
+    </div>
+    <div class="col-xs-10">
+        <legend><%=title%></legend>
+        <div class="profile">
+            <ul class="nav nav-tabs" role=tablist>
+                <li role="presentation" class="active"><a href="#profile" aria-control="profile" role="tab" data-toggle="tab">Profile</a></li>
+                <li role="presentation" class=""><a href="#password" aria-control="password" role="tab" data-toggle="tab">Change Password</a></li>
+                <li role="presentation" class=""><a href="#message" aria-control="message" role="tab" data-toggle="tab">Message Config</a></li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="profile">
+                    <form class="form form-horizontal" name="profileForm" ng-submit="processProfileForm(profileForm.$valid)" novalidate>
+                        <div class="alert alert-success alert-dismissible hide" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <strong>Success!</strong> Your profile saved.
+                        </div>
+                        <div class="alert alert-danger alert-dismissible hide" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <strong>Error!</strong> <span class="text">Save failed.</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Username: </label>
+                            <p class="form-control-static">{{profileData.username}}</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Group: </label>
+                            <p class="form-control-static">{{profileData.group}}</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Name: </label>
+                            <div class="input-group col-sm-6">
+                                <input name="name" type="text" class="form-control" ng-model="profileData.name" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Email: </label>
+                            <div class="input-group col-sm-6">
+                                <input name="email" type="text" class="form-control" ng-model="profileData.email" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Telephone: </label>
+                            <div class="input-group col-sm-6">
+                                <input name="phoneNum" type="text" class="form-control" ng-model="profileData.phoneNum" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Description: </label>
+                            <div class="input-group col-sm-8">
+                                <textarea class="form-control" rows="3" ng-model="profileData.description" placeholder="What do you say?"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Logo: </label>
+                                <div class="fileinput fileinput-new col-sm-4" data-provides="fileinput">
+                                <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
+                                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTAiIGhlaWdodD0iMTQwIj48cmVjdCB3aWR0aD0iMTkwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9Ijk1IiB5PSI3MCIgc3R5bGU9ImZpbGw6I2FhYTtmb250LXdlaWdodDpib2xkO2ZvbnQtc2l6ZToxMnB4O2ZvbnQtZmFtaWx5OkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmO2RvbWluYW50LWJhc2VsaW5lOmNlbnRyYWwiPjE5MHgxNDA8L3RleHQ+PC9zdmc+" alt="Your Shop Logo (<5KB)">
+                                </div>
+                                <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
+                                <div>
+                                    <span class="btn btn-default btn-file">
+                                        <span class="fileinput-new">Select Logo</span>
+                                        <span class="fileinput-exists">Change</span>
+                                        <input type="file" />
+                                   </span>
+                                    <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+                                </div>
+                            </div>
+                            <div id="uploaded">
+                                <label for="" class="col-sm-2 control-label">Uploaded Logo: </label><br/>
+                                <div class="col-sm-4"><img src=""></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <hr/>
+                        </div>
+                        <div class="form-group text-center">
+                            <button class="btn btn-primary" type="submit">Save</button>
+                        </div>
+                    </form>
+                </div><!-- End profile-tab -->
+                <div role="tabpanel" class="tab-pane" id="password">
+                    <form class="form form-horizontal" name="passwordForm" ng-submit="processPwdForm(passwordForm.$valid)">
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">Password: </label>
+                            <div class="input-group col-sm-6">
+                                <input type="password" name="originalPwd" class="form-control" value="{{profileData.password}}" disabled/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">Old Password: </label>
+                            <div class="input-group col-sm-6">
+                                <input type="password" name="oldPwd" class="form-control" ng-model="passwordData.oldPwd" placeholder="Please enter your old passwod"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">New Password: </label>
+                            <div class="input-group col-sm-6">
+                                <input type="password" name="newPwd" class="form-control" ng-model="passwordData.newPwd"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">Confirm New Password: </label>
+                            <div class="input-group col-sm-6">
+                                <input type="password" name="confirmNewPwd" class="form-control" ng-model="passwordData.confirmNewPwd"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <hr/>
+                        </div>
+                        <div class="form-group text-center">
+                            <button class="btn btn-primary" type="submit">Change</button>
+                        </div>
+                    </form>
+                </div><!-- End password-tab -->
+                <div role="tabpanel" class="tab-pane" id="message">
+
+                </div><!-- End message-tab -->
+            </div><!-- End div.tab-content -->
+        </div><!-- End div.tab -->
+    </div>
+</div>
+
+<script>
+    $( function () {
+
+    });
+
+    App.controller('MyProfile', function ($scope, $http) {
+        $scope.profileData = {
+            name: '<%=userInfo.name%>',
+            username: '<%=userInfo.username%>',
+            password: '<%=userInfo.password%>',
+            email: '<%=userInfo.email%>',
+            phoneNum: '<%=userInfo.phoneNum%>',
+            // address: '<%=userInfo.address%>',
+            description: '<%=userInfo.description%>',
+            logo: '<%=userInfo.logo%>',
+            group: '<%=userInfo.group%>'
+        };
+        // console.log($scope.profileData);
+
+        $("#uploaded img").attr("src", $scope.profileData.logo);
+
+        $scope.processProfileForm = function (isValid) {
+            if (isValid) {
+                if (!$scope.profileData.logo) {
+                    $("form[name='profileForm'] div.alert-danger").removeClass('hide');
+                    return;
+                }
+            }
+        }
+    });
+</script>
