@@ -7,7 +7,8 @@
 var mongoose = require('mongoose'),
     shortid = require('shortid'),
     Schema = mongoose.Schema,
-    settings = require('./db/settings');
+    settings = require('./db/settings'),
+    url = require('url');
 
 var user = new Schema({
     _id: {
@@ -101,6 +102,33 @@ User.business = {
                 Db.updateOneById( id, User, req, res, req.session.adminUserInfo.username + ' recovery a user(' + id + ')' );
             }
         });
+    },
+
+    updateByUser: function (req, res) {
+        var Db = require('./db/Db'),
+            password = url.parse(req.url, true).query.password;
+
+        if (password) {
+            User.findOne({ _id: req.session.user._id }, 'password', function (err, user) {
+                if (user) {
+                    if (user.password === Db.encrypt(req.body.oldPwd, settings.encrypt_key)) {
+                        if (req.body.newPwd === req.body.confirmNewPwd) {
+                            req.body = { password: Db.encrypt(req.body.newPwd, settings.encrypt_key) };
+                            Db.updateOneById(req.session.user._id, User, req, res);
+                        } else {
+                            res.end("Twice password you entered is not same.");
+                        }
+                    } else {
+                        res.end("Your enter the old password is not correct.");
+                    }
+                } else {
+                    console.log(err || 'error');
+                    res.end('error');
+                }
+            });
+        } else {
+            Db.updateOneById(req.session.user._id, User, req, res);
+        }
     }
 
 };

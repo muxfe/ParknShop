@@ -69,7 +69,7 @@
                                     <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
                                 </div>
                             </div>
-                            <div id="uploaded">
+                            <div class="uploaded">
                                 <label for="" class="col-sm-2 control-label">Uploaded Logo: </label><br/>
                                 <div class="col-sm-4"><img src=""></div>
                             </div>
@@ -84,35 +84,46 @@
                 </div><!-- End profile-tab -->
                 <div role="tabpanel" class="tab-pane" id="password">
                     <form class="form form-horizontal" name="passwordForm" ng-submit="processPwdForm(passwordForm.$valid)">
+                        <div class="alert alert-success alert-dismissible hide" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <strong>Success!</strong> Your password have changed.
+                        </div>
+                        <div class="alert alert-danger alert-dismissible hide" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <strong>Error!</strong> <span class="text">Change password failed.</span>
+                        </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Password: </label>
                             <div class="input-group col-sm-6">
-                                <input type="password" name="originalPwd" class="form-control" value="{{profileData.password}}" disabled/>
+                                <input type="password" name="originalPwd" class="form-control" ng-model="profileData.password" disabled/>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Old Password: </label>
                             <div class="input-group col-sm-6">
-                                <input type="password" name="oldPwd" class="form-control" ng-model="passwordData.oldPwd" placeholder="Please enter your old passwod"/>
+                                <input type="password" name="oldPwd" class="form-control" ng-minlength="4" ng-maxlength="18" ng-model="passwordData.oldPwd" placeholder="Please enter your old passwod"/>
+                                <label for="inputError" class="control-label text-danger" ng-show="passwordForm.oldPwd.$invalid && !passwordForm.oldPwd.$pristine"><i class="fa fa-times-circle-o"></i> 4-18 letters or numbers</label>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">New Password: </label>
                             <div class="input-group col-sm-6">
-                                <input type="password" name="newPwd" class="form-control" ng-model="passwordData.newPwd"/>
+                                <input type="password" name="newPwd" id="input-newPwd" class="form-control" ng-minlength="4" ng-maxlength="18" ng-model="passwordData.newPwd"/>
+                                <label for="inputError" class="control-label text-danger" ng-show="passwordForm.newPwd.$invalid && !passwordForm.newPwd.$pristine"><i class="fa fa-times-circle-o"></i> 4-18 letters or numbers</label>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-3">Confirm New Password: </label>
                             <div class="input-group col-sm-6">
-                                <input type="password" name="confirmNewPwd" class="form-control" ng-model="passwordData.confirmNewPwd"/>
+                                <input type="password" name="confirmNewPwd" pw-check="input-newPwd" class="form-control" ng-minlength="4" ng-maxlength="18" ng-model="passwordData.confirmNewPwd"/>
+                                <label for="inputError" class="control-label text-danger" ng-show="passwordForm.confirmNewPwd.$invalid && !passwordForm.confirmNewPwd.$pristine"><i class="fa fa-times-circle-o"></i> Twice password is not same.</label>
                             </div>
                         </div>
                         <div class="form-group">
                             <hr/>
                         </div>
                         <div class="form-group text-center">
-                            <button class="btn btn-primary" type="submit">Change</button>
+                            <button class="btn btn-primary" type="submit" ng-disabled="passwordForm.$invalid">Change</button>
                         </div>
                     </form>
                 </div><!-- End password-tab -->
@@ -130,20 +141,23 @@
     });
 
     App.controller('MyProfile', function ($scope, $http) {
-        $scope.profileData = {
-            name: '<%=userInfo.name%>',
-            username: '<%=userInfo.username%>',
-            password: '<%=userInfo.password%>',
-            email: '<%=userInfo.email%>',
-            phoneNum: '<%=userInfo.phoneNum%>',
-            // address: '<%=userInfo.address%>',
-            description: '<%=userInfo.description%>',
-            logo: '<%=userInfo.logo%>',
-            group: '<%=userInfo.group%>'
-        };
-        // console.log($scope.profileData);
+        var user_id = '<%=userInfo._id%>',
+            url = '/api/v1/user';
 
-        $("#uploaded img").attr("src", $scope.profileData.logo);
+        $scope.load = function () {
+            $scope.profileData = {};
+            $scope.passwordData = {};
+            $("#password input").val('');
+
+            $http.get(url + '/' + user_id).success(function (data) {
+                if (typeof data === 'object') {
+                    $scope.profileData = data;
+                    $("div.uploaded img").attr("src", data.logo);
+                }
+            });
+        };
+
+        $scope.load();
 
         $scope.processProfileForm = function (isValid) {
             if (isValid) {
@@ -151,7 +165,51 @@
                     $("form[name='profileForm'] div.alert-danger").removeClass('hide');
                     return;
                 }
+                angularHttpPost($http, url, $scope.profileData, function (data) {
+                    if (data === 'success') {
+                        $("form[name='profileForm'] div.alert-success").removeClass('hide');
+                        $scope.load();
+                    } else {
+                        $("form[name='profileForm'] div.alert-danger").removeClass('hide').find('span.text').text(data);
+                    }
+                });
+            }
+        };
+
+        $scope.processPwdForm = function (isValid) {
+            if (isValid) {
+                angularHttpPost($http, url + '?password=1', $scope.passwordData, function (data) {
+                    if (data === 'success') {
+                        $("form[name='passwordForm'] div.alert-success").removeClass('hide');
+                        $scope.load();
+                    } else {
+                        $("form[name='passwordForm'] div.alert-danger").removeClass('hide').find('span.text').text(data);
+                    }
+                });
+            }
+        };
+
+        $( 'div.fileinput' ).on( 'change.bs.fileinput', function () {
+            // console.log('file selected');
+            var logoDUS = $( this ).find( "div.fileinput-preview img").attr( 'src' );
+            $scope.profileData.logo = logoDUS;
+        });
+        $( 'div.fileinput' ).on( 'clear.bs.fileinput', function () {
+            // console.log('file clear');
+            $scope.shopFormData.logo = $( "div.uploaded img" ).attr( 'src' );
+        });
+    }).directive( 'pwCheck', [ function ( ) {
+        return {
+            require: 'ngModel',
+            link: function ( scope, elem, attrs, ctrl ) {
+                var firstPassword = '#' + attrs.pwCheck;
+                elem.add( firstPassword ).on( 'keyup', function ( ) {
+                    scope.$apply( function ( ) {
+                        var v = elem.val() === $( firstPassword ).val();
+                        ctrl.$setValidity( 'pwmatch', v );
+                    });
+                });
             }
         }
-    });
+    }]);
 </script>

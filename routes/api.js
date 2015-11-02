@@ -26,8 +26,40 @@ var	SiteUtils = require('../utils/SiteUtils'),
     Auth = require('../utils/Auth');
 
 
-/* Shop Api */
+/* User Api */
+/*
+ * GET User
+ */
+router.get('/v1/user/:user_id', function (req, res, next) {
+	var user_id = req.params.user_id,
+		filter = '';
+	if (user_id !== req.session.user._id) {
+		filter = 'name username description logo';
+	}
+	User.findOne({ _id: user_id }, filter, function (err, user) {
+		if (user) {
+			res.json(user);
+			return;
+		}
+		console.log('get ' + user_id + ' error!');
+	});
+});
 
+/*
+ * POST User
+ * @pre-condition: must be logined
+ */
+router.post('/v1/user', function (req, res, next) {
+	if (Auth.isLogin(req)) {
+		User.business.updateByUser(req, res);
+	} else {
+		res.end('Permission Denied.');
+	}
+});
+
+
+
+/* Shop Api */
 /*
  * PUT Shop
  * @pre-condition: must be logined

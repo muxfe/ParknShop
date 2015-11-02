@@ -91,7 +91,5 @@ router.put( '/', function ( req, res, next ) {
     User.business.insert( req, res );
 });
 
-/* api */
-
 
 module.exports = router;
