@@ -187,8 +187,27 @@ Shop.business = {
 
     find: function ( req, res ) {
         var Db = require('./db/Db');
-        var keywords = url.parse(req.url, true).query.keywords;
+        var query = url.parse(req.url, true).query;
+        var keywords = query.keywords,
+            sortByVisits = query.sortByVisits || '',
+            sortBySaled = query.sortBySaled || '',
+            sortByProducts = query.sortByProducts || '',
+            sortByScore = query.sortByScore || '';
         var re = new RegExp(keywords, 'i');
+        var sort = {};
+
+        if (sortByVisits === '1' || sortByVisits === '-1') {
+            sort.visits = Number(sortByVisits);
+        } else if (sortByScore === '1' || sortByScore === '-1') {
+            sort.score = Number(sortByScore);
+        } else if (sortBySaled === '1' || sortBySaled === '-1') {
+            sort.nSales = Number(sortBySaled);
+        } else if (sortByProducts === '1' || sortByProducts === '-1') {
+            sort.nProducts = Number(sortByProducts);
+        } else {
+            sort.date = -1;
+        }
+
 		Db.pagination(Shop, req, res, [{ // condtions
 			'state': 'approved',
 			$or: [
@@ -198,12 +217,7 @@ Shop.business = {
 				{ 'contact.phoneNum': { $regex: re } },
 				{ 'contact.email': { $regex: re } }
 			]
-		}], { // sort
-			'visits': -1,
-			'score': -1,
-			'nSales': -1,
-			'date': 1
-		});
+		}], sort);
     }
 };
 

@@ -42,6 +42,10 @@ router.get('/manage/profile', function ( req, res, next ) {
     res.render('front/user/profile', SiteUtils.getData4Customer(req, res, 'My Profile'));
 });
 
+router.get('/manage/cart', function ( req, res, next ) {
+    res.render('front/user/cart', SiteUtils.getData4Customer(req, res, 'My Cart'));
+});
+
 router.get( '/manage/free_shop', function ( req, res, next ) {
     if ( Auth.isShopOwner(req) ) {
         res.redirect('/');

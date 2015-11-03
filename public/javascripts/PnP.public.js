@@ -64,7 +64,7 @@ function initDelete($scope, $http, url, msg) {
     };
 }
 
-function initPage($scope, $http, url, isPage) {
+function initPage($scope, $http, url, isPage, callback) {
     $scope.isPage = isPage;
     if (isPage) {
         $scope.limitNum = '10';
@@ -84,33 +84,34 @@ function initPage($scope, $http, url, isPage) {
         // 定义翻页动作
         $scope.loadPage = function ( page ) {
             $scope.currentPage = page;
-            loadData($scope, $http, url);
+            loadData($scope, $http, url, callback);
         };
 
         $scope.nextPage = function () {
             if ( $scope.currentPage < $scope.totalPage ) {
                 $scope.currentPage++;
-                loadData($scope, $http, url);
+                loadData($scope, $http, url, callback);
             }
         };
 
         $scope.prevPage = function () {
             if ( $scope.currentPage > 1 ) {
                 $scope.currentPage--;
-                loadData($scope, $http, url);
+                loadData($scope, $http, url, callback);
             }
         };
 
         $scope.changeOption = function () {
             $scope.limit = Number( $scope.limitNum );
-            loadData($scope, $http, url);
+            loadData($scope, $http, url, callback);
         };
     }
-    loadData($scope, $http, url);
+    loadData($scope, $http, url, callback);
 }
 
-function loadData($scope, $http, url) {
+function loadData($scope, $http, url, callback) {
      $( "#dataLoading" ).removeClass( "hide" );
+     $scope.isPage = Boolean($scope.isPage);
 
      var filterStr = '',
          sortStr = '',
@@ -135,44 +136,56 @@ function loadData($scope, $http, url) {
      url += '?' + pageStr + '&' + filterStr + '&' + sortStr;
 
      $http.get(url).success(function (result) {
-         if (typeof result.docs !== 'undefined') {
-             $scope.data = result.docs;
-             if ( result.pageInfo ) {
-                 $scope.totalItems = result.pageInfo.totalItems;
-                 $scope.currentPage = result.pageInfo.currentPage;
-                 $scope.limit = result.pageInfo.limit;
-                 $scope.startNum = result.pageInfo.startNum;
-                 //获取总页数
-                 $scope.totalPage = Math.ceil( $scope.totalItems / $scope.limit );
-                 //生成数字链接
-                 if ( $scope.currentPage > 1 && $scope.currentPage < $scope.totalPage ) {
-                     $scope.pages = [
-                         $scope.currentPage - 1,
-                         $scope.currentPage,
-                         $scope.currentPage + 1
-                     ];
-                 } else if ( $scope.currentPage == 1 && $scope.totalPage == 1 ) {
-                     $scope.pages = [
-                         $scope.currentPage
-                     ];
-                 } else if ( $scope.currentPage == 1 && $scope.totalPage > 1 ) {
-                     $scope.pages = [
-                         $scope.currentPage,
-                         $scope.currentPage + 1
-                     ];
-                 } else if ( $scope.currentPage == $scope.totalPage && $scope.totalPage > 1 ) {
-                     $scope.pages = [
-                         $scope.currentPage - 1,
-                         $scope.currentPage
-                     ];
+         if ($scope.isPage) {
+             if (typeof result.docs !== 'undefined') {
+                 $scope.data = result.docs;
+                 if ( result.pageInfo ) {
+                     $scope.totalItems = result.pageInfo.totalItems;
+                     $scope.currentPage = result.pageInfo.currentPage;
+                     $scope.limit = result.pageInfo.limit;
+                     $scope.startNum = result.pageInfo.startNum;
+                     //获取总页数
+                     $scope.totalPage = Math.ceil( $scope.totalItems / $scope.limit );
+                     //生成数字链接
+                     if ( $scope.currentPage > 1 && $scope.currentPage < $scope.totalPage ) {
+                         $scope.pages = [
+                             $scope.currentPage - 1,
+                             $scope.currentPage,
+                             $scope.currentPage + 1
+                         ];
+                     } else if ( $scope.currentPage == 1 && $scope.totalPage == 1 ) {
+                         $scope.pages = [
+                             $scope.currentPage
+                         ];
+                     } else if ( $scope.currentPage == 1 && $scope.totalPage > 1 ) {
+                         $scope.pages = [
+                             $scope.currentPage,
+                             $scope.currentPage + 1
+                         ];
+                     } else if ( $scope.currentPage == $scope.totalPage && $scope.totalPage > 1 ) {
+                         $scope.pages = [
+                             $scope.currentPage - 1,
+                             $scope.currentPage
+                         ];
+                     }
+                 } else {
+                     console.error("get pagination info failed.")
                  }
-             } else {
-                 console.error("get pagination info failed.")
-             }
 
-             $("#dataLoading").addClass("hide");
+                 $("#dataLoading").addClass("hide");
+             } else {
+                 showErrorInfo(result);
+             }
          } else {
-             showErrorInfo(data);
+             if (typeof result === 'object') {
+                 $scope.data = result;
+             } else {
+                 showErrorInfo(result);
+             }
+         }
+
+         if (callback) {
+             callback(result);
          }
      });
 }

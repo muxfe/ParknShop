@@ -6,6 +6,7 @@
 
 var express = require('express'),
 	router = express.Router(),
+	url = require('url'),
 	SiteUtils = require('../utils/SiteUtils');
 
 // Model
@@ -35,7 +36,9 @@ router.get('/product/:product_id', function (req, res, next) {
  * @param: shop_id
  */
 router.get('/shop/:shop_id', function (req, res, next) {
-
+	var shop_id = req.params.shop_id;
+	res.render('front/shop', SiteUtils.getData4Shop(req, res, shop_id, 'Shop Detail'));
+	SiteUtils.incVisits(Shop, shop_id);
 });
 
 /*
@@ -43,8 +46,13 @@ router.get('/shop/:shop_id', function (req, res, next) {
  * @param: keyword
  * @query: in (product | shop)
  */
-router.get('/search/:keyword', function (req, res, next) {
+router.get('/search', function (req, res, next) {
+	var stype = req.params.stype,
+		query = url.parse(req.url, true).query,
+		stype = query.stype || 'commodity',
+		keyword = query.keyword || '';
 
+	res.render('front/search', SiteUtils.getData4Search(req, res, stype, keyword, 'Search Result'));
 });
 
 

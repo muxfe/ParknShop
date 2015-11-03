@@ -97,6 +97,31 @@ var SiteUtils = {
         };
     },
 
+    getData4Shop: function ( req, res, id, title ) {
+        return {
+            siteConfig: SiteUtils.getSiteInfo(),
+            shopId: id,
+            category: _IndexCategory,
+            userInfo: req.session.user,
+            logined: req.session.logined,
+            title: title,
+            layout: 'front/public/defaultTpl'
+        };
+    },
+
+    getData4Search: function ( req, res, stype, keyword, title ) {
+        return {
+            siteConfig: SiteUtils.getSiteInfo(),
+            stype: stype,
+            keyword: keyword,
+            category: _IndexCategory,
+            userInfo: req.session.user,
+            logined: req.session.logined,
+            title: title,
+            layout: 'front/public/defaultTpl'
+        };
+    },
+
     getData4Customer: function ( req, res, title ) {
         return {
             siteConfig: SiteUtils.getSiteInfo( ),

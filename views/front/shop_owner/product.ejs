@@ -197,9 +197,6 @@
     $(function () {
         $("div.input-daterange input").each(function () {
             $(this).datepicker({format: 'mm/dd/yyyy'});
-            if ($(this).attr('name') === 'startDate') {
-                $(this).datepicker('setDate', new Date());
-            }
         });
     });
 
@@ -257,7 +254,7 @@
                     showFormErrorInfo('You must choose one logo.');
                     return;
                 }
-                console.log($scope.formData);
+                // console.log($scope.formData);
                 // content
                 $scope.formData.content = $.trim($('.wysiwyg-editor').html());
                 // category

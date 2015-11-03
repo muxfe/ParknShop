@@ -1,0 +1,38 @@
+<div class="container">
+    <div class="col-xs-2">
+        <% include ./sidebar %>
+    </div>
+    <div class="col-xs-10">
+        <legend><%=title%></legend>
+        <div class="cart">
+            <div class="panel panel-warning">
+                <button class="btn btn-danger btn-sm">Delete</button>
+            </div>
+            <div class="box">
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover">
+                        <tr>
+                            <th><input type="checkbox" class="mini" id="selectAll"/></th>
+                            <th>Commodity</th>
+                            <th>Unit-price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Operation</th>
+                        </tr>
+                        <tr class="datalist" ng-repeat="item in data">
+                            <td><input type="checkbox" name="listItem" class="mini" value="{{item._id}}" ng-click="getNewIds()"/></td>
+                            <td><a href="{{}}">{{item.name}}</a></td>
+                            <td>{{item.price}}</td>
+                            <td>{{item.quantity}}</td>
+                            <td>{{item.price * item.quantity}}</td>
+                            <td>
+                                <button class="btn btn-danger btn-xs" ng-click="deleteItems(item._id)"><span class="fa fa-fw fa-remove" aria-hidden="true"></span>Delete</button>
+                            </td>
+                        </tr>
+                        <tr class="datalist" ng-show="!data.length"><td colspan="6" class="text-center"><h4>Nothing here.Add commdity first.</h4></td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

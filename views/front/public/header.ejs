@@ -150,10 +150,20 @@
             </ul>
         </div>
         <div class="search pull-right">
-            <form class="form-control">
+            <form class="form form-inline" action="/search" type="get">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="search..." style="width: 200px;" />
-                    <span class="input-group-btn"><button class="btn btn-default" type="button">Search</button></span>
+                    <div class="input-group-btn">
+                        <!-- <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Commodity <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            <li class=""><a href="#">Shop</a></li>
+                        </ul> -->
+                        <select class="form-control" name="stype">
+                            <option value="commodity" selected="selected">Commodity</option>
+                            <option value="shop">Shop</option>
+                        </select>
+                    </div>
+                    <input type="text" class="form-control" name="keyword" placeholder="search..." style="width: 250px;" />
+                    <span class="input-group-btn"><button class="btn btn-default" type="submit">Search</i></button></span>
                 </div>
             </form>
         </div>
@@ -182,11 +192,6 @@
             window.location = $( this ).attr( 'href' );
         });
 
-        // search box large
-        $( "div.search input" ).focus( function () {
-            $( this ).animate( { "width": "400" } );
-        }).blur( function () {
-            $( this ).animate( { "width": "200" } );
-        });
+
     });
 </script>

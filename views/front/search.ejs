@@ -1,0 +1,163 @@
+<div class="container search-result" ng-controller="searchResult">
+    <div class="filter pull-left">
+        <form class="form-horizontal light" name="filterForm">
+            <div class="form-group keywords">
+                <label for="" class="label-control">Keywords:</label><br/>
+                <div class="input-group col-sm-8">
+                    <input type="text" class="form-control" name="keywords" ng-model="filterData.keywords" placeholder="keywords.."/>
+                </div>
+            </div>
+            <% if (stype === 'commodity') { %>
+            <div class="form-group price">
+                <label for="" class="label-control">Price:</label>
+                <div class="input-group">
+                    <div class="input-group-addon">$</div>
+                    <input type="text" class="form-control input-sm" name="startPrice" ng-model="filterData.startPrice" style="width:100px;"/>
+                </div>
+                &nbsp;-
+                <div class="input-group">
+                    <div class="input-group-addon">$</div>
+                    <input type="text" class="form-control input-sm" name="endPrice" ng-model="filterData.endPrice" style="width:100px;"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="label-control">Date:</label>
+                <div class="input-group input-daterange col-sm-10">
+                    <input type="text" class="form-control" name="startDate" ng-model="filterData.startDate" style="width:100px;"/>
+                    <span class="input-group-addon">to</span>
+                    <input type="text" class="form-control" name="endDate" ng-model="filterData.endDate" style="width:100px;"/>
+                </div>
+            </div>
+            <% } else if (stype === 'shop') { %>
+            <!-- <div class="form-group">
+                <label for="" class="label-control">Address:</label><br/>
+                <div class="input-group col-sm-8">
+                    <input type="text" class="form-control" name="address" ng-model="filterData.address" placeholder="address.."/>
+                </div>
+            </div> -->
+            <% } %>
+            <hr/>
+            <div class="form-group">
+                <a class="btn btn-info" ng-click="load()">Search</a>
+            </div>
+        </form>
+    </div>
+    <div class="result pull-right">
+        <div class="sortbar">
+            <a class="btn active" id="sortByDefault" ng-click="sort('sortByDefault')">All</a>
+            <% if (stype === 'commodity') { %>
+                <a class="btn" id="sortByPrice" ng-click="sort('sortByPrice')">Price <i class=""></i></a>
+            <% } else if (stype === 'shop') { %>
+                <a class="btn" id="sortByScore" ng-click="sort('sortByScore')">Score <i class=""></i></a>
+                <a class="btn" id="sortByProducts" ng-click="sort('sortByProducts')">Commodites Volume <i class=""></i></a>
+            <% } %>
+            <a class="btn" id="sortByVisits" ng-click="sort('sortByVisits')">Popularity <i class=""></i></a>
+            <a class="btn" id="sortBySaled" ng-click="sort('sortBySaled')">Sales Volume <i class=""></i></a>
+        </div>
+        <div class="box">
+            <div class="item col-sm-12" ng-repeat="item in data">
+                <div class="logo col-sm-4"><img src="{{item.logo}}" class="img-rounded"/></div>
+                <div class="text col-sm-8">
+                    <% if (stype === 'commodity') { %>
+                        <h2 class=""><a href="/product/{{item._id}}">{{item.name}}</a></h2>
+                        <div class="col-sm-6">
+                            <p class="">Fast free shipping.</p>
+                            <h3>USD {{item.price | currency: '$'}}</h3>
+                            <p class="text-danger">{{item.nSaled}} Sold</p>
+                            <p class="text-info">{{item.visits}} Views</p>
+                        </div>
+                        <div class="col-sm-4 text-center">From {{shopData[item.shop._id].name}}<img src="{{shopData[item.shop._id].logo}}" class="img-rounded"/></div>
+                        <div class="col-sm-2">Score: {{shopData[item.shop._id].score}}</div>
+                    <% } else if (stype === 'shop') { %>
+                        <h2 class=""><a href="/shop/{{item._id}}">{{item.name}}</a></h2>
+                        <div class="col-sm-6">
+                            <p><b>{{item.nProducts}}</b> Commodites</p>
+                            <p class="text-danger"><b>{{item.nSales}}</b> Sold</p>
+                            <p class="text-info"><b>{{item.visits}}</b> Views</p>
+                            <p class="">Create in {{item.date | date}}</p>
+                        </div>
+                        <div class="col-sm-4">
+                            Contact:<br/>
+                            <p class="">Telephone: <b>{{item.contact.phoneNum}}</b></p>
+                            <p class="">Address: <b>{{item.contact.address}}</b></p>
+                            <p class="">Email: <b>{{item.contact.email}}</b></p>
+                        </div>
+                        <div class="col-sm-2">Score: <b>{{item.score}}</b></div>
+                    <% } %>
+                </div>
+            </div><!-- End div.item -->
+            <div class="box-footer">
+                <% include ./public/pagination %>
+            </div>
+            <div class="overlay hide" id="dataLoading">
+                <i class="fa fa-refresh fa-spin"></i>
+            </div>
+        </div><!-- End div.box -->
+    </div>
+</div>
+
+
+<script>
+
+    $(function () {
+        $("div.input-daterange input").each(function () {
+            $(this).datepicker({format: 'mm/dd/yyyy'});
+        });
+    });
+
+    App.controller('searchResult', function ($scope, $http) {
+        var stype = '<%=stype%>',
+            url = stype === 'shop' ? '/api/v1/shop' : '/api/v1/product';
+        $scope.filterData = {};
+        $scope.filterData.keywords = "<%=keyword%>";
+        $scope.sortData = {};
+        $scope.shopData = {};
+        $scope.stype = stype || 'commodity';
+
+        // 载入商品的商铺信息
+        function cbLoad(result) {
+            if (typeof result === 'object') {
+                $scope.shopData = {};
+                for (var i = 0; i < $scope.data.length; i++) {
+                    if (typeof $scope.shopData[$scope.data[i].shop._id] === 'undefined') {
+                        $scope.shopData[$scope.data[i].shop._id] = {};
+                    }
+                }
+                for (var key in $scope.shopData) {
+                    $http.get('/api/v1/shop/' + key).success(function (shop) {
+                        if (typeof shop === 'object') {
+                            $scope.shopData[key] = shop;
+                        } else {
+                            showErrorInfo(shop);
+                        }
+                    });
+                }
+            }
+        }
+
+        initPage($scope, $http, url, true, $scope.stype === 'shop' ? null : cbLoad);
+        $scope.load = function () {
+            loadData($scope, $http, url, $scope.stype === 'shop' ? null : cbLoad);
+        };
+
+        $scope.sort = function (field) {
+            $("div.sortbar a i").each(function () {
+                $(this).removeClass();
+            });
+            // console.log($scope.sortData);
+            if (typeof $scope.sortData[field] !== 'undefined') {
+                $scope.sortData[field] = $scope.sortData[field] === 1 ? -1 : 1;
+            } else {
+                $scope.sortData = {};
+                $scope.sortData[field] = -1;
+                $("div.sortbar a.active").removeClass('active');
+                $("#" + field).addClass('active');
+            }
+            var fa = $scope.sortData[field] === 1 ? 'fa-sort-asc' : 'fa-sort-desc';
+            $("#" + field).find("i").addClass("fa").addClass(fa);
+
+            $scope.load();
+        };
+    });
+
+</script>
