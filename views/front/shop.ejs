@@ -2,7 +2,7 @@
     <div class="col-xs-3">
         <div class="panel panel-info">
             <div class="panel-heading">
-                Shop Search
+                Search In Shop
             </div>
             <div class="panel-body">
                 <div class="search ">
@@ -55,15 +55,12 @@
                 Hot Commodity
             </div>
             <div class="panel-body">
-                <div class="item col-sm-4" ng-repeat="item in hotProductData" ng-show="hotProductData">
+                <div class="item col-sm-4" ng-repeat="item in hotProductData">
                     <a href="/product/{{item._id}}"><img src="{{item.logo}}"/></a>
-                    <h4><a href="/product/{{item._id}}">{{item.name}}</a></h4>
+                    <h4><a href="/product/{{item._id}}" title="{{item.name}}">{{item.name | limitTo: 70}}</a></h4>
                     <p><strong>{{item.price | currency: '$'}}<strong></p>
-                    <p class="text-danger">{{item.nSales}} Sold</p>
+                    <p class="text-danger">{{item.nSaled}} Sold</p>
                     <button class="btn pull-right">Buy It Now</button>
-                </div><!-- End div.item -->
-                <div class="item text-center" ng-show="!hotProductData">
-                    <h3>Nothing here in this shop, please browsing other shop.</h3>
                 </div><!-- End div.item -->
             </div>
         </div><!-- End div.panel hot commodity -->
@@ -72,15 +69,12 @@
                 Commodity
             </div>
             <div class="panel-body">
-                <div class="item col-sm-4" ng-repeat="item in productData" ng-show="productData">
+                <div class="item col-sm-4" ng-repeat="item in productData">
                     <a href="/product/{{item._id}}"><img src="{{item.logo}}"/></a>
-                    <h4><a href="/product/{{item._id}}">{{item.name}}</a></h4>
+                    <h4><a href="/product/{{item._id}}" title="{{item.name}}">{{item.name | limitTo: 70}}</a></h4>
                     <p><strong>{{item.price | currency: '$'}}<strong></p>
-                    <p class="text-danger">{{item.nSales}} Sold</p>
+                    <p class="text-danger">{{item.nSaled}} Sold</p>
                     <button class="btn pull-right">Buy It Now</button>
-                </div><!-- End div.item -->
-                <div class="item text-center" ng-show="!productData">
-                    <h3>Nothing here in this shop, please browsing other shop.</h3>
                 </div><!-- End div.item -->
             </div>
         </div><!-- End div.panel commodity -->
@@ -89,15 +83,12 @@
                 Recommend
             </div>
             <div class="panel-body">
-                <div class="item col-sm-4" ng-repeat="item in recommProductData" ng-show="recommProductData">
+                <div class="item col-sm-4" ng-repeat="item in recommProductData">
                     <a href="/product/{{item._id}}"><img src="{{item.logo}}"/></a>
-                    <h4><a href="/product/{{item._id}}">{{item.name}}</a></h4>
+                    <h4><a href="/product/{{item._id}}" title="{{item.name}}">{{item.name | limitTo: 70}}</a></h4>
                     <p><strong>{{item.price | currency: '$'}}<strong></p>
-                    <p class="text-danger">{{item.nSales}} Sold</p>
+                    <p class="text-danger">{{item.nSaled}} Sold</p>
                     <button class="btn pull-right">Buy It Now</button>
-                </div><!-- End div.item -->
-                <div class="item text-center" ng-show="!recommProductData">
-                    <h3>Nothing here in this shop, please browsing other shop.</h3>
                 </div><!-- End div.item -->
             </div>
         </div><!-- End div.panel recommendition -->

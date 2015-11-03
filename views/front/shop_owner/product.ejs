@@ -101,9 +101,9 @@
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-4"><span class="text-danger">*</span> Name</label>
-                            <div class="col-sm-4">
-                                <input type="text" class="form-control" name="name" ng-model="formData.name" ng-minlength="2" ng-maxlength="30" placeholder="2-30 letters" required/>
-                                <label for="inputError" class="control-label text-danger" ng-show="productForm.name.$invalid && !productForm.name.$pristine"><i class="fa fa-times-circle-o"></i> 2-30 letters</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="name" ng-model="formData.name" ng-minlength="2" ng-maxlength="100" placeholder="2-100 letters" required/>
+                                <label for="inputError" class="control-label text-danger" ng-show="productForm.name.$invalid && !productForm.name.$pristine"><i class="fa fa-times-circle-o"></i> 2-100 letters</label>
                             </div>
                         </div>
                         <div class="form-group">
@@ -234,14 +234,14 @@
         $http.get('/api/v1/shop/mine').success(function (data) {
             if (typeof data === 'object') {
                 $scope.shopInfo = data;
+                url = url + '?shop_id=' + data._id;
+                initPage($scope, $http, url, true);
+                initDelete($scope, $http, url, 'Are you sure to delete selected product(s)?');
                 $scope.loadCate();
             } else {
                 showErrorInfo('Get shop info failed.');
             }
         });
-
-        initPage($scope, $http, url, true);
-        initDelete($scope, $http, url, 'Are you sure to delete selected product(s)?');
 
         $scope.load = function () {
             // product data

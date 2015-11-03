@@ -87,6 +87,7 @@ Product.business = {
             query = url.parse(req.url, true).query,
             keywords = query.keywords,
             state = query.state,
+            shop_id = query.shop_id,
             startPrice = Number(query.startPrice),
             endPrice = Number(query.endPrice),
             startDate = new Date(query.startDate),
@@ -106,6 +107,9 @@ Product.business = {
             conditions.$or.push({ description: { $regex: re } });
             conditions.$or.push({ content: { $regex: re } });
             conditions.$or.push({ tags: { $in: [ re ] } });
+        }
+        if (shop_id) {
+            conditions['shop._id'] = shop_id;
         }
         if (state) {
             conditions.state = state;
@@ -156,7 +160,8 @@ Product.business = {
 
     insert: function (req, res) {
         var Shop = require('./Shop'),
-            Db = require('./db/Db');
+            Db = require('./db/Db'),
+            SiteUtils = require('../utils/SiteUtils');
         Shop.findOne({ 'shop_owner._id': req.session.user._id }, function (err, shop) {
             if (shop) {
                 handleData(req);
@@ -167,6 +172,7 @@ Product.business = {
                 };
 
                 Db.addOne(Product, req, res);
+                SiteUtils.incProducts(shop._id);
             } else if (err) {
                 console.log(err);
                 res.end('error');
@@ -207,11 +213,13 @@ Product.business = {
     },
 
     delete: function (id, req, res) {
-        var Db = require('./db/Db');
+        var Db = require('./db/Db'),
+            SiteUtils = require('../utils/SiteUtils');
         Product.findOne({ _id: id }, function (err, product) {
             if (product) {
                 if (product.shop.shop_owner_id === req.session.user._id) {
                     Db.delete(id, Product, req, res);
+                    SiteUtils.incProducts(product.shop._id, -1);
                 } else {
                     res.end('Permission Denied.');
                 }

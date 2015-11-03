@@ -133,7 +133,10 @@ function loadData($scope, $http, url, callback) {
      if ($scope.isPage) {
          pageStr = 'limit=' + $scope.limit + '&currentPage=' + $scope.currentPage;
      }
-     url += '?' + pageStr + '&' + filterStr + '&' + sortStr;
+     if (url.indexOf('?') < 0) {
+         url += '?';
+     }
+     url += '&' + pageStr + '&' + filterStr + '&' + sortStr;
 
      $http.get(url).success(function (result) {
          if ($scope.isPage) {

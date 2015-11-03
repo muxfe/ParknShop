@@ -25,10 +25,10 @@
                             <label class="col-sm-4 control-label">Quantity: </label>
                             <div class="col-sm-8">
                                 <div class="input-group">
-                                    <input type="text" name="quantity" ng-model="buyData.quantity" class="form-control input-sm" placeholder="1" value="1" />
                                     <span class="input-group-btn">
                                         <button class="btn btn-default btn-sm" type="button" ng-click="minus()">-</button>
                                     </span>
+                                    <input type="text" name="quantity" ng-model="buyData.quantity" class="form-control input-sm text-center" placeholder="1" value="1" />
                                     <span class="input-group-btn">
                                         <button class="btn btn-default btn-sm" type="button" ng-click="inc()">+</button>
                                     </span>
@@ -79,7 +79,7 @@
                     <img src="{{shopData.logo}}" />
                 </div>
                 <h4>{{shopData.name}} <small class="label label-warning pull-right">Not-official</small></h4>
-                <p>{{shopData.score}} Score, 99.7% Feedback</p>
+                <p class="clearfix">Score: {{shopData.score}}</p>
                 <!-- <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span> -->
                 <ul class="fa-ul" style="border-bottom: 1px solid #eee;">
                     <li><i class="fa-li fa fa-check"></i> Hignest Customer Comment</li>
@@ -104,11 +104,11 @@
                     <div></div>
                     <div class="content">
                         <h3>Product Details:</h3>
-                        <ul>
-                            <li>color: black</li>
-                            <li>Brand: Nikon</li>
-                            <li>Series: Nikon D</li>
-                            <li>....</li>
+                        <ul class="fa-ul">
+                            <li><i class="fa-li fa fa-location-arrow"></i> Name: <strong>{{productData.name}}</strong></li>
+                            <li><i class="fa-li fa fa-location-arrow"></i> Description: {{productData.description}}</li>
+                            <li><i class="fa-li fa fa-location-arrow"></i> Tags: {{productData.tags.join(', ')}}</li>
+                            <li><i class="fa-li fa fa-location-arrow"></i> Date: {{productData.date | date}}</li>
                         </ul>
                     </div>
                     <div class="content" ng-bind-html="productData.content | to_trusted"></div>
