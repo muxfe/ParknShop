@@ -1,3 +1,143 @@
-<div class="container">
-
+<div class="container" ng-controller="shopHome">
+    <div class="col-xs-3">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                Shop Search
+            </div>
+            <div class="panel-body">
+                <div class="search ">
+                    <form name="sInShopForm" class="form" action="/search" type="get">
+                        <input type="hidden" value="<%=shopId%>" name="shop_id"/>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input name="keywords" class="form-control" placeholder="keywords..."/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input name="startPrice" class="form-control" placeholder="low"/>
+                                <div class="input-group-btn"><button class="btn">-</button></div>
+                                <input name="endPrice" class="form-control" placeholder="high"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button role="button" type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                        </div>
+                    </form>
+                </div><!-- End div.search -->
+            </div>
+        </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                Shop Description
+            </div>
+            <div class="panel-body">
+                <p>{{shopData.description}}</p>
+            </div>
+        </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                Contact
+            </div>
+            <div class="panel-body">
+                <address>
+                    <strong>{{shopData.name}}</strong><br/>
+                    {{shopData.contact.address}}<br/>
+                    <abbr title="Telephone">Phone:</abbr> {{shopData.contact.phoneNum}}<br/>
+                    <a href="mailto:#">{{item.contact.email}}</a>
+                </address>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-9 shop-product">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                Hot Commodity
+            </div>
+            <div class="panel-body">
+                <div class="item col-sm-4" ng-repeat="item in hotProductData" ng-show="hotProductData">
+                    <a href="/product/{{item._id}}"><img src="{{item.logo}}"/></a>
+                    <h4><a href="/product/{{item._id}}">{{item.name}}</a></h4>
+                    <p><strong>{{item.price | currency: '$'}}<strong></p>
+                    <p class="text-danger">{{item.nSales}} Sold</p>
+                    <button class="btn pull-right">Buy It Now</button>
+                </div><!-- End div.item -->
+                <div class="item text-center" ng-show="!hotProductData">
+                    <h3>Nothing here in this shop, please browsing other shop.</h3>
+                </div><!-- End div.item -->
+            </div>
+        </div><!-- End div.panel hot commodity -->
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                Commodity
+            </div>
+            <div class="panel-body">
+                <div class="item col-sm-4" ng-repeat="item in productData" ng-show="productData">
+                    <a href="/product/{{item._id}}"><img src="{{item.logo}}"/></a>
+                    <h4><a href="/product/{{item._id}}">{{item.name}}</a></h4>
+                    <p><strong>{{item.price | currency: '$'}}<strong></p>
+                    <p class="text-danger">{{item.nSales}} Sold</p>
+                    <button class="btn pull-right">Buy It Now</button>
+                </div><!-- End div.item -->
+                <div class="item text-center" ng-show="!productData">
+                    <h3>Nothing here in this shop, please browsing other shop.</h3>
+                </div><!-- End div.item -->
+            </div>
+        </div><!-- End div.panel commodity -->
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                Recommend
+            </div>
+            <div class="panel-body">
+                <div class="item col-sm-4" ng-repeat="item in recommProductData" ng-show="recommProductData">
+                    <a href="/product/{{item._id}}"><img src="{{item.logo}}"/></a>
+                    <h4><a href="/product/{{item._id}}">{{item.name}}</a></h4>
+                    <p><strong>{{item.price | currency: '$'}}<strong></p>
+                    <p class="text-danger">{{item.nSales}} Sold</p>
+                    <button class="btn pull-right">Buy It Now</button>
+                </div><!-- End div.item -->
+                <div class="item text-center" ng-show="!recommProductData">
+                    <h3>Nothing here in this shop, please browsing other shop.</h3>
+                </div><!-- End div.item -->
+            </div>
+        </div><!-- End div.panel recommendition -->
+    </div>
 </div>
+
+<script>
+
+    App.controller('shopHome', function ($scope, $http) {
+        $scope.shopData = {};
+        var shop_id = '<%=shopId%>',
+            url = '/api/v1/shop/' + shop_id;
+
+        $scope.load = function () {
+            $http.get(url).success(function (shop) {
+                if (typeof shop === 'object') {
+                    $scope.shopData = shop;
+                } else {
+                    showErrorInfo(shop);
+                }
+            });
+
+            $http.get('/api/v1/product?shop_id=' + shop_id + '&currentPage=1&limit=3&sortBySaled=-1').success(function (products) {
+                if (typeof products === 'object') {
+                    $scope.hotProductData = products.docs;
+                }
+            });
+            $http.get('/api/v1/product?shop_id=' + shop_id + '&currentPage=1&limit=9&sortByVisits=-1').success(function (products) {
+                if (typeof products === 'object') {
+                    $scope.productData = products.docs;
+                }
+            });
+            $http.get('/api/v1/product?shop_id=' + shop_id + '&currentPage=1&limit=3&sortByScore=-1').success(function (products) {
+                if (typeof products === 'object') {
+                    $scope.recommProductData = products.docs;
+                }
+            });
+        };
+
+        $scope.load();
+    });
+
+</script>

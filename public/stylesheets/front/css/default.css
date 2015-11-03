@@ -319,6 +319,11 @@ li.user-header {
     text-align: center;
 }
 
+li.user-header img {
+    max-width: 100px;
+    max-height: 100px;
+}
+
 a.btn-top:hover {
     background-color: #eee;
 }
@@ -488,6 +493,101 @@ div.product-body div.tab ul.nav {
 #pComment div.comment div:nth-child(n+2) {
     padding-top: 30px;
 }
+
+/*
+ * Profile Page
+ */
+
+div.profile div.tab-content > div {
+    padding: 30px 50px;
+}
+
+div.profile div.uploaded img {
+    max-width: 100px;
+    max-height: 100px;
+}
+
+/*
+ * search result page
+ */
+div.search-result > div {
+    padding: 10px 10px;
+    border: 1px solid #eee;
+    height: auto;
+}
+
+div.filter {
+    width: 300px;
+    border-right: 0 !important;
+}
+
+div.filter form {
+    padding: 20px 20px;
+    height: 100%;
+}
+
+div.filter form > div.form-group {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+div.result {
+    width:840px;
+}
+
+div.result div.item {
+    width: 98%;
+    border-bottom: 1px solid #eee;
+    height: 200px;
+    margin: 20px auto;
+}
+
+div.result div.item > div {
+    height: 98%;
+}
+
+div.result div.item div.logo {
+    width: 30%;
+}
+
+div.result div.item div.logo img {
+    max-width: 100%;
+    max-height: 100%;
+    border: 1px solid #eee;
+    text-align: center;
+    vertical-align: middle;
+}
+
+div.result div.item div {
+    padding: 0 5px;
+}
+
+div.result div.item div.text img {
+    max-width: 150px;
+    max-height: 80px;
+}
+
+div.result div.item div.text h2, div.result div.item div.text h3 {
+    margin-top: 5px;
+}
+
+/*
+ * Shop Home Page
+ */
+div.shop-product div.item img {
+    width: 200px;
+    height: 200px;
+}
+
+div.shop-product div.item {
+    height: 350px;
+    border: 1px solid #eee;
+}
+
+div.shop-product div.item:hover {
+    border-color: red;
+}
+
 
 /*
  * login_register page

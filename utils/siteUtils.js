@@ -31,8 +31,8 @@ var _ShopOwnerCategory = [
 
 var _IndexCategory = [
     { name: 'Home', url: '/', childs: [] },
-    { name: 'Commodity', url: '/category', childs: [] },
-    { name: 'Shop', url: '/shop', childs: [] },
+    { name: 'Commodity', url: '/search', childs: [] },
+    { name: 'Shop', url: '/search?stype=shop', childs: [] },
 ];
 
 var SiteUtils = {
@@ -190,6 +190,24 @@ var SiteUtils = {
 
     incVisits: function (obj, id) {
         obj.update({ _id: id }, { $inc: { visits: 1 } }, function (err) {
+            if (err) {
+                console.log(err);
+            }
+        });
+    },
+
+    incProducts: function (id, value) {
+        var val = value || 1;
+        Shop.update({ _id: id }, { $inc: { nProducts: val } }, function (err) {
+            if (err) {
+                console.log(err);
+            }
+        });
+    },
+
+    incSales: function (id, value) {
+        var val = value || 1;
+        Shop.update({ _id: id }, { $inc: { nSales: val } }, function (err) {
             if (err) {
                 console.log(err);
             }

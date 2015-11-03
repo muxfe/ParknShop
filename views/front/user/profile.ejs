@@ -128,7 +128,27 @@
                     </form>
                 </div><!-- End password-tab -->
                 <div role="tabpanel" class="tab-pane" id="message">
-
+                    <form class="form form-horizontal" name="passwordForm" ng-submit="processMsgForm(messageForm.$valid)">
+                        <div class="alert alert-success alert-dismissible hide" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <strong>Success!</strong> Your configuration saved.
+                        </div>
+                        <div class="alert alert-danger alert-dismissible hide" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <strong>Error!</strong> <span class="text">Save failed.</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-5">
+                                <input type="checkbox" name="isInform" ng-model="messageData.isInform" />  Inform you when you have new message
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <hr/>
+                        </div>
+                        <div class="form-group text-center">
+                            <button class="btn btn-primary" type="submit" ng-disabled="passwordForm.$invalid">Change</button>
+                        </div>
+                    </form>
                 </div><!-- End message-tab -->
             </div><!-- End div.tab-content -->
         </div><!-- End div.tab -->
