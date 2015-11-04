@@ -53,10 +53,8 @@ var user = new Schema({
     // 购物车
     cart: [
         new Schema({
-            product_name: String,
-            product_link: String,
-            product_id: String,
-            product_num: Number
+            _id: String,
+            quantity: Number
         })
     ]
 });
@@ -129,6 +127,44 @@ User.business = {
         } else {
             Db.updateOneById(req.session.user._id, User, req, res);
         }
+    },
+
+    changeCart: function (req, res) {
+        var user_id = req.session.user._id,
+            product_id = req.body._id || '',
+            quantity = req.body.quantity || 1;
+        User.findOne({ _id: user_id, 'cart._id': product_id }, function (err, user) {
+            if (user) {
+                User.update({ _id: user_id, 'cart._id': product_id }, { $inc: { 'cart.$.quantity': quantity } }, function (err) {
+                    if (err) {
+                        res.end('error');
+                        console.log(err);
+                    } else {
+                        res.end('success');
+                    }
+                });
+            } else {
+                User.update({ _id: user_id }, { $push: { cart: req.body } },function (err) {
+                    if (err) {
+                        console.log(err);
+                        res.end('error');
+                    } else {
+                        res.end('success');
+                    }
+                });
+            }
+        });
+    },
+
+    deleteCart: function (id, req, res) {
+        User.update({ _id: req.session.user._id }, { $pull: { cart: { _id: id } } }, function (err) {
+            if (err) {
+                res.end('error');
+                console.log(err);
+            } else {
+                res.end('success');
+            }
+        });
     }
 
 };

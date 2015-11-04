@@ -154,8 +154,20 @@ Product.business = {
     },
 
     findOne: function (id, req, res) {
-        var Db = require('./db/Db');
-        Db.findOne(id, Product, req, res);
+        var Db = require('./db/Db'),
+            part = url.parse(req.url, true).query.part,
+            filter = '';
+        if (part) {
+            filter = 'name logo price storage';
+        }
+        Product.findOne({ _id: id }, filter, function (err, product) {
+            if (err) {
+                console.log(err || 'error');
+                res.end('error');
+            } else {
+                return res.json(product);
+            }
+        });
     },
 
     insert: function (req, res) {

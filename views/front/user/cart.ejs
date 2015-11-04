@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" ng-controller="MyCart">
     <div class="col-xs-2">
         <% include ./sidebar %>
     </div>
@@ -6,7 +6,7 @@
         <legend><%=title%></legend>
         <div class="cart">
             <div class="panel panel-warning">
-                <button class="btn btn-danger btn-sm">Delete</button>
+                <button class="btn btn-danger btn-sm" ng-click="deleteItems()"><span class="fa fa-fw fa-remove" aria-hidden="true"></span> Delete</button>
             </div>
             <div class="box">
                 <div class="box-body table-responsive no-padding">
@@ -19,20 +19,91 @@
                             <th>Total</th>
                             <th>Operation</th>
                         </tr>
-                        <tr class="datalist" ng-repeat="item in data">
+                        <tr class="datalist" ng-repeat="item in cartData">
                             <td><input type="checkbox" name="listItem" class="mini" value="{{item._id}}" ng-click="getNewIds()"/></td>
-                            <td><a href="{{}}">{{item.name}}</a></td>
-                            <td>{{item.price}}</td>
-                            <td>{{item.quantity}}</td>
-                            <td>{{item.price * item.quantity}}</td>
+                            <td>
+                                <img src="{{item.logo}}" class="pull-left" style="width:50px;height:50px;" />
+                                <a href="/product/{{item._id}}" title="{{item.name}}">{{item.name | limitTo:70}}</a>
+                            </td>
+                            <td>{{item.price | currency: '$'}}</td>
+                            <td>
+                                <div class="input-group col-sm-8">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default btn-sm" type="button" ng-disabled="item.quantity == 1" ng-click="minus(item)">-</button>
+                                    </span>
+                                    <input type="text" name="quantity" ng-model="item.quantity" class="form-control input-sm text-center" placeholder="1" value="{{item.quantity}}" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default btn-sm" type="button" ng-click="inc(item)">+</button>
+                                    </span>
+                                </div>
+                            </td>
+                            <td>{{item.price * item.quantity | currency: '$'}}</td>
                             <td>
                                 <button class="btn btn-danger btn-xs" ng-click="deleteItems(item._id)"><span class="fa fa-fw fa-remove" aria-hidden="true"></span>Delete</button>
                             </td>
                         </tr>
-                        <tr class="datalist" ng-show="!data.length"><td colspan="6" class="text-center"><h4>Nothing here.Add commdity first.</h4></td></tr>
                     </table>
                 </div>
+            </div><!-- End div.box -->
+            <div class="panel panel-info">
+                <button class="btn btn-danger btn-sm"><span class="fa fa-fw fa-remove" aria-hidden="true"></span> Delete</button>
+                <button class="btn btn-primary btn-sm pull-right"><span class="fa fa-fw fa-check" aria-hidden="true"></span> Checkout</button>
             </div>
         </div>
     </div>
-</div>
+    <% include ../public/modal %>
+</div><!-- End div.container -->
+
+<script>
+
+    App.controller('MyCart', function ($scope, $http) {
+        var user_id = '<%=userInfo._id%>';
+        $scope.cartData = {};
+
+        $scope.load = function () {
+            $http.get('/api/v1/user/' + user_id).success(function (user) {
+                if (typeof user === 'object') {
+                    $scope.cartData = user.cart;
+                    for (var i = 0; i < user.cart.length; i++) {
+                        (function (i) {
+                            $http.get('/api/v1/product/' + user.cart[i]._id + '?part=1').success(function (result) {
+                                if (typeof result === 'object') {
+                                    $.extend($scope.cartData[i], result);
+                                } else {
+                                    console.log('get product' + user.cart[i]._id + 'error');
+                                }
+                            });
+                        })(i);
+                    }
+                } else {
+                    console.log('get user failed');
+                }
+            });
+        };
+
+        $scope.load();
+
+        initDelete($scope, $http, '/api/v1/user/cart');
+
+        $scope.inc = function (item) {
+            // console.log(item);
+            if (item.quantity < item.storage) {
+                item.quantity++;
+                $scope.setQuantity({ _id: item._id, quantity: 1 });
+            }
+        };
+        $scope.minus = function (item) {
+            // console.log(item);
+            if (item.quantity > 1) {
+                item.quantity--;
+                $scope.setQuantity({ _id: item._id, quantity: -1 });
+            }
+        };
+
+        $scope.setQuantity = function (data) {
+            angularHttpPost($http, '/api/v1/user/cart', data);
+        };
+
+    });
+
+</script>

@@ -1,6 +1,6 @@
 <div class="container search-result" ng-controller="searchResult">
     <div class="filter pull-left">
-        <form class="form-horizontal light" name="filterForm">
+        <form class="form-horizontal" name="filterForm" style="background-color:#f3f5f7;">
             <div class="form-group keywords">
                 <label for="" class="label-control">Keywords:</label><br/>
                 <div class="input-group col-sm-8">
@@ -59,17 +59,20 @@
                 <div class="logo col-sm-4"><img src="{{item.logo}}" class="img-rounded"/></div>
                 <div class="text col-sm-8">
                     <% if (stype === 'commodity') { %>
-                        <h2 class=""><a href="/product/{{item._id}}">{{item.name}}</a></h2>
+                        <h3 class=""><a href="/product/{{item._id}}">{{item.name}}</a></h3>
                         <div class="col-sm-6">
                             <p class="">Fast free shipping.</p>
                             <h3>USD {{item.price | currency: '$'}}</h3>
                             <p class="text-danger">{{item.nSaled}} Sold</p>
                             <p class="text-info">{{item.visits}} Views</p>
                         </div>
-                        <div class="col-sm-4 text-center">From {{shopData[item.shop._id].name}}<img src="{{shopData[item.shop._id].logo}}" class="img-rounded"/></div>
+                        <div class="col-sm-4 text-center">From <strong>{{shopData[item.shop._id].name}}</strong>
+                            <br/>
+                            <img src="{{shopData[item.shop._id].logo}}" class="img-rounded"/>
+                        </div>
                         <div class="col-sm-2">Score: {{shopData[item.shop._id].score}}</div>
                     <% } else if (stype === 'shop') { %>
-                        <h2 class=""><a href="/shop/{{item._id}}">{{item.name}}</a></h2>
+                        <h3 class=""><a href="/shop/{{item._id}}">{{item.name}}</a></h3>
                         <div class="col-sm-6">
                             <p><b>{{item.nProducts}}</b> Commodites</p>
                             <p class="text-danger"><b>{{item.nSales}}</b> Sold</p>
@@ -124,13 +127,16 @@
                     }
                 }
                 for (var key in $scope.shopData) {
-                    $http.get('/api/v1/shop/' + key).success(function (shop) {
-                        if (typeof shop === 'object') {
-                            $scope.shopData[key] = shop;
-                        } else {
-                            showErrorInfo(shop);
-                        }
-                    });
+                    // because of no-block scope and key is always same when callback
+                    (function (key) {
+                        $http.get('/api/v1/shop/' + key).success(function (shop) {
+                            if (typeof shop === 'object') {
+                                $scope.shopData[key] = shop;
+                            } else {
+                                showErrorInfo(shop);
+                            }
+                        });
+                    })(key);
                 }
             }
         }

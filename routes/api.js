@@ -57,6 +57,33 @@ router.post('/v1/user', function (req, res, next) {
 	}
 });
 
+/*
+ * POST User's Cart
+ * @pre-condition: must be logined
+ * @body: (product)_id, quantity
+ */
+router.post('/v1/user/cart', function (req, res, next) {
+	if (Auth.isLogin(req)) {
+		User.business.changeCart(req, res);
+	} else {
+		res.end('Permission Denied.');
+	}
+});
+
+/*
+ * DELETE User's Cart
+ * @pre-condition: must be logined
+ * @param: product_id
+ */
+router.delete('/v1/user/cart/:product_id', function (req, res, next) {
+	var product_id = req.params.product_id;
+	if (Auth.isLogin(req)) {
+		User.business.deleteCart(product_id, req, res);
+	} else {
+		res.end('Permission Denied.');
+	}
+});
+
 
 
 /* Shop Api */

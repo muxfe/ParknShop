@@ -336,7 +336,6 @@ div.sidebar ul.nav li {
 div.sidebar ul.nav li a {
     color: #333;
     font-size: 1.2em;
-    text-align: center;
 }
 
 div.sidebar ul.nav li a:hover {
@@ -472,10 +471,6 @@ div.product-body div.tab ul.nav {
     margin-top: 20px;
 }
 
-#pComment > div:first-child {
-    border-right: 1px solid #eee;
-}
-
 #pComment > div:first-child h1 {
     font-size: 6em;
     margin-top: 50px;
@@ -483,6 +478,7 @@ div.product-body div.tab ul.nav {
 
 #pComment > div:last-child {
     padding: 20px 50px;
+    border-left: 1px solid #eee;
 }
 
 #pComment div.comment {

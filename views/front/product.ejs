@@ -68,7 +68,7 @@
                                 <button class="form-control btn" style="background-color:#a8b8d5;">Buy It Now</button>
                             </div>
                             <div class="col-sm-6 right-button">
-                                <button class="form-control btn" style="background-color:#8aa5d6;">Add to Cart</button>
+                                <button class="form-control btn" style="background-color:#8aa5d6;" ng-click="add2cart()">Add to Cart</button>
                             </div>
                         </div>
                     </div>
@@ -205,6 +205,7 @@
         $scope.productData = {};
         $scope.shopData = {};
         $scope.buyData = {
+            _id: product_id,
             quantity: 1
         };
 
@@ -220,6 +221,10 @@
                 console.error(data);
             }
         });
+
+        $scope.add2cart = function () {
+            angularHttpPost($http, '/api/v1/user/cart', $scope.buyData);
+        };
 
         $scope.inc = function () {
             if ($scope.buyData.quantity < $scope.productData.storage) {
