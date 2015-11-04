@@ -37,11 +37,16 @@ function getSelectIds(){
 }
 
 function initDelete($scope, $http, url, msg) {
-    msg = msg || 'Do you want to delete the item?';
+    msg = msg || 'Are you sure you want to delete the item?';
 
     $scope.deleteItems = function (id) {
         var targetId = id || $('#targetIds').val();
-        targetId = targetId ? targetId : '';
+        targetId = targetId || '';
+
+        if (!targetId) {
+            alert('Please choose one item at least');
+            return;
+        }
 
         initCheckIfDo( $scope, targetId, msg, function (currentID) {
             if (currentID.indexOf(',') > 0) {
