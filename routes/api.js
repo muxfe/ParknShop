@@ -254,6 +254,58 @@ router.delete('/v1/product/:product_id', function (req, res, next) {
 });
 
 
+/* Order Api */
+/*
+ * GET Order
+ * @param: order_id?
+ */
+router.get('/v1/order/:order_id?', function (req, res, next) {
+
+});
+
+/*
+ * PUT Order
+ * @pre-condition: must be logined
+ * @body: address(), products()
+ */
+router.put('/v1/order', function (req, res, next) {
+	if (Auth.isLogin(req)) {
+		Order.business.insert(req, res);
+	} else {
+		res.end('Permission Denied.');
+	}
+});
+
+/*
+ * POST Order
+ * @pre-condition: must be shop_owner logined
+ * @body:
+ */
+router.post('/v1/order/:order_id', function (req, res, next) {
+	var order_id = req.params.order_id;
+	if (Auth.isShopOwner(req)) {
+
+	} else {
+		res.end('Permission Denied.');
+	}
+});
+
+/*
+ * DELETE Order
+ * @pre-condition: must be logined
+ * @customer: cancel order
+ * @shop_owner: cancel order
+ */
+router.delete('/v1/order/:order_id', function (req, res, next) {
+	var order_id = req.params.order_id;
+	if (Auth.isLogin(req)) {
+		Order.business.delete(req, res);
+	} else {
+		res.end('Permission Denied.');
+	}
+});
+
+
 /* Category Api */
 /*
  * GET Category

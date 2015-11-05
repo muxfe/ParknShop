@@ -6,6 +6,7 @@
 
  var mongoose = require('mongoose'),
      shortid = require('shortid'),
+     url = require('url'),
      Schema = mongoose.Schema;
 
 var order = new Schema({
@@ -19,26 +20,39 @@ var order = new Schema({
         _id: String,
         username: String
     },
+    // 用户留言
+    message: String,
     // 详细地址
     address: {
-        province: String,
-        city: String,
-        street: String,
+        _id: String,
+        name: String,
+        address: String
         postcode: String,
-        phoneNum: String,
-        name: String // 收件人名称
+        phoneNum: String
     },
     // 产品列表
     products: [
         new Schema({
             _id: String,
-            name: String,
             quantity: Number,
-            price: Number,
-            description: String,
-            url: String
+            price: Number
         })
     ],
+    // 运费信息
+    shipping: {
+        description: String,
+        manner: String, // 运送方式
+        deliveryNum: String, // 快递单号
+        fare: {
+            type: Number,
+            default: 0
+        }
+    },
+    // 折扣
+    discount: {
+        type: Number,
+        default: 0
+    },
     // 价格合计
     total: {
         type: Number,
@@ -65,5 +79,65 @@ var order = new Schema({
 });
 
 var Order = mongoose.model('Order', order);
+
+Order.business = {
+
+    find: function (req, res) {
+        var query = url.parse(req.url, true).query,
+            keywords = query.keywords,
+            state = query.state,
+            startDate = new Date(query.startDate),
+            endDate = new Date(query.endDate),
+            sortByDate = Number(query.sortByDate),
+            sortByTotal = Number(query.sortByTotal),
+            sortByShop = Number(query.sortByShop),
+            conditions = {},
+            sort = {};
+    },
+
+    findOne: function (id, req, res) {
+        var part = url.parse(req.url, true).query.part,
+            filter = '';
+
+        if (part) {
+            filter = 'date user total';
+        }
+        Order.findOne({ _id: id }, filter, function (err, order) {
+            if (err) {
+                console.log(err);
+                res.end('error');
+            } else {
+                res.json(order);
+            }
+        });
+    },
+
+    insert: function (req, res) {
+        var Db = require('./db/Db');
+        req.body.user = {
+            _id: req.session.user._id,
+            username: req.session.user.username
+        };
+        req.body.address = {
+            _id: req.body['address[_id]'],
+            name: req.body['address[name]'],
+            address: req.body['address[address]'],
+            phoneNum: req.body['address[phoneNum]'],
+            postcode: req.body['address[postcode]']
+        };
+        Db.addOne(Order, req, res);
+    },
+
+    update: function (id, req, res) {
+        var Db = require('./db/Db');
+        Db.updateOneById(id, Order, req, res);
+    },
+
+    delete: function (id, req, res) {
+        var Db = require('./db/Db');
+        Db.delete(id, Order, req, res);
+    }
+
+};
 
 module.exports = Order;
