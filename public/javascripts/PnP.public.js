@@ -25,12 +25,19 @@ $( function ( ) {
 function getSelectIds(){
     var checkBoxList = $( ".datalist td input[name='listItem']:checkbox" );
     var ids = '';
+    var allSelNum = checkBoxList.length;
     if ( checkBoxList.length > 0 ) {
          $( checkBoxList ).each( function ( i ) {
              if ( true == $( this ).prop( "checked" ) ) {
+                 allSelNum--;
                  ids += $( this ).prop( 'value' ) + ',';
              }
          });
+         if (allSelNum === 0) {
+             $("#selectAll").prop('checked', true);
+         } else {
+             $("#selectAll").prop('checked', false);
+         }
          // 去掉结尾的','
          $( '#targetIds' ).val( ids.substring( 0, ids.length - 1 ) );
     }

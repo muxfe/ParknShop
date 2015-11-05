@@ -13,7 +13,7 @@
                 <div class="box-body table-responsive no-padding">
                     <table class="table table-hover">
                         <tr>
-                            <th><input type="checkbox" class="mini" id="selectAll"/></th>
+                            <th><input type="checkbox" class="mini" id="" ng-model="isCheckAll" ng-click="checkAll()"/></th>
                             <th>Commodity</th>
                             <th>Unit-price</th>
                             <th>Quantity</th>
@@ -21,7 +21,7 @@
                             <th>Operation</th>
                         </tr>
                         <tr class="datalist" ng-repeat="item in cartData">
-                            <td><input type="checkbox" name="listItem" class="mini" value="{{item._id}}" ng-click="getNewIds()"/></td>
+                            <td><input type="checkbox" name="listItem" class="mini" value="{{item._id}}" ng-model="item.isChecked" ng-click="check(item)"/></td>
                             <td>
                                 <img src="{{item.logo}}" class="pull-left" style="width:50px;height:50px;margin-right: 10px;" />
                                 <a href="/product/{{item._id}}" title="{{item.name}}">{{item.name | limitTo:70}}</a>
@@ -38,17 +38,17 @@
                                     </span>
                                 </div>
                             </td>
-                            <td>{{item.price * item.quantity | currency: '$'}}</td>
+                            <td class="text-danger">{{item.price * item.quantity | currency: '$'}}</td>
                             <td>
                                 <button class="btn btn-danger btn-xs" ng-click="deleteItems(item._id)"><span class="fa fa-fw fa-remove" aria-hidden="true"></span>Delete</button>
                             </td>
                         </tr>
                         <tr>
                             <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>Total:</td>
-                            <td class="text-danger">{{total | currency: '$'}}</td>
+                            <td class="text-right h4">Selected Items: </td>
+                            <td class="text-danger h4">{{totalItems}}</td>
+                            <td class="text-right h4">Total:</td>
+                            <td class="text-danger h4"><b>{{total | currency: '$'}}</b></td>
                             <td></td>
                         </tr>
                     </table>
@@ -69,6 +69,8 @@
         var user_id = '<%=userInfo._id%>';
         $scope.cartData = {};
         $scope.total = 0;
+        $scope.totalItems = 0;
+        $scope.isCheckAll = false;
 
         $scope.load = function () {
             $http.get('/api/v1/user/' + user_id).success(function (user) {
@@ -79,7 +81,7 @@
                             $http.get('/api/v1/product/' + user.cart[i]._id + '?part=1').success(function (result) {
                                 if (typeof result === 'object') {
                                     $.extend($scope.cartData[i], result);
-                                    $scope.countTotal();
+                                    $scope.cartData[i].isChecked = false;
                                 } else {
                                     console.log('get product' + user.cart[i]._id + 'error');
                                 }
@@ -100,7 +102,9 @@
         $scope.countTotal = function () {
             $scope.total = 0;
             for (var i = 0; i < $scope.cartData.length; i++) {
-                $scope.total += $scope.cartData[i].price * $scope.cartData[i].quantity;
+                if ($scope.cartData[i].isChecked) {
+                    $scope.total += $scope.cartData[i].price * $scope.cartData[i].quantity;
+                }
             }
         };
 
@@ -114,6 +118,27 @@
             }
             $scope.setQuantity({ _id: item._id, quantity: item.quantity - 1 });
             $("input." + item._id).blur();
+        };
+
+        $scope.checkAll = function () {
+            for (var i = 0; i < $scope.cartData.length; i++) {
+                $scope.cartData[i].isChecked = $scope.isCheckAll;
+            }
+            $scope.totalItems = $scope.isCheckAll ? $scope.cartData.length : 0;
+            $scope.countTotal();
+        };
+
+        $scope.check = function (item) {
+            if (item.isChecked) {
+                $scope.totalItems++;
+                if ($scope.totalItems === $scope.cartData.length) {
+                    $scope.isCheckAll = true;
+                }
+            } else {
+                $scope.totalItems--;
+                $scope.isCheckAll = false;
+            }
+            $scope.countTotal();
         };
 
         $scope.inc = function (item) {

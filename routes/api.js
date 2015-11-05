@@ -57,6 +57,7 @@ router.post('/v1/user', function (req, res, next) {
 	}
 });
 
+/* User Cart */
 /*
  * POST User's Cart
  * @pre-condition: must be logined
@@ -84,6 +85,48 @@ router.delete('/v1/user/cart/:product_id', function (req, res, next) {
 	}
 });
 
+/* User Address */
+/*
+ * PUT User's Address
+ * @pre-condition: must be logined
+ * @body: name, postcode, address, phoneNum, isDefault
+ */
+router.put('/v1/user/address', function (req, res, next) {
+	if (Auth.isLogin(req)) {
+		User.business.insertAddr(req, res);
+	} else {
+		res.end('Permission Denied.');
+	}
+});
+
+/*
+ * POST User's Address
+ * @pre-condition: must be logined
+ * @param: addr_id
+ * @body: name, postcode, address, phoneNum, isDefault
+ */
+router.post('/v1/user/address/:addr_id', function (req, res, next) {
+	if (Auth.isLogin(req)) {
+		var addr_id = req.params.addr_id;
+		User.business.updateAddr(addr_id, req, res);
+	} else {
+		res.end('Permission Denied.');
+	}
+});
+
+/*
+ * DELETE User's Address
+ * @pre-condition: must be logined
+ * @param: addr_id
+ */
+router.delete('/v1/user/address/:addr_id', function (req, res, next) {
+	if (Auth.isLogin(req)) {
+		var addr_id = req.params.addr_id;
+		User.business.deleteAddr(addr_id, req, res);
+	} else {
+		res.end('Permission Denied.');
+	}
+});
 
 
 /* Shop Api */

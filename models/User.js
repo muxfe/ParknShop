@@ -43,11 +43,19 @@ var user = new Schema({
     // 收货地址
     address: [
         new Schema({
+            _id: {
+                type: String,
+                unique: true,
+                default: shortid.generate
+            },
             name: String,
             postcode: Number,
             address: String,
             phoneNum: String,
-            isDefault: Boolean
+            isDefault: {
+                type: Boolean,
+                default: false
+            }
         })
     ],
     // 购物车
@@ -158,6 +166,39 @@ User.business = {
 
     deleteCart: function (id, req, res) {
         User.update({ _id: req.session.user._id }, { $pull: { cart: { _id: id } } }, function (err) {
+            if (err) {
+                res.end('error');
+                console.log(err);
+            } else {
+                res.end('success');
+            }
+        });
+    },
+
+    insertAddr: function (req, res) {
+        User.update({ _id: req.session.user._id }, { $push: { address: req.body } }, function (err) {
+            if (err) {
+                console.log(err);
+                res.end('error');
+            } else {
+                res.end('success');
+            }
+        });
+    },
+
+    updateAddr: function (id, req, res) {
+        User.update({ _id: req.session.user._id, 'address._id': id }, { $set: { 'address.$': req.body } }, function (err) {
+            if (err) {
+                console.log(err);
+                res.end('error');
+            } else {
+                res.end('success');
+            }
+        });
+    },
+
+    deleteAddr: function (id, req, res) {
+        User.update({ _id: req.session.user._id }, { $pull: { address: { _id: id } } }, function (err) {
             if (err) {
                 res.end('error');
                 console.log(err);
