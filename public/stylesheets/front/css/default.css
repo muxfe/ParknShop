@@ -508,6 +508,19 @@ div.profile div.uploaded img {
 }
 
 /*
+ * Confirm Order
+ */
+div.tab-confirm-order div.progress {
+    height: 30px;
+}
+
+div.tab-confirm-order div.progress div.progress-bar {
+    line-height: 30px;
+    font-size: 1.3em;
+}
+
+
+/*
  * search result page
  */
 div.search-result > div {

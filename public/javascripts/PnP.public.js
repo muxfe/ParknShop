@@ -210,8 +210,9 @@ function angularHttp( $http, method, url, data, callback ) {
     $http({
         method  : method,
         url     : url,
-        data    : $.param(data),  // pass in data as strings
-        headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
+        data    : data,  // pass in data as strings
+        type    : 'json',
+        dataType: 'json'  
     })
     .success(function (result) {
         // 关闭所有模态窗口

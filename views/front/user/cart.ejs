@@ -56,7 +56,7 @@
             </div><!-- End div.box -->
             <div class="panel panel-info">
                 <button class="btn btn-danger btn-sm" ng-click="deleteItems()"><span class="fa fa-fw fa-remove" aria-hidden="true"></span> Delete</button>
-                <button class="btn btn-primary btn-sm pull-right"><span class="fa fa-fw fa-check" aria-hidden="true"></span> Checkout</button>
+                <button class="btn btn-primary btn-sm pull-right" ng-disabled="!totalItems" ng-click="checkout()"><span class="fa fa-fw fa-check" aria-hidden="true"></span> Checkout</button>
             </div>
         </div>
     </div>
@@ -99,6 +99,30 @@
 
         initDelete($scope, $http, '/api/v1/user/cart');
 
+        // 结算购物车
+        $scope.checkout = function () {
+            if ($scope.totalItems <= 0) {
+                alert('Please choose one to check out.');
+                return;
+            }
+            var products = [];
+            for (var i = 0; i < $scope.cartData.length; i++) {
+                if ($scope.cartData[i].isChecked) {
+                    products.push({
+                        _id: $scope.cartData[i]._id,
+                        price: $scope.cartData[i].price,
+                        quantity: $scope.cartData[i].quantity
+                    });
+                }
+            }
+            angularHttpPut($http, '/api/v1/order', { products: products, total: $scope.total }, function (data) {
+                if (data === 'success') {
+                    window.location = '/user/manage/confirm_order';
+                }
+            });
+        };
+
+        // 计算总价
         $scope.countTotal = function () {
             $scope.total = 0;
             for (var i = 0; i < $scope.cartData.length; i++) {
@@ -108,6 +132,7 @@
             }
         };
 
+        // 防止数量输入框输入非法字符
         $scope.validate = function ($event, item) {
             var key = $event.which;
             if ((key > 47 && key < 58) || key === 8) {
@@ -120,6 +145,7 @@
             $("input." + item._id).blur();
         };
 
+        // 全选按钮
         $scope.checkAll = function () {
             for (var i = 0; i < $scope.cartData.length; i++) {
                 $scope.cartData[i].isChecked = $scope.isCheckAll;
@@ -128,6 +154,7 @@
             $scope.countTotal();
         };
 
+        // 单选按钮
         $scope.check = function (item) {
             if (item.isChecked) {
                 $scope.totalItems++;
@@ -141,6 +168,7 @@
             $scope.countTotal();
         };
 
+        // 数量++
         $scope.inc = function (item) {
             // console.log(item);
             if (item.quantity < item.storage) {
@@ -149,6 +177,7 @@
                 $scope.countTotal();
             }
         };
+        // 数量--
         $scope.minus = function (item) {
             // console.log(item);
             if (item.quantity > 1) {
@@ -157,7 +186,7 @@
                 $scope.countTotal();
             }
         };
-
+        // 实时更新数量
         $scope.setQuantity = function (data) {
             angularHttpPost($http, '/api/v1/user/cart', data);
         };

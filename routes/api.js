@@ -190,15 +190,6 @@ router.post('/v1/shop/:shop_id', function (req, res, next) {
 	}
 });
 
-/* Order Api */
-/*
- * GET Order
- * @param: product_id
- */
-router.get('/v1/order/:order_id?', function (req, res, next) {
-	res.end('not complete');
-});
-
 
 /* Product Api */
 /*
@@ -260,7 +251,14 @@ router.delete('/v1/product/:product_id', function (req, res, next) {
  * @param: order_id?
  */
 router.get('/v1/order/:order_id?', function (req, res, next) {
-
+	var order_id = req.params.order_id;
+	if (order_id === 'cart') {
+		if (!Auth.isLogin(req)) {
+			res.end('Permission Denied.');
+			return;
+		}
+	}
+	Order.business.findOne(order_id, req, res);
 });
 
 /*
