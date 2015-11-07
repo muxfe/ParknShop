@@ -158,7 +158,7 @@ Product.business = {
             part = url.parse(req.url, true).query.part,
             filter = '';
         if (part) {
-            filter = 'name logo price storage';
+            filter = 'name logo price storage shop';
         }
         Product.findOne({ _id: id }, filter, function (err, product) {
             if (err) {

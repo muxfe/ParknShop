@@ -1,22 +1,34 @@
 <div class="container" ng-controller="confirmOrder">
-    <legend><%=title%></legend>
+    <legend><h3><%=title%></h3></legend>
     <div class="tab-confirm-order">
-        <ul class="nav nav-tabs" role=tablist>
-            <li role="presentation" class="active"><a href="#confirmOrder" aria-control="confirmOrder" role="tab" data-toggle="tab">Confirm</a></li>
-            <li role="presentation" class=""><a href="#payOrder" aria-control="payOrder" role="tab" data-toggle="tab">Pay</a></li>
-            <li role="presentation" class=""><a href="#doneOrder" aria-control="doneOrder" role="tab" data-toggle="tab">Done</a></li>
+        <ul class="nav nav-tabs hide" role="tablist">
+            <li class="active"><a href="#confirmOrder">Confirm</a></li>
+            <li class=""><a href="#payOrder">Pay</a></li>
+            <li class=""><a href="#doneOrder">Done</a></li>
         </ul>
         <div class="progress">
             <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100" style="width: 33%;">
-                Confirm
+                1. Confirm
             </div>
         </div>
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="confirmOrder">
-                <div class="box addressSel">
-
+                <div class="addressSel col-sm-12">
+                    <legend>Select Receiver's Address</legend>
+                    <div class="panel address" ng-repeat="item in userData.address" ng-click="selAddr($event)" ng-class="{ true: 'active panel-success', false: 'panel-default' }[item.isDefault]" data-addr="{{item}}">
+                        <div class="panel-heading"><b>{{item.name | limitTo: 20}}</b> receive <i class="fa fa-check"></i></div>
+                        <div class="panel-body">
+                            <p>Address: {{item.address}}</p>
+                            <p>Postcode: {{item.postcode}}</p>
+                            <p>Telephone: {{item.phoneNum}}</p>
+                        </div>
+                    </div>
+                    <div class="clearfix div-addAddr col-sm-12">
+                        <a class="btn btn-primary" href="#addressModal" data-toggle="modal"><span class="fa fa-plus-square" aria-hidden="true">&nbsp;</span>Use new address</a>
+                    </div>
                 </div>
-                <div class="box productList">
+                <div class="productList col-sm-12">
+                    <legend>Confirm commodities</legend>
                     <div class="box">
                         <div class="box-body table-responsive no-padding">
                             <table class="table table-hover">
@@ -25,7 +37,6 @@
                                     <th>Unit-price</th>
                                     <th>Quantity</th>
                                     <th>Total</th>
-                                    <th>Operation</th>
                                 </tr>
                                 <tr class="datalist" ng-repeat="item in orderData.products">
                                     <td>
@@ -35,24 +46,20 @@
                                     <td>{{item.price | currency: '$'}}</td>
                                     <td>{{item.quantity}}</td>
                                     <td class="text-danger">{{item.price * item.quantity | currency: '$'}}</td>
-                                    <td>
-                                        <button class="btn btn-danger btn-xs" ng-click="deleteItems(item._id)"><span class="fa fa-fw fa-remove" aria-hidden="true"></span>Delete</button>
-                                    </td>
                                 </tr>
                                 <tr>
-                                    <td></td>
                                     <td class="text-right h4">Selected Items: </td>
                                     <td class="text-danger h4">{{orderData.products.length}}</td>
                                     <td class="text-right h4">Total:</td>
                                     <td class="text-danger h4"><b>{{orderData.total | currency: '$'}}</b></td>
-                                    <td></td>
                                 </tr>
                             </table>
                         </div>
                     </div><!-- End div.box -->
                 </div>
-                <div class="box summary">
-
+                <div class="summary col-sm-12">
+                    <a class="btn btn-primary btn-lg pull-right" href="#" ng-click="confirmOrder()">Submit Order</a>
+                    <a class="btn btn-lg pull-right" href="/user/manage/cart">Back to Cart</a>
                 </div>
             </div>
             <div role="tabpanel" class="tab-pane" id="payOrder">
@@ -63,25 +70,92 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="addressModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">New Address</h4>
+                </div>
+                <div class="modal-body">
+                    <form role="form" class="form-horizontal" name="addrForm" ng-submit="processAddrForm(addrForm.$valid)" novalidate>
+                        <div class="alert alert-danger alert-dismissible text-center hide" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <strong>Error!</strong> <span class="text">Some fields are invalid.</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4"><span class="text-danger">*</span> Name</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="name" ng-model="addrFormData.name" ng-minlength="2" ng-maxlength="30" placeholder="2-30 letters" required/>
+                                <label for="inputError" class="control-label text-danger" ng-show="addrForm.name.$invalid && !addrForm.name.$pristine"><i class="fa fa-times-circle-o"></i> 2-30 letters</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4"><span class="text-danger">*</span> Address</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="address" ng-minlength="4" ng-maxlength="100" ng-model="addrFormData.address" placeholder="4-100 letters" required/>
+                                <label for="inputError" class="control-label text-danger" ng-show="addrForm.address.$invalid && !addrForm.address.$pristine"><i class="fa fa-times-circle-o"></i>4-100 letters</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4"><span class="text-danger">*</span> Postcode</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="postcode" ng-minlength="6" ng-maxlength="6" ng-pattern="/[0-9]+/i" ng-model="addrFormData.postcode" placeholder="postcode" required/>
+                                <label for="inputError" class="control-label text-danger" ng-show="addrForm.postcode.$invalid && !addrForm.postcode.$pristine"><i class="fa fa-times-circle-o"></i> It's not a postcode.</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4"><span class="text-danger">*</span> Telephone</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="phoneNum" ng-minlength="7" ng-maxlength="13" ng-pattern="/[0-9]+/i" ng-model="addrFormData.phoneNum" placeholder="phone number" required/>
+                                <label for="inputError" class="control-label text-danger" ng-show="addrForm.phoneNum.$invalid && !addrForm.phoneNum.$pristine"><i class="fa fa-times-circle-o"></i> It's not a phone number.</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4"> isDefault</label>
+                            <div class="col-sm-6" style="padding-top:7px;">
+                                <label>
+                                    <input type="checkbox" name="isDefault" ng-model="addrFormData.isDefault"/> set Default Address
+                                </label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary" ng-disabled="addrForm.$invalid">Submit</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div><!-- /.modal-body -->
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 </div>
 
 <script>
 
+    $(function () {
+
+    });
+
     App.controller('confirmOrder', function ($scope, $http) {
         var user_id = '<%=userInfo._id%>';
 
-        $scope.load = function () {
-            $scope.productData = [];
-            $scope.addressData = [];
+        $scope.loadUserData = function () {
+            $scope.userData = {};
 
             $http.get('/api/v1/user/' + user_id).success(function (data) {
                 if (typeof data === 'object') {
-                    $scope.addressData = data.address;
+                    $scope.userData = data;
                 } else {
                     console.log('error');
                     showErrorInfo('get user info failed.');
                 }
             });
+        }
+
+        $scope.load = function () {
+            $scope.loadUserData();
+
+            $scope.orderData = {};
 
             $http.get('/api/v1/order/cart').success(function (data) {
                 if (typeof data === 'object') {
@@ -105,6 +179,29 @@
         };
 
         $scope.load();
+
+        $scope.processAddrForm = function (isValid) {
+            if (isValid) {
+                angularHttp($http, 'PUT', '/api/v1/user/address', $scope.addrFormData, function (data) {
+                    if (data === 'success') {
+                        $scope.loadUserData();
+                        $("div.div-addAddr").hide();
+                    }
+                });
+            }
+        };
+
+        $scope.selAddr = function ($event) {
+            if (!$($event.currentTarget).hasClass('active')) {
+                $("div.addressSel > div.active").removeClass('active panel-success').addClass('panel-default');
+                $($event.currentTarget).remove('panel-default').addClass('active panel-success');
+            }
+        };
+
+        $scope.confirmOrder = function () {
+            var addressData = $("div.address.active").data('addr');
+            
+        };
 
     });
 

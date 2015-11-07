@@ -20,6 +20,11 @@ var order = new Schema({
         _id: String,
         username: String
     },
+    // 店铺信息
+    shop: {
+        _id: String,
+        shop_owner_id: String
+    },
     // 用户留言
     message: String,
     // 详细地址
@@ -63,6 +68,8 @@ var order = new Schema({
         type: Date,
         default: Date.now
     },
+    // 提交时间
+    submitDate: Date,
     // 支付时间
     payDate: Date,
     // 发货时间
@@ -153,7 +160,64 @@ Order.business = {
 
     update: function (id, req, res) {
         var Db = require('./db/Db');
-        Db.updateOneById(id, Order, req, res);
+        Order.findOne({ _id: id }, function (err, order) {
+            if (err) {
+                console.log(err);
+                res.end('error');
+            } else {
+                if (order) {
+                    if (order.state === 'cart') {
+                        if (order.user._id === req.session.user._id) {
+                            var update = {
+                                address: req.body.address,
+                                message: req.body.message,
+                                state: 'submit'
+                            };
+                            Order.update({ _id: id }, { $set: update }, function (err) {
+                                if (err) {
+                                    res.end('error');
+                                } else {
+                                    res.end('success');
+                                }
+                            });
+                            return;
+                        } // if user
+                    } else if (order.state === 'submit') {
+                        if (order.shop.shop_owner_id === req.session.user._id) {
+                            var discount = Number(req.body.discount) || 0;
+                            var update = {
+                                total: order.total - discount,
+                                discount: discount
+                            };
+                            Order.update({ _id: id }, { $set: update }, function (err) {
+                                if (err) {
+                                    res.end('error');
+                                } else {
+                                    res.end('success');
+                                }
+                            });
+                            return;
+                        } // if shop_owner
+                        // end else-if submit
+                    } else if (order.state === 'pay') {
+                        if (order.shop.shop_owner_id === req.session.user._id) {
+                            var update = {
+                                shipping: shipping
+                            };
+                            Order.update({ _id: id }, { $set: update }, function (err) {
+                                if (err) {
+                                    res.end('error');
+                                } else {
+                                    res.end('success');
+                                }
+                            });
+                            return;
+                        } // if shop_owner
+                    }
+                } // end if order
+                res.end('error');
+            }
+        });
     },
 
     delete: function (id, req, res) {

@@ -282,7 +282,7 @@ router.put('/v1/order', function (req, res, next) {
 router.post('/v1/order/:order_id', function (req, res, next) {
 	var order_id = req.params.order_id;
 	if (Auth.isShopOwner(req)) {
-
+		
 	} else {
 		res.end('Permission Denied.');
 	}

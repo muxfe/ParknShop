@@ -508,6 +508,27 @@ div.profile div.uploaded img {
 }
 
 /*
+ * My cart
+ */
+
+div.cart table tbody {
+    padding: 30px 0;
+}
+
+div.cart table tbody:first-child tr th:first-child {
+    width: 50px
+}
+
+div.cart table tbody:nth-child(n+2) tr:first-child td:first-child input {
+    margin-left: 10px;
+}
+
+div.cart table tbody:nth-child(n+2) tr:nth-child(n+2) td:first-child input {
+    margin-left: 15px;
+}
+
+
+/*
  * Confirm Order
  */
 div.tab-confirm-order div.progress {
@@ -519,6 +540,31 @@ div.tab-confirm-order div.progress div.progress-bar {
     font-size: 1.3em;
 }
 
+div.addressSel div.address {
+    padding: 0 0;
+    height: 200px;
+    float: left;
+    width: 24%;
+    margin-right: 1%;
+}
+
+div.addressSel div.address div.panel-heading i {
+    display: none;
+}
+
+div.addressSel div.address.active div.panel-heading i {
+    display: inline;
+    color: green;
+}
+
+div.addressSel div.address.active, div.addressSel div.address:hover {
+    border: 1px solid #dff0d8;
+    cursor: pointer;
+}
+
+div#confirmOrder > div {
+    margin-bottom: 30px;
+}
 
 /*
  * search result page

@@ -148,6 +148,7 @@
                                     <th><input type="checkbox" class="mini" id="selectAll"/></th>
                                     <th>Name</th>
                                     <th>Address</th>
+                                    <th>Postcode</th>
                                     <th>Telephone</th>
                                     <th>Default</th>
                                     <th>Operation</th>
@@ -156,6 +157,7 @@
                                     <td><input type="checkbox" name="listItem" class="mini" value="{{item._id}}"  ng-click="getNewIds()"/></td>
                                     <td>{{item.name}}</td>
                                     <td>{{item.address}}</td>
+                                    <td>{{item.postcode}}</td>
                                     <td>{{item.phoneNum}}</td>
                                     <td><label class="label label-info" ng-show="item.isDefault">Default</label></td>
                                     <td>

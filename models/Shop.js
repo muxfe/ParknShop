@@ -172,7 +172,12 @@ Shop.business = {
     },
 
     findOne: function ( shop_id, req, res ) {
-        Shop.findOne({ _id: shop_id, state: 'approved' }, function (err, shop) {
+        var part = url.parse(req.url, true).query.part,
+            filter = '';
+        if (part) {
+            filter = 'name shop_owner';
+        }
+        Shop.findOne({ _id: shop_id, state: 'approved' }, filter, function (err, shop) {
             if (err) {
                 console.log(err);
                 return;

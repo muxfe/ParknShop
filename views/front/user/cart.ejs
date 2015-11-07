@@ -12,45 +12,55 @@
             <div class="box">
                 <div class="box-body table-responsive no-padding">
                     <table class="table table-hover">
-                        <tr>
-                            <th><input type="checkbox" class="mini" id="" ng-model="isCheckAll" ng-click="checkAll()"/></th>
-                            <th>Commodity</th>
-                            <th>Unit-price</th>
-                            <th>Quantity</th>
-                            <th>Total</th>
-                            <th>Operation</th>
-                        </tr>
-                        <tr class="datalist" ng-repeat="item in cartData">
-                            <td><input type="checkbox" name="listItem" class="mini" value="{{item._id}}" ng-model="item.isChecked" ng-click="check(item)"/></td>
-                            <td>
-                                <img src="{{item.logo}}" class="pull-left" style="width:50px;height:50px;margin-right: 10px;" />
-                                <a href="/product/{{item._id}}" title="{{item.name}}">{{item.name | limitTo:70}}</a>
-                            </td>
-                            <td>{{item.price | currency: '$'}}</td>
-                            <td>
-                                <div class="input-group col-sm-8">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-default btn-sm" type="button" ng-disabled="item.quantity == 1" ng-click="minus(item)">-</button>
-                                    </span>
-                                    <input type="text" name="" ng-model="item.quantity" ng-keyup="validate($event, item)" class="form-control input-sm text-center {{item._id}}" placeholder="1" value="{{item.quantity}}" />
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-default btn-sm" type="button" ng-click="inc(item)">+</button>
-                                    </span>
-                                </div>
-                            </td>
-                            <td class="text-danger">{{item.price * item.quantity | currency: '$'}}</td>
-                            <td>
-                                <button class="btn btn-danger btn-xs" ng-click="deleteItems(item._id)"><span class="fa fa-fw fa-remove" aria-hidden="true"></span>Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td class="text-right h4">Selected Items: </td>
-                            <td class="text-danger h4">{{totalItems}}</td>
-                            <td class="text-right h4">Total:</td>
-                            <td class="text-danger h4"><b>{{total | currency: '$'}}</b></td>
-                            <td></td>
-                        </tr>
+                        <tbody>
+                            <tr>
+                                <th><input type="checkbox" class="mini" id="" ng-model="isCheckAll" ng-click="checkAll()"/></th>
+                                <th>Commodity</th>
+                                <th>Unit-price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th>Operation</th>
+                            </tr>
+                        </tbody>
+                        <tbody ng-repeat="shopItem in shopData">
+                            <tr>
+                                <td><input type="checkbox" class="mini" id="" ng-model="shopItem.isChecked" ng-click="checkShopAll(shopItem)"/></td>
+                                <td colspan="5">Shop: {{shopItem.name}}</td>
+                            </tr>
+                            <tr class="datalist" ng-repeat="item in cartData" ng-if="item.shop._id === shopItem._id">
+                                <td><input type="checkbox" name="listItem" class="mini" value="{{item._id}}" ng-model="item.isChecked" ng-click="check(item)"/></td>
+                                <td>
+                                    <img src="{{item.logo}}" class="pull-left" style="width:50px;height:50px;margin-right: 10px;" />
+                                    <a href="/product/{{item._id}}" title="{{item.name}}">{{item.name | limitTo:70}}</a>
+                                </td>
+                                <td>{{item.price | currency: '$'}}</td>
+                                <td>
+                                    <div class="input-group col-sm-8">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default btn-sm" type="button" ng-disabled="item.quantity == 1" ng-click="minus(item)">-</button>
+                                        </span>
+                                        <input type="text" name="" ng-model="item.quantity" ng-keyup="validate($event, item)" class="form-control input-sm text-center {{item._id}}" placeholder="1" value="{{item.quantity}}" />
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default btn-sm" type="button" ng-click="inc(item)">+</button>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="text-danger">{{item.price * item.quantity | currency: '$'}}</td>
+                                <td>
+                                    <button class="btn btn-danger btn-xs" ng-click="deleteItems(item._id)"><span class="fa fa-fw fa-remove" aria-hidden="true"></span>Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td class="text-right h4">Selected Items: </td>
+                                <td class="text-danger h4">{{totalItems}}</td>
+                                <td class="text-right h4">Total:</td>
+                                <td class="text-danger h4"><b>{{total | currency: '$'}}</b></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </div><!-- End div.box -->
@@ -67,7 +77,8 @@
 
     App.controller('MyCart', function ($scope, $http) {
         var user_id = '<%=userInfo._id%>';
-        $scope.cartData = {};
+        $scope.cartData = [];
+        $scope.shopData = [];
         $scope.total = 0;
         $scope.totalItems = 0;
         $scope.isCheckAll = false;
@@ -76,19 +87,35 @@
             $http.get('/api/v1/user/' + user_id).success(function (user) {
                 if (typeof user === 'object') {
                     $scope.cartData = user.cart;
+                    $scope.shopData = [];
+                    var shopIds = [];
                     for (var i = 0; i < user.cart.length; i++) {
                         (function (i) {
                             $http.get('/api/v1/product/' + user.cart[i]._id + '?part=1').success(function (result) {
                                 if (typeof result === 'object') {
                                     $.extend($scope.cartData[i], result);
+                                    var shop_id = $scope.cartData[i].shop._id;
+                                    if (shopIds.join(',').indexOf(shop_id) < 0) {
+                                        shopIds.push(shop_id);
+                                        $http.get('/api/v1/shop/' + shop_id + '?part=1').success(function (result) {
+                                            if (typeof result === 'object') {
+                                                var shop = { _id: shop_id };
+                                                $.extend(shop, result);
+                                                // 是否勾选
+                                                shop.isChecked = false;
+                                                $scope.shopData.push(shop);
+                                            } else {
+                                                console.log('get shop ' + $scope.shopData[i]._id + ' error');
+                                            }
+                                        });
+                                    }
                                     $scope.cartData[i].isChecked = false;
                                 } else {
-                                    console.log('get product' + user.cart[i]._id + 'error');
+                                    console.log('get product ' + user.cart[i]._id + ' error');
                                 }
                             });
                         })(i);
                     }
-
                 } else {
                     console.log('get user failed');
                 }
@@ -147,10 +174,41 @@
 
         // 全选按钮
         $scope.checkAll = function () {
+            // 全选商品
             for (var i = 0; i < $scope.cartData.length; i++) {
                 $scope.cartData[i].isChecked = $scope.isCheckAll;
             }
+            // 全选所有店铺
+            for (var i = 0; i < $scope.shopData.length; i++) {
+                $scope.shopData[i].isChecked = $scope.isCheckAll;
+            }
+            // 重置已选数量
             $scope.totalItems = $scope.isCheckAll ? $scope.cartData.length : 0;
+            $scope.countTotal();
+        };
+
+        // 店铺全选
+        $scope.checkShopAll = function (shopItem) {
+            var nChecked = 0, // 该店铺下已选中产品数量
+                nUnchecked = 0; // 该店铺下未选中产品数量
+            for (var i = 0; i < $scope.cartData.length; i++) {
+                if ($scope.cartData[i].shop._id === shopItem._id) {
+                    $scope.cartData[i].isChecked ? nChecked++ : nUnchecked++;
+                    $scope.cartData[i].isChecked = shopItem.isChecked;
+                }
+            }
+            // 如果是置为选中状态， 则加上还未选中的产品数量，因为已选产品数量已计算
+            // 如果是置为未选中状态，则减去已选中产品数量，因为未选产品数量已计算
+            $scope.totalItems += shopItem.isChecked ? nUnchecked : -nChecked;
+            if (shopItem.isChecked) {
+                // 检查是否达到全选
+                if ($scope.totalItems === $scope.cartData.length) {
+                    $scope.isCheckAll = true;
+                }
+            } else {
+                // 取消全局全选
+                $scope.isCheckAll = false;
+            }
             $scope.countTotal();
         };
 
@@ -158,12 +216,36 @@
         $scope.check = function (item) {
             if (item.isChecked) {
                 $scope.totalItems++;
+                // 如果产品被全选，则全选按钮被全选
                 if ($scope.totalItems === $scope.cartData.length) {
                     $scope.isCheckAll = true;
                 }
+                // 如果某店下产品被全选，则该店铺被选中
+                var flag = true;
+                for (var i = 0; i < $scope.cartData.length; i++) {
+                    if ($scope.cartData[i].shop._id === item.shop._id) {
+                        if (!$scope.cartData[i].isChecked) {
+                            flag = false; // 如果有一个未选中，置标志为false
+                        }
+                    }
+                }
+                if (flag) {
+                    for (var i = 0; i < $scope.shopData.length; i++) {
+                        if (item.shop._id === $scope.shopData[i]._id) {
+                            $scope.shopData[i].isChecked = true;
+                        }
+                    }
+                }
             } else {
                 $scope.totalItems--;
+                // 取消全选按钮的选中
                 $scope.isCheckAll = false;
+                // 取消该产品所在店铺的全选的选中
+                for (var i = 0; i < $scope.shopData.length; i++) {
+                    if (item.shop._id === $scope.shopData[i]._id) {
+                        $scope.shopData[i].isChecked = false;
+                    }
+                }
             }
             $scope.countTotal();
         };
