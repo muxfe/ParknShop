@@ -23,10 +23,14 @@ var order = new Schema({
     // 店铺信息
     shop: {
         _id: String,
-        shop_owner_id: String
+        shop_owner_id: String,
+        shop_owner_username: String
     },
     // 用户留言
-    message: String,
+    message: {
+        type: String,
+        default: ''
+    },
     // 详细地址
     address: {
         _id: String,
@@ -78,10 +82,10 @@ var order = new Schema({
     confirmDate: Date,
     // 完成时间
     doneDate: Date,
-    // 订单状态：购物车(cart) -> 提交（submit） -> 支付（pay） -> 发货（delivery） -> 确认（confirm） -> 完成（done）
+    // 订单状态：购物车(cart) -> 提交（submit） -> 支付（pay） -> 发货（shipping） -> 确认（confirm） -> 完成（done）
     state: {
         type: String,
-        default: 'submit'
+        default: 'cart'
     }
 });
 
@@ -104,23 +108,13 @@ Order.business = {
 
     findOne: function (id, req, res) {
         var part = url.parse(req.url, true).query.part,
-            filter = '',
-            condition = {};
+            filter = '';
 
         if (part) {
-            filter = 'date user total';
+            filter = 'date user total shop';
         }
-        if (id === 'cart') {
-            condition = {
-                'user._id': req.session.user._id,
-                'state': 'cart'
-            };
-        } else {
-            condition = {
-                _id: id
-            };
-        }
-        Order.findOne(condition, filter, function (err, order) {
+
+        Order.findOne({ _id: id }, filter, function (err, order) {
             if (err) {
                 console.log(err);
                 res.end('error');
@@ -130,30 +124,46 @@ Order.business = {
         });
     },
 
+    findCart: function (req, res) {
+        Order.find({ 'user._id': req.session.user._id, state: 'cart' }, function (err, orders) {
+            if (err) {
+                console.log(err);
+                res.end('error');
+            }
+            res.json(orders);
+        });
+    },
+
     insert: function (req, res) {
-        var Db = require('./db/Db');
-        Order.findOne({ 'user._id': req.session.user._id, state: 'cart' }, function (err, order) {
+        Order.remove({ 'user._id': req.session.user._id, state: 'cart' }, function (err) {
             if (err) {
                 console.log(err);
                 res.end('error');
             } else {
-                req.body.user = {
+                var user = {
                     _id: req.session.user._id,
                     username: req.session.user.username
                 };
-                req.body.state = 'cart';
-                if (order) {
-                    Order.update({ _id: order._id }, { $set: req.body }, function (err) {
+                var shops = req.body.shops, index = 0;
+                (function createOrder(index) {
+                    if (index === shops.length) {
+                        res.end('success');
+                        return;
+                    }
+                    var order = new Order();
+                    order.user = user;
+                    order.products = shops[index].products;
+                    order.shop = shops[index].shop;
+                    order.total = shops[index].total;
+                    order.save(function (err) {
                         if (err) {
                             console.log(err);
                             res.end('error');
                         } else {
-                            res.end('success');
+                            createOrder(index + 1);
                         }
                     });
-                } else {
-                    Db.addOne(Order, req, res);
-                }
+                })(index);
             }
         });
     },
@@ -166,56 +176,63 @@ Order.business = {
                 res.end('error');
             } else {
                 if (order) {
-                    if (order.state === 'cart') {
-                        if (order.user._id === req.session.user._id) {
-                            var update = {
-                                address: req.body.address,
-                                message: req.body.message,
-                                state: 'submit'
-                            };
-                            Order.update({ _id: id }, { $set: update }, function (err) {
-                                if (err) {
-                                    res.end('error');
+
+                    function updateOrder(update, callback) {
+                        Order.update({ _id: id }, { $set: update }, function (err) {
+                            if (err) {
+                                res.end('error');
+                            } else {
+                                if (callback) {
+                                    callback();
                                 } else {
                                     res.end('success');
                                 }
-                            });
-                            return;
-                        } // if user
-                    } else if (order.state === 'submit') {
-                        if (order.shop.shop_owner_id === req.session.user._id) {
-                            var discount = Number(req.body.discount) || 0;
-                            var update = {
-                                total: order.total - discount,
-                                discount: discount
-                            };
-                            Order.update({ _id: id }, { $set: update }, function (err) {
-                                if (err) {
-                                    res.end('error');
-                                } else {
-                                    res.end('success');
-                                }
-                            });
-                            return;
-                        } // if shop_owner
-                        // end else-if submit
-                    } else if (order.state === 'pay') {
-                        if (order.shop.shop_owner_id === req.session.user._id) {
-                            var update = {
-                                shipping: shipping
-                            };
-                            Order.update({ _id: id }, { $set: update }, function (err) {
-                                if (err) {
-                                    res.end('error');
-                                } else {
-                                    res.end('success');
-                                }
-                            });
-                            return;
-                        } // if shop_owner
+                            }
+                        });
                     }
-                } // end if order
-                res.end('error');
+
+                    if (order.state === 'cart') {
+                        if (order.user._id !== req.session.user._id) {
+                            res.end('Permission Denied.');
+                            return;
+                        }
+                        updateOrder(req.body, function () {
+                            var User = require('./User');
+                            var Product = require('./Product');
+                            (function rmCart(i) {
+                                if (i === order.products.length) {
+                                    return;
+                                }
+                                User.update({ _id: req.session.user._id }, { $pull: { cart: { _id: order.products[i]._id } } },function (err) {
+                                    if (err) {
+                                        console.log(err);
+                                        res.end('error');
+                                    } else {
+                                        rmCart(i + 1);
+                                    }
+                                })
+                            })(0);
+                            (function reduceStorage(i) {
+                                if (i === order.products.length) {
+                                    res.end('success');
+                                    return;
+                                }
+                                Product.update({ _id: order.products[i]._id }, { $inc: { storage: -order.products[i].quantity } },function (err) {
+                                    if (err) {
+                                        console.log(err);
+                                        res.end('error');
+                                    } else {
+                                        reduceStorage(i + 1);
+                                    }
+                                })
+                            })(0);
+                        }); // updateOrder
+                    } else {
+                        updateOrder(req.body);
+                    }
+                } else {
+                    res.end('Order Not Found!');
+                }
             }
         });
     },

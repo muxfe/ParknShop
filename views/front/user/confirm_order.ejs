@@ -29,16 +29,16 @@
                 </div>
                 <div class="productList col-sm-12">
                     <legend>Confirm commodities</legend>
-                    <div class="box">
+                    <div class="box"  ng-repeat="shopItem in orderData">
                         <div class="box-body table-responsive no-padding">
                             <table class="table table-hover">
                                 <tr>
-                                    <th>Commodity</th>
+                                    <th>Shop: {{shopItem.shop.name}}</th>
                                     <th>Unit-price</th>
                                     <th>Quantity</th>
                                     <th>Total</th>
                                 </tr>
-                                <tr class="datalist" ng-repeat="item in orderData.products">
+                                <tr class="datalist" ng-repeat="item in shopItem.products">
                                     <td>
                                         <img src="{{item.logo}}" class="pull-left" style="width:50px;height:50px;margin-right: 10px;" />
                                         <a href="/product/{{item._id}}" title="{{item.name}}">{{item.name | limitTo:70}}</a>
@@ -48,10 +48,10 @@
                                     <td class="text-danger">{{item.price * item.quantity | currency: '$'}}</td>
                                 </tr>
                                 <tr>
-                                    <td class="text-right h4">Selected Items: </td>
-                                    <td class="text-danger h4">{{orderData.products.length}}</td>
+                                    <td class="text-right h4">Total Items: </td>
+                                    <td class="text-danger h4">{{shopItem.products.length}}</td>
                                     <td class="text-right h4">Total:</td>
-                                    <td class="text-danger h4"><b>{{orderData.total | currency: '$'}}</b></td>
+                                    <td class="text-danger h4"><b>{{shopItem.total | currency: '$'}}</b></td>
                                 </tr>
                             </table>
                         </div>
@@ -160,17 +160,30 @@
             $http.get('/api/v1/order/cart').success(function (data) {
                 if (typeof data === 'object') {
                     $scope.orderData = data;
-                    for (var i = 0; i < data.products.length; i++) {
-                        (function (i) {
-                            $http.get('/api/v1/product/' + data.products[i]._id + '?part=1').success(function (result) {
+                    for (var j = 0; j < data.length; j++) { // cart order
+                        for (var i = 0; i < data[j].products.length; i++) { // order products
+                            (function (i, j) {
+                                $http.get('/api/v1/product/' + data[j].products[i]._id + '?part=1').success(function (result) {
+                                    if (typeof result === 'object') {
+                                        $.extend($scope.orderData[j].products[i], result);
+                                    } else {
+                                        console.log('get product ' + data[j].products[i]._id + ' error');
+                                    }
+                                });
+                            })(i, j);
+                        }
+                        (function (j) {
+                            $http.get('/api/v1/shop/' + data[j].shop._id + '?part=1').success(function (result) {
                                 if (typeof result === 'object') {
-                                    $.extend($scope.orderData.products[i], result);
+                                    $.extend($scope.orderData[j].shop, result);
                                 } else {
-                                    console.log('get product' + data.products[i]._id + 'error');
+                                    console.log('get shop ' + data[j].shop._id + ' error');
                                 }
                             });
-                        })(i);
-                    }
+                        })(j);
+                        // 订单留言
+                        $scope.orderData[j].message = '';
+                    } // end for-orderData
                 } else {
                     console.log('error');
                     showErrorInfo('get order info failed.');
@@ -199,8 +212,21 @@
         };
 
         $scope.confirmOrder = function () {
-            var addressData = $("div.address.active").data('addr');
-            
+            var address = $("div.address.active").data('addr');
+            var orders = $scope.orderData;
+            (function submitOrder(i) {
+                if (i === orders.length) {
+                    console.log('success');
+                    $("#payOrder").tab('show');
+                } else {
+                    var data = { address: address, state: 'submit', submitDate: new Date().toISOString() };
+                    angularHttpPost($http, '/api/v1/order/' + $scope.orderData[i]._id, data, function (data) {
+                        if (data === 'success') {
+                            submitOrder(i + 1);
+                        }
+                    });
+                }
+            })(0);
         };
 
     });

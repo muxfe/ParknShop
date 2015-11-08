@@ -132,17 +132,37 @@
                 alert('Please choose one to check out.');
                 return;
             }
-            var products = [];
+            var shopProduct = {}, shopTotal = {}, shops = [];
             for (var i = 0; i < $scope.cartData.length; i++) {
                 if ($scope.cartData[i].isChecked) {
-                    products.push({
+                    var shop_id = $scope.cartData[i].shop._id;
+                    if (typeof shopProduct[shop_id] === 'undefined') {
+                        shopProduct[shop_id] = [];
+                        shopTotal[shop_id] = 0;
+                    }
+                    shopTotal[shop_id] += $scope.cartData[i].price * $scope.cartData[i].quantity;
+                    shopProduct[shop_id].push({
                         _id: $scope.cartData[i]._id,
                         price: $scope.cartData[i].price,
                         quantity: $scope.cartData[i].quantity
                     });
                 }
             }
-            angularHttpPut($http, '/api/v1/order', { products: products, total: $scope.total }, function (data) {
+            for (var i = 0; i < $scope.shopData.length; i++) {
+                var shop_id = $scope.shopData[i]._id;
+                if (shopProduct[shop_id]) {
+                    shops.push({
+                        shop: {
+                            _id: shop_id,
+                            shop_owner_id: $scope.shopData[i].shop_owner._id,
+                            shop_owner_username: $scope.shopData[i].shop_owner.username
+                        },
+                        total: shopTotal[shop_id],
+                        products: shopProduct[shop_id]
+                    });
+                }
+            }
+            angularHttpPut($http, '/api/v1/order', { shops: shops }, function (data) {
                 if (data === 'success') {
                     window.location = '/user/manage/confirm_order';
                 }

@@ -255,10 +255,12 @@ router.get('/v1/order/:order_id?', function (req, res, next) {
 	if (order_id === 'cart') {
 		if (!Auth.isLogin(req)) {
 			res.end('Permission Denied.');
-			return;
+		} else {
+			Order.business.findCart(req, res);
 		}
+	} else {
+		Order.business.findOne(order_id, req, res);
 	}
-	Order.business.findOne(order_id, req, res);
 });
 
 /*
@@ -282,7 +284,7 @@ router.put('/v1/order', function (req, res, next) {
 router.post('/v1/order/:order_id', function (req, res, next) {
 	var order_id = req.params.order_id;
 	if (Auth.isShopOwner(req)) {
-		
+		Order.business.update(order_id, req, res);
 	} else {
 		res.end('Permission Denied.');
 	}
