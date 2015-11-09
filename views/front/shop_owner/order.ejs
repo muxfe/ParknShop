@@ -60,9 +60,7 @@
                                 <td><h4 class="text-danger">Total: {{orderItem.total | currency: '$'}}</h4></td>
                                 <td></td>
                                 <td ng-switch="orderItem.state">
-                                    <button class="btn btn-primary" ng-switch-when="submit">Pay it</button>
-                                    <button class="btn btn-primary" ng-switch-when="shipping">Confirm</button>
-                                    <button class="btn btn-primary" ng-switch-when="confirm">Comment</button>
+                                    <button class="btn btn-primary" ng-switch-when="submit">Shipping</button>
                                 </td>
                             </tr>
                         </table>
@@ -85,7 +83,7 @@
     });
 
     App.controller("MyOrder", function ($scope, $http) {
-        var url = '/api/v1/order?role=customer';
+        var url = '/api/v1/order?role=shop_owner';
 
         initPage($scope, $http, url, true, loadProducts);
         $scope.load = function () {

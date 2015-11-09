@@ -93,6 +93,10 @@ var Order = mongoose.model('Order', order);
 
 Order.business = {
 
+    query: function (req, res) {
+        Order.business.find(req, res);
+    },
+
     find: function (req, res) {
         var Db = require('./db/Db'),
             query = url.parse(req.url, true).query,
@@ -111,6 +115,8 @@ Order.business = {
                 conditions['user._id'] = req.session.user._id;
             } else if (role === 'shop_owner') {
                 conditions['shop.shop_owner_id'] = req.session.user._id;
+            } else if (req.session.adminlogined) {
+                // next
             } else {
                 res.end('error');
                 return;

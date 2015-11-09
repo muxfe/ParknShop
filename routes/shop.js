@@ -40,5 +40,10 @@ router.get( '/manage/product', function ( req, res, next ) {
     res.render( 'front/shop_owner/product', SiteUtils.getData4ShopOwner( req, res, 'Product Management' ) );
 });
 
+// order page
+router.get( '/manage/order', function ( req, res, next ) {
+    res.render( 'front/shop_owner/order', SiteUtils.getData4ShopOwner( req, res, 'Order Management' ) );
+});
+
 
 module.exports = router;

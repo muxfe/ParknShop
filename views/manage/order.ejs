@@ -1,8 +1,6 @@
-<div class="container" ng-controller="MyOrder">
-    <div class="col-xs-2">
-        <% include sidebar.ejs %>
-    </div>
-    <div class="col-xs-10">
+<div class="row" ng-controller="orderManage">
+    <% include public/modal %>
+    <div class="col-xs-12">
         <legend><%=title%>
             <small class="pull-right text-success hide"><i class="fa fa-info"></i> <span id="successInfo"></span></small>
             <small class="pull-right text-danger hide"><i class="fa fa-info"></i> <span id="errorInfo"></span></small>
@@ -59,10 +57,7 @@
                             <tr>
                                 <td><h4 class="text-danger">Total: {{orderItem.total | currency: '$'}}</h4></td>
                                 <td></td>
-                                <td ng-switch="orderItem.state">
-                                    <button class="btn btn-primary" ng-switch-when="submit">Pay it</button>
-                                    <button class="btn btn-primary" ng-switch-when="shipping">Confirm</button>
-                                    <button class="btn btn-primary" ng-switch-when="confirm">Comment</button>
+                                <td>
                                 </td>
                             </tr>
                         </table>
@@ -70,7 +65,7 @@
                 </div>
             </div>
             <div class="box-footer">
-                <% include ../public/pagination %>
+                <% include ./public/pagination %>
             </div>
         </div>
     </div>
@@ -84,8 +79,8 @@
         });
     });
 
-    App.controller("MyOrder", function ($scope, $http) {
-        var url = '/api/v1/order?role=customer';
+    App.controller("orderManage", function ($scope, $http) {
+        var url = '/admin/api/v1/order';
 
         initPage($scope, $http, url, true, loadProducts);
         $scope.load = function () {
