@@ -94,16 +94,52 @@ var Order = mongoose.model('Order', order);
 Order.business = {
 
     find: function (req, res) {
-        var query = url.parse(req.url, true).query,
+        var Db = require('./db/Db'),
+            query = url.parse(req.url, true).query,
             keywords = query.keywords,
             state = query.state,
+            shop_id = query.shop_id,
+            role = query.role,
             startDate = new Date(query.startDate),
             endDate = new Date(query.endDate),
             sortByDate = Number(query.sortByDate),
             sortByTotal = Number(query.sortByTotal),
             sortByShop = Number(query.sortByShop),
-            conditions = {},
-            sort = {};
+            conditions = {};
+
+            if (role === 'customer') {
+                conditions['user._id'] = req.session.user._id;
+            } else if (role === 'shop_owner') {
+                conditions['shop.shop_owner_id'] = req.session.user._id;
+            } else {
+                res.end('error');
+                return;
+            }
+
+            if (keywords) {
+                conditions.$or = [];
+                var re = new RegExp(keywords, 'i');
+                conditions.$or.push({ message: { $regex: re } });
+                conditions.$or.push({ _id: { $regex: re } });
+            }
+            if (shop_id) {
+                conditions['shop._id'] = shop_id;
+            }
+            if (state) {
+                conditions.state = state;
+            }
+            if (!isNaN(startDate.valueOf()) || !isNaN(endDate.valueOf())) {
+                var condDate = {};
+                if (!isNaN(startDate.valueOf())) {
+                    condDate.$gte = startDate.toISOString();
+                }
+                if (!isNaN(endDate.valueOf())) {
+                    condDate.$lte = endDate.toISOString();
+                }
+                conditions.date = condDate;
+            }
+
+            Db.pagination(Order, req, res, [conditions]);
     },
 
     findOne: function (id, req, res) {

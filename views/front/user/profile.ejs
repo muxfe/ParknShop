@@ -161,7 +161,7 @@
                                     <td>{{item.phoneNum}}</td>
                                     <td><label class="label label-info" ng-show="item.isDefault">Default</label></td>
                                     <td>
-                                        <button class="btn btn-primary btn-xs" data-whatever="{{item}}" data-toggle="modal" data-target="#addressModal"><span class="fa fa-fw fa-edit" aria-hidden="true"></span>Edit</button>&nbsp;
+                                        <button class="btn btn-primary btn-xs" data-addr="{{item}}" data-toggle="modal" data-target="#addressModal"><span class="fa fa-fw fa-edit" aria-hidden="true"></span>Edit</button>&nbsp;
                                         <button class="btn btn-danger btn-xs" ng-click="deleteItems(item._id)"><span class="fa fa-fw fa-trash-o" aria-hidden="true"></span>Delete</button>
                                     </td>
                                 </tr>
@@ -205,14 +205,14 @@
                             <div class="form-group">
                                 <label class="control-label col-sm-4"><span class="text-danger">*</span> Postcode</label>
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" name="postcode" ng-minlength="6" ng-maxlength="6" ng-pattern="/[0-9]+/i" ng-model="addrFormData.postcode" placeholder="postcode" required/>
+                                    <input type="text" class="form-control" name="postcode" ng-minlength="6" ng-maxlength="6" ng-pattern="/[0-9]+/i" ng-model="addrFormData.postcode" placeholder="postcode(6)" required/>
                                     <label for="inputError" class="control-label text-danger" ng-show="addrForm.postcode.$invalid && !addrForm.postcode.$pristine"><i class="fa fa-times-circle-o"></i> It's not a postcode.</label>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-4"><span class="text-danger">*</span> Telephone</label>
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control" name="phoneNum" ng-minlength="7" ng-maxlength="13" ng-pattern="/[0-9]+/i" ng-model="addrFormData.phoneNum" placeholder="phone number" required/>
+                                    <input type="text" class="form-control" name="phoneNum" ng-minlength="7" ng-maxlength="13" ng-pattern="/[0-9]+/i" ng-model="addrFormData.phoneNum" placeholder="phone number(7-13)" required/>
                                     <label for="inputError" class="control-label text-danger" ng-show="addrForm.phoneNum.$invalid && !addrForm.phoneNum.$pristine"><i class="fa fa-times-circle-o"></i> It's not a phone number.</label>
                                 </div>
                             </div>
@@ -220,7 +220,7 @@
                                 <label class="control-label col-sm-4"> isDefault</label>
                                 <div class="col-sm-6" style="padding-top:7px;">
                                     <label>
-                                        <input type="checkbox" name="isDefault" ng-model="addrFormData.isDefault"/> set Default Address
+                                        <input type="checkbox" name="isDefault" ng-model="addrFormData.isDefault"/> set as Default Address
                                     </label>
                                 </div>
                             </div>
@@ -243,11 +243,12 @@
         var user_id = '<%=userInfo._id%>',
             url = '/api/v1/user';
 
+        $scope.addrFormData = {};
+        $scope.addrTargetId = '';
+        $scope.passwordData = {};
+
         $scope.load = function () {
             $scope.profileData = {};
-            $scope.passwordData = {};
-            $scope.addrTargetId = '';
-            $scope.addrFormData = {};
             $("#password input").val('');
 
             $http.get(url + '/' + user_id).success(function (data) {
@@ -318,27 +319,22 @@
         });
         $( 'div.fileinput' ).on( 'clear.bs.fileinput', function () {
             // console.log('file clear');
-            $scope.shopFormData.logo = $( "div.uploaded img" ).attr( 'src' );
+            $scope.profileData.logo = $( "div.uploaded img" ).attr( 'src' );
         });
 
         // modal
         $("#addressModal").on('show.bs.modal', function (event) {
             var obj = $(event.relatedTarget);
-            var editId = obj.data('whatever');
+            var addr = obj.data('addr');
             var modalTitle = $(this).find('.modal-title');
-            if (editId) {
+            if (addr) {
                 modalTitle.text('Edit Address');
-                $scope.addrTargetId = editId;
-                for (var i = 0; i < $scope.profileData.address.length; i++) {
-                    if ($scope.profileData.address[i]._id === editId) {
-                        $scope.addrFormData = Object.create($scope.profileData.address[i]);
-                    }
-                }
+                $scope.addrTargetId = addr._id;
+                $scope.addrFormData = $.extend({ }, addr);
             } else {
                 modalTitle.text('New Address');
                 $scope.addrFormData = {};
             }
-            console.log($scope.addrFormData);
         }).on('hidden.bs.modal', function (event) {
             $( this ).find( "input" ).val( "" );
             $( this ).find( "input[type='checkbox']" ).prop( "checked", false );

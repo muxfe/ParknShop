@@ -215,9 +215,9 @@
             var address = $("div.address.active").data('addr');
             var orders = $scope.orderData;
             (function submitOrder(i) {
-                if (i === orders.length) {
+                if (i === orders.length) { // success
                     console.log('success');
-                    $("#payOrder").tab('show');
+                    $("a[href='#payOrder']").tab('show');
                 } else {
                     var data = { address: address, state: 'submit', submitDate: new Date().toISOString() };
                     angularHttpPost($http, '/api/v1/order/' + $scope.orderData[i]._id, data, function (data) {

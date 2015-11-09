@@ -5,7 +5,10 @@
     <div class="product-header">
         <div class="logo"><img class="img-thumbnail" src="{{productData.logo}}" /></div>
         <div class="col-sm-9 detail pull-right">
-            <legend>{{productData.name}}</legend>
+            <legend>{{productData.name}}
+                <small class="pull-right text-success hide"><i class="fa fa-info"></i> <span id="successInfo"></span></small>
+                <small class="pull-right text-danger hide"><i class="fa fa-info"></i> <span id="errorInfo"></span></small>
+            </legend>
             <div class="col-sm-9 product-info">
                 <form class="form-horizontal" name="buyForm" ng-submit="processBuyForm($buyForm.$valid)">
                     <div class="" style="background-color:#e4e9f1;">
@@ -223,7 +226,12 @@
         });
 
         $scope.add2cart = function () {
-            angularHttpPost($http, '/api/v1/user/cart', $scope.buyData);
+            angularHttpPost($http, '/api/v1/user/cart', $scope.buyData, function (result) {
+                if (result === 'success') {
+                    showSuccessInfo('Add to your cart successfully.');
+                    $("ul.cart", 'div.top').dropdown('toggle');
+                }
+            });
         };
 
         $scope.inc = function () {

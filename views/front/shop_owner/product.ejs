@@ -61,7 +61,7 @@
                     </tr>
                     <tr class="datalist" ng-repeat="item in data">
                         <td><input type="checkbox" name="listItem" class="mini" value="{{item._id}}"  ng-click="getNewIds()"/></td>
-                        <td><a href="/product/{{item._id}}">{{item.name}}</a></td>
+                        <td><img src="{{item.logo}}" style="width: 60px;height:60px;margin-right:10px;"/><a href="/product/{{item._id}}">{{item.name}}</a></td>
                         <td>{{item.state}}</td>
                         <td>{{item.storage}}</td>
                         <td>{{item.price}}</td>
@@ -233,8 +233,8 @@
         $http.get('/api/v1/shop/mine').success(function (data) {
             if (typeof data === 'object') {
                 $scope.shopInfo = data;
-                url = url + '?shop_id=' + data._id;
-                initPage($scope, $http, url, true);
+                var shopUrl = url + '?shop_id=' + data._id;
+                initPage($scope, $http, shopUrl, true);
                 initDelete($scope, $http, url, 'Are you sure to delete selected product(s)?');
                 $scope.loadCate();
             } else {

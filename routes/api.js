@@ -252,14 +252,18 @@ router.delete('/v1/product/:product_id', function (req, res, next) {
  */
 router.get('/v1/order/:order_id?', function (req, res, next) {
 	var order_id = req.params.order_id;
-	if (order_id === 'cart') {
-		if (!Auth.isLogin(req)) {
-			res.end('Permission Denied.');
+	if (order_id) {
+		if (order_id === 'cart') {
+			if (!Auth.isLogin(req)) {
+				res.end('Permission Denied.');
+			} else {
+				Order.business.findCart(req, res);
+			}
 		} else {
-			Order.business.findCart(req, res);
+			Order.business.findOne(order_id, req, res);
 		}
 	} else {
-		Order.business.findOne(order_id, req, res);
+		Order.business.find(req, res);
 	}
 });
 

@@ -152,44 +152,48 @@ function loadData($scope, $http, url, callback) {
 
      $http.get(url).success(function (result) {
          if ($scope.isPage) {
-             if (typeof result.docs !== 'undefined') {
-                 $scope.data = result.docs;
-                 if ( result.pageInfo ) {
-                     $scope.totalItems = result.pageInfo.totalItems;
-                     $scope.currentPage = result.pageInfo.currentPage;
-                     $scope.limit = result.pageInfo.limit;
-                     $scope.startNum = result.pageInfo.startNum;
-                     //获取总页数
-                     $scope.totalPage = Math.ceil( $scope.totalItems / $scope.limit );
-                     //生成数字链接
-                     if ( $scope.currentPage > 1 && $scope.currentPage < $scope.totalPage ) {
-                         $scope.pages = [
-                             $scope.currentPage - 1,
-                             $scope.currentPage,
-                             $scope.currentPage + 1
-                         ];
-                     } else if ( $scope.currentPage == 1 && $scope.totalPage == 1 ) {
-                         $scope.pages = [
-                             $scope.currentPage
-                         ];
-                     } else if ( $scope.currentPage == 1 && $scope.totalPage > 1 ) {
-                         $scope.pages = [
-                             $scope.currentPage,
-                             $scope.currentPage + 1
-                         ];
-                     } else if ( $scope.currentPage == $scope.totalPage && $scope.totalPage > 1 ) {
-                         $scope.pages = [
-                             $scope.currentPage - 1,
-                             $scope.currentPage
-                         ];
+             if (typeof result !== 'undefined') {
+                 if (typeof result.docs !== 'undefined') {
+                     $scope.data = result.docs;
+                     if ( result.pageInfo ) {
+                         $scope.totalItems = result.pageInfo.totalItems;
+                         $scope.currentPage = result.pageInfo.currentPage;
+                         $scope.limit = result.pageInfo.limit;
+                         $scope.startNum = result.pageInfo.startNum;
+                         //获取总页数
+                         $scope.totalPage = Math.ceil( $scope.totalItems / $scope.limit );
+                         //生成数字链接
+                         if ( $scope.currentPage > 1 && $scope.currentPage < $scope.totalPage ) {
+                             $scope.pages = [
+                                 $scope.currentPage - 1,
+                                 $scope.currentPage,
+                                 $scope.currentPage + 1
+                             ];
+                         } else if ( $scope.currentPage == 1 && $scope.totalPage == 1 ) {
+                             $scope.pages = [
+                                 $scope.currentPage
+                             ];
+                         } else if ( $scope.currentPage == 1 && $scope.totalPage > 1 ) {
+                             $scope.pages = [
+                                 $scope.currentPage,
+                                 $scope.currentPage + 1
+                             ];
+                         } else if ( $scope.currentPage == $scope.totalPage && $scope.totalPage > 1 ) {
+                             $scope.pages = [
+                                 $scope.currentPage - 1,
+                                 $scope.currentPage
+                             ];
+                         }
+                     } else {
+                         console.error("get pagination info failed.")
                      }
-                 } else {
-                     console.error("get pagination info failed.")
-                 }
 
-                 $("#dataLoading").addClass("hide");
+                     $("#dataLoading").addClass("hide");
+                 } else {
+                     showErrorInfo(result);
+                 }
              } else {
-                 showErrorInfo(result);
+                 showErrorInfo('get ' + url + ' error');
              }
          } else {
              if (typeof result === 'object') {
@@ -212,7 +216,7 @@ function angularHttp( $http, method, url, data, callback ) {
         url     : url,
         data    : data,  // pass in data as strings
         type    : 'json',
-        dataType: 'json'  
+        dataType: 'json'
     })
     .success(function (result) {
         // 关闭所有模态窗口
@@ -244,12 +248,12 @@ function angularHttpPost($http, url, data, callback) {
 }
 
 function showInfo(selector, info) {
-    $(selector).removeClass('hide').css({ 'opacity': 1 }).text(info);
+    $(selector).css({ 'opacity': 1 }).text(info).closest('small').removeClass('hide');
     setTimeout(function () {
         $(selector).animate({
             'opacity': 0
         }, 1000, function () {
-            $(selector).addClass('hide');
+            $(selector).closest('small').addClass('hide');
         });
     }, 5000);
 }

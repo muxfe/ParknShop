@@ -1,0 +1,131 @@
+<div class="container" ng-controller="MyOrder">
+    <div class="col-xs-2">
+        <% include sidebar.ejs %>
+    </div>
+    <div class="col-xs-10">
+        <legend><%=title%>
+            <small class="pull-right text-success hide"><i class="fa fa-info"></i> <span id="successInfo"></span></small>
+            <small class="pull-right text-danger hide"><i class="fa fa-info"></i> <span id="errorInfo"></span></small>
+        </legend>
+        <div class="panel panel-info">
+            <div class="panel-body">
+                <form class="form-inline" name="filterForm">
+                    <div class="form-group keywords">
+                        <label for="">Keywords:</label>
+                        <input type="text" class="form-control input-sm" name="keywords" ng-model="filterData.keywords" placeholder="keywords.."/>
+                    </div>
+                    <div class="form-group price">
+                        <label for="">State:</label>
+                        <select class="form-control" ng-model="filterData.state">
+                            <option value="">Select State</option>
+                            <option value="submit">Submit</option>
+                            <option value="pay">Pay</option>
+                            <option value="shipping">Shipping</option>
+                            <option value="done">Done</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Date:</label>
+                        <div class="input-group input-daterange">
+                            <input type="text" class="form-control" name="startDate" ng-model="filterData.startDate" style="width:100px;"/>
+                            <span class="input-group-addon">to</span>
+                            <input type="text" class="form-control" name="endDate" ng-model="filterData.endDate" style="width:100px;"/>
+                        </div>
+                    </div>
+                    <a class="btn btn-default btn-sm" ng-click="load()">Go!</a>
+                </form>
+            </div>
+        </div>
+        <div class="box orders">
+            <div class="panel" ng-repeat="orderItem in data" ng-class="{ 'done': 'panel-success', 'pay': 'panel-info', 'submit': 'panel-default', 'shipping': 'panel-warning' }[orderItem.state]">
+                <div class="panel-heading">
+                    <span>[{{orderItem.date | date: 'MM/dd/yyyy'}}] Order: {{orderItem._id}}</span>
+                    <span style="margin-left: 200px;">Shop: {{shopData[orderItem.shop._id].name}}</span>
+                    <span class="pull-right">State: {{orderItem.state}}</span>
+                </div>
+                <div class="panel-body">
+                    <div class="box-body table-responsive no-padding">
+                        <table class="table table-hover">
+                            <tr>
+                                <th>Name</th>
+                                <th>Unit-price</th>
+                                <th>Quantity</th>
+                            </tr>
+                            <tr class="datalist" ng-repeat="item in orderItem.products">
+                                <td><img src="{{item.logo}}" style="width: 60px;height:60px;margin-right:10px;"/><a href="/product/{{item._id}}">{{item.name}}</a></td>
+                                <td style="vertical-align:middle;">{{item.price}}</td>
+                                <td style="vertical-align:middle;">{{item.quantity}}</td>
+                            </tr>
+                            <tr>
+                                <td><h4 class="text-danger">Total: {{orderItem.total | currency: '$'}}</h4></td>
+                                <td></td>
+                                <td ng-switch="orderItem.state">
+                                    <button class="btn btn-primary" ng-switch-when="submit">Pay it</button>
+                                    <button class="btn btn-primary" ng-switch-when="shipping">Confirm</button>
+                                    <button class="btn btn-primary" ng-switch-when="confirm">Comment</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="box-footer">
+                <% include ../public/pagination %>
+            </div>
+        </div>
+    </div>
+</div><!-- div.container END -->
+
+<script>
+
+    $(function () {
+        $("div.input-daterange input").each(function () {
+            $(this).datepicker({format: 'mm/dd/yyyy'});
+        });
+    });
+
+    App.controller("MyOrder", function ($scope, $http) {
+        var url = '/api/v1/order?role=customer';
+
+        initPage($scope, $http, url, true, loadProducts);
+        $scope.load = function () {
+            loadData($scope, $http, url, loadProducts);
+        };
+
+        function loadProducts(result) {
+            if (typeof result === 'object') {
+                $scope.shopData = {};
+                for (var i = 0; i < $scope.data.length; i++) {
+                    if (typeof $scope.shopData[$scope.data[i].shop._id]) {
+                        $scope.shopData[$scope.data[i].shop._id] = {};
+                    }
+                    for (var j = 0; j < $scope.data[i].products.length; j++) {
+                        var product = $scope.data[i].products[j];
+                        (function (i, j) {
+                            $http.get('/api/v1/product/' + product._id).success(function (result) {
+                                if (typeof result === 'object') {
+                                    $.extend($scope.data[i].products[j], result);
+                                } else {
+                                    showErrorInfo('get product(' + $scope.data[i].products[j]._id + ') error');
+                                }
+                            });
+                        })(i, j);
+                    } // for-products
+                } // for-data
+                for (var key in $scope.shopData) {
+                    (function (key) {
+                        $http.get('/api/v1/shop/' + key).success(function (result) {
+                            if (typeof result === 'object') {
+                                $.extend($scope.shopData[key], result);
+                            } else {
+                                showErrorInfo('get shop(' + $scope.data[i].shop._id + ') error');
+                            }
+                        });
+                    })(key);
+                }
+            }
+        }
+
+    });
+
+</script>
