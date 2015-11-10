@@ -1,14 +1,14 @@
 <div class="sidebar">
     <legend class=""><b>All Functions</b></legend>
     <ul class="nav">
-        <li><a href="/user/manage/profile">My Profile</a></li>
-        <li><a href="/user/manage/cart">My Cart</a></li>
-        <li><a href="/user/manage/order">My Order</a></li>
-        <li><a href="/user/manage/collection">My Collections</a></li>
-        <li><a href="/user/manage/comment">My Comments</a></li>
-        <li><a href="/user/manage/service">My Service</a></li>
+        <li><a href="<%=home%>profile">My Profile</a></li>
+        <li><a href="<%=home%>cart">My Cart</a></li>
+        <li><a href="<%=home%>order">My Order</a></li>
+        <li><a href="<%=home%>collection">My Collections</a></li>
+        <li><a href="<%=home%>comment">My Comments</a></li>
+        <li><a href="<%=home%>service">My Service</a></li>
         <% if (userInfo.group !== 'shop_owner') { %>
-            <li><a href="/user/manage/free_shop" class="free-shop">Free Shop</a></li>
+            <li><a href="<%=home%>free_shop" class="free-shop">Free Shop</a></li>
         <% } else if (userInfo.group === 'shop_owner') { %>
             <li><a href="/shop/manage">My Shop</a></li>
         <% } %>

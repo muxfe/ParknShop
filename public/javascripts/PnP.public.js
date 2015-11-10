@@ -268,6 +268,18 @@ function showSuccessInfo(info) {
     showInfo('#successInfo', info);
 }
 
+function confirmModal($scope, msg, callback) {
+    $('#checkIfDo').on('show.bs.modal', function (event) {
+        $(this).find('.modal-msg').text(msg);
+    });
+    $('#checkIfDo').modal('show');
+    // 确认执行删除
+    $scope.confirmDo = function () {
+        callback();
+        $('#checkIfDo').modal('hide');
+    };
+}
+
 // 提示用户操作窗口
 function initCheckIfDo( $scope, targetId, msg, callback ){
     $( '#checkIfDo' ).on( 'show.bs.modal', function ( event ) {

@@ -285,10 +285,11 @@ router.put('/v1/order', function (req, res, next) {
  * @pre-condition: must be shop_owner logined
  * @body:
  */
-router.post('/v1/order/:order_id', function (req, res, next) {
-	var order_id = req.params.order_id;
-	if (Auth.isShopOwner(req)) {
-		Order.business.update(order_id, req, res);
+router.post('/v1/order/:order_id/:operate', function (req, res, next) {
+	var order_id = req.params.order_id,
+		operate = req.params.operate;
+	if (Auth.isLogin(req)) {
+		Order.business.update(order_id, operate, req, res);
 	} else {
 		res.end('Permission Denied.');
 	}
@@ -303,7 +304,7 @@ router.post('/v1/order/:order_id', function (req, res, next) {
 router.delete('/v1/order/:order_id', function (req, res, next) {
 	var order_id = req.params.order_id;
 	if (Auth.isLogin(req)) {
-		Order.business.delete(req, res);
+		Order.business.delete(order_id, req, res);
 	} else {
 		res.end('Permission Denied.');
 	}

@@ -52,15 +52,17 @@
                                 <th>Quantity</th>
                             </tr>
                             <tr class="datalist" ng-repeat="item in orderItem.products">
-                                <td><img src="{{item.logo}}" style="width: 60px;height:60px;margin-right:10px;"/><a href="/product/{{item._id}}">{{item.name}}</a></td>
-                                <td style="vertical-align:middle;">{{item.price | currency: '$'}}</td>
-                                <td style="vertical-align:middle;">{{item.quantity}}</td>
+                                <td class="col-sm-6"><img src="{{item.logo}}" style="width: 60px;height:60px;margin-right:10px;"/><a href="/product/{{item._id}}">{{item.name}}</a></td>
+                                <td class="col-sm-3" style="vertical-align:middle;">{{item.price | currency: '$'}} (now)</td>
+                                <td class="col-sm-3" style="vertical-align:middle;">{{item.quantity}}</td>
                             </tr>
                             <tr>
                                 <td><h4 class="text-danger">Total: {{orderItem.total | currency: '$'}}</h4></td>
-                                <td></td>
-                                <td ng-switch="orderItem.state">
-                                    <button class="btn btn-primary" ng-switch-when="submit">Shipping</button>
+                                <td colspan="2" ng-switch="orderItem.state">
+                                    <button class="btn btn-primary" ng-switch-when="pay" ng-click="shippingOrder(orderItem._id)">Shipping</button>
+                                    <h4 class="text-info" ng-switch-when="submit">Waiting the buyer to pay it.</h4>
+                                    <h4 class="text-info" ng-switch-when="shipping">Waiting the buyer to confirm it.</h4>
+                                    <h4 class="text-info" ng-switch-when="confirm">Waiting the buyer to comment it.</h4>
                                 </td>
                             </tr>
                         </table>
@@ -72,6 +74,7 @@
             </div>
         </div>
     </div>
+    <% include ../public/modal %>
 </div><!-- div.container END -->
 
 <script>
@@ -123,6 +126,18 @@
                 }
             }
         }
+
+        $scope.shippingOrder = function (order_id) {
+            if (order_id) {
+                confirmModal($scope, 'Are you sure to shipping it?', function () {
+                    angularHttpPost($http, '/api/v1/order/' + order_id + '/shipping', { }, function (result) {
+                        if (result === 'success') {
+                            $scope.load();
+                        }
+                    });
+                });
+            }
+        };
 
     });
 

@@ -129,6 +129,7 @@ var SiteUtils = {
             category: _CustomerCategory,
             userInfo: req.session.user,
             logined: req.session.logined,
+            home: '/user/manage/',
             layout: 'front/public/defaultTpl'
         };
     },
@@ -205,11 +206,23 @@ var SiteUtils = {
         });
     },
 
-    incSales: function (id, value) {
+    incSaled: function (id, value) {
         var val = value || 1;
-        Shop.update({ _id: id }, { $inc: { nSales: val } }, function (err) {
+        Shop.update({ _id: id }, { $inc: { nSaled: val } }, function (err) {
             if (err) {
                 console.log(err);
+            }
+        });
+    },
+
+    incStorage: function (id, value, callback) {
+        var val = value || 1;
+        Product.update({ _id: id }, { $inc: { storage: val, nSaled: -val } }, function (err) {
+            if (err) {
+                console.log(err);
+                callback && callback(err);
+            } else {
+                callback && callback();
             }
         });
     }

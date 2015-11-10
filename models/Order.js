@@ -77,12 +77,12 @@ var order = new Schema({
     // 支付时间
     payDate: Date,
     // 发货时间
-    deliveryDate: Date,
+    shippingDate: Date,
     // 确认时间
     confirmDate: Date,
     // 完成时间
     doneDate: Date,
-    // 订单状态：购物车(cart) -> 提交（submit） -> 支付（pay） -> 发货（shipping） -> 确认（confirm） -> 完成（done）
+    // 订单状态：购物车(cart) -> 提交（submit） -> 支付（pay） -> 发货（shipping） -> 确认（confirm） -> 完成（done | after comment）
     state: {
         type: String,
         default: 'cart'
@@ -102,7 +102,7 @@ Order.business = {
             query = url.parse(req.url, true).query,
             keywords = query.keywords,
             state = query.state,
-            shop_id = query.shop_id,
+            // shop_id = query.shop_id,
             role = query.role,
             startDate = new Date(query.startDate),
             endDate = new Date(query.endDate),
@@ -118,7 +118,7 @@ Order.business = {
             } else if (req.session.adminlogined) {
                 // next
             } else {
-                res.end('error');
+                res.end('Permission Denied.');
                 return;
             }
 
@@ -128,11 +128,12 @@ Order.business = {
                 conditions.$or.push({ message: { $regex: re } });
                 conditions.$or.push({ _id: { $regex: re } });
             }
-            if (shop_id) {
-                conditions['shop._id'] = shop_id;
-            }
+            // if (shop_id) {
+            //     conditions['shop._id'] = shop_id;
+            // }
+            conditions.state = { $ne: 'cart' };
             if (state) {
-                conditions.state = state;
+                conditions.$and = [ { state: state } ];
             }
             if (!isNaN(startDate.valueOf()) || !isNaN(endDate.valueOf())) {
                 var condDate = {};
@@ -149,14 +150,30 @@ Order.business = {
     },
 
     findOne: function (id, req, res) {
-        var part = url.parse(req.url, true).query.part,
-            filter = '';
+        var query = url.parse(req.url, true).query,
+            part = query.part,
+            role = query.role,
+            filter = '',
+            conditions = {},
+            key = '';
 
         if (part) {
             filter = 'date user total shop';
         }
 
-        Order.findOne({ _id: id }, filter, function (err, order) {
+        conditions._id = id;
+
+        if (role === 'customer') {
+            conditions['user._id'] = req.session.user._id;
+        } else if (role === 'shop_owner') {
+            conditions['shop.shop_owner_id'] = req.session.user._id;
+        } else if (req.session.adminglogined) {
+            // next;
+        } else {
+            res.end('Permission Denied.');
+        }
+
+        Order.findOne(conditions, filter, function (err, order) {
             if (err) {
                 console.log(err);
                 res.end('error');
@@ -210,56 +227,77 @@ Order.business = {
         });
     },
 
-    update: function (id, req, res) {
+    update: function (id, operate, req, res) {
         var Db = require('./db/Db');
-        Order.findOne({ _id: id }, function (err, order) {
-            if (err) {
-                console.log(err);
-                res.end('error');
-            } else {
-                if (order) {
+        var User = require('./User');
+        var Product = require('./Product');
+        var Shop = require('./Shop');
+        var SiteUtils = require('../utils/SiteUtils');
+        var user_id = req.session.user._id;
 
-                    function updateOrder(update, callback) {
-                        Order.update({ _id: id }, { $set: update }, function (err) {
-                            if (err) {
-                                res.end('error');
-                            } else {
-                                if (callback) {
-                                    callback();
-                                } else {
-                                    res.end('success');
-                                }
-                            }
-                        });
+        switch (operate) {
+            case 'submit':
+                var update = {
+                    address: req.body.address,
+                    submitDate: new Date().toISOString(),
+                    state: 'submit'
+                };
+                Order.update({ _id: id, 'user._id': user_id, state: 'cart' }, { $set: update }, function (err) {
+                    if (err) {
+                        console.log(err);
+                        res.end('error');
+                        return;
                     }
-
-                    if (order.state === 'cart') {
-                        if (order.user._id !== req.session.user._id) {
-                            res.end('Permission Denied.');
-                            return;
+                    Order.findOne({ _id: id, 'user._id': user_id, state: 'submit' }, function (err, order) {
+                        if (err) {
+                            console.log(err);
+                            res.end('error');
                         }
-                        updateOrder(req.body, function () {
-                            var User = require('./User');
-                            var Product = require('./Product');
-                            (function rmCart(i) {
-                                if (i === order.products.length) {
-                                    return;
+                        if (!order) {
+                            res.end('No the order here.');
+                        }
+
+                        // 从购物车中删除
+                        (function rmCart(i) {
+                            if (i === order.products.length) {
+                                return;
+                            }
+                            User.update({ _id: req.session.user._id }, { $pull: { cart: { _id: order.products[i]._id } } },function (err) {
+                                if (err) {
+                                    console.log(err);
+                                    res.end('error');
+                                } else {
+                                    rmCart(i + 1);
                                 }
-                                User.update({ _id: req.session.user._id }, { $pull: { cart: { _id: order.products[i]._id } } },function (err) {
-                                    if (err) {
-                                        console.log(err);
-                                        res.end('error');
-                                    } else {
-                                        rmCart(i + 1);
-                                    }
-                                })
-                            })(0);
+                            })
+                        })(0);
+                    });
+                });
+                break;
+            case 'pay':
+                updateOrder({ _id: id, 'user._id': user_id, state: 'submit' }, { state: 'pay', payDate: now() });
+                break;
+            case 'shipping':
+                updateOrder({ _id: id, 'shop.shop_owner_id': user_id, state: 'pay' }, { state: 'shipping', shippingDate: now() }, function (err) {
+                    if (err) {
+                        res.end('error');
+                    } else {
+                        Order.findOne({ _id: id, 'user._id': user_id, state: 'shipping' }, function (err, order) {
+                            if (err) {
+                                console.log(err);
+                                res.end('error');
+                            }
+                            if (!order) {
+                                res.end('No the order here.');
+                                return;
+                            }
+
+                            // 从产品库存中删除
                             (function reduceStorage(i) {
                                 if (i === order.products.length) {
-                                    res.end('success');
                                     return;
                                 }
-                                Product.update({ _id: order.products[i]._id }, { $inc: { storage: -order.products[i].quantity } },function (err) {
+                                SiteUtils.incStorage(order.products[i]._id, -order.products[i].quantity, function (err) {
                                     if (err) {
                                         console.log(err);
                                         res.end('error');
@@ -268,20 +306,50 @@ Order.business = {
                                     }
                                 })
                             })(0);
-                        }); // updateOrder
-                    } else {
-                        updateOrder(req.body);
+
+                            // 更新shop nSaled
+                            SiteUtils.incSaled(order.shop._id, order.products.length);
+                            res.end('success');
+                        });
                     }
+                });
+                break;
+            case 'confirm':
+                updateOrder({ _id: id, 'user._id': user_id, state: 'shipping' }, { state: 'confirm', confirmDate: now() });
+                break;
+            case 'done':
+                updateOrder({ _id: id, 'user._id': user_id, state: 'confirm' }, { state: 'done', confirmDate: now() });
+                break;
+            default:
+                res.end('Error Operation.');
+                break;
+        }
+
+        function updateOrder(selector, update, callback) {
+            Order.update(selector, { $set: update }, function (err) {
+                if (err) {
+                    console.log(err);
+                    callback ? callback(err) : res.end('error');
                 } else {
-                    res.end('Order Not Found!');
+                    callback ? callback() : res.end('success');
                 }
-            }
-        });
+            });
+        }
+
+        function now() {
+            return new Date().toISOString();
+        }
     },
 
     delete: function (id, req, res) {
-        var Db = require('./db/Db');
-        Db.delete(id, Order, req, res);
+        Order.remove({ _id: id, 'user._id': req.session.user._id, state: 'submit' }, function (err) {
+            if (err) {
+                console.log(err);
+                res.end('error');
+            } else {
+                res.end('success');
+            }
+        });
     }
 
 };

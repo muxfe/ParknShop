@@ -40,7 +40,7 @@
             <div class="panel" ng-repeat="orderItem in data" ng-class="{ 'done': 'panel-success', 'pay': 'panel-info', 'submit': 'panel-default', 'shipping': 'panel-warning' }[orderItem.state]">
                 <div class="panel-heading">
                     <span>[{{orderItem.date | date: 'MM/dd/yyyy'}}] Order: {{orderItem._id}}</span>
-                    <span style="margin-left: 200px;">Shop: {{shopData[orderItem.shop._id].name}}</span>
+                    <span style="margin-left: 200px;">Shop: <a href="/shop/{{shopData[orderItem.shop._id]._id}}">{{shopData[orderItem.shop._id].name}}</a></span>
                     <span class="pull-right">State: {{orderItem.state}}</span>
                 </div>
                 <div class="panel-body">
@@ -52,17 +52,23 @@
                                 <th>Quantity</th>
                             </tr>
                             <tr class="datalist" ng-repeat="item in orderItem.products">
-                                <td><img src="{{item.logo}}" style="width: 60px;height:60px;margin-right:10px;"/><a href="/product/{{item._id}}">{{item.name}}</a></td>
-                                <td style="vertical-align:middle;">{{item.price | currency: '$'}}</td>
-                                <td style="vertical-align:middle;">{{item.quantity}}</td>
+                                <td class="col-sm-6"><img src="{{item.logo}}" style="width: 60px;height:60px;margin-right:10px;"/><a href="/product/{{item._id}}">{{item.name}}</a></td>
+                                <td class="col-sm-3" style="vertical-align:middle;">{{item.price | currency: '$'}} (now)</td>
+                                <td class="col-sm-3" style="vertical-align:middle;">{{item.quantity}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Receiver: {{orderItem.address.name}} <br/>
+                                Address: {{orderItem.address.address}} ({{orderItem.address.postcode}}) <br/>
+                                Telephone: {{orderItem.address.phoneNum}}</td>
                             </tr>
                             <tr>
                                 <td><h4 class="text-danger">Total: {{orderItem.total | currency: '$'}}</h4></td>
-                                <td></td>
-                                <td ng-switch="orderItem.state">
-                                    <button class="btn btn-primary" ng-switch-when="submit">Pay it</button>
-                                    <button class="btn btn-primary" ng-switch-when="shipping">Confirm</button>
-                                    <button class="btn btn-primary" ng-switch-when="confirm">Comment</button>
+                                <td colspan="2" ng-switch="orderItem.state">
+                                    <button class="btn btn-primary" ng-switch-when="submit" ng-click="payOrder(orderItem._id)">Pay it</button>
+                                    <button class="btn btn-danger" ng-switch-when="submit" ng-click="deleteOrder(orderItem._id)">Cancel</button>
+                                    <h4 class="text-info" ng-switch-when="pay">Waiting the seller shipping products.</h4>
+                                    <button class="btn btn-primary" ng-switch-when="shipping" ng-click="confirmOrder(orderItem._id)">Confirm</button>
+                                    <button class="btn btn-primary" ng-switch-when="confirm" ng-click="commentOrder(orderItem._id)">Comment</button>
                                 </td>
                             </tr>
                         </table>
@@ -73,6 +79,7 @@
                 <% include ../public/pagination %>
             </div>
         </div>
+        <% include ../public/modal %>
     </div>
 </div><!-- div.container END -->
 
@@ -124,7 +131,53 @@
                     })(key);
                 }
             }
-        }
+        } // func-loadProducts
+
+        $scope.payOrder = function (order_id) {
+            if (order_id) {
+                confirmModal($scope, 'Are you sure pay for it?', function () {
+                    angularHttpPost($http, '/api/v1/order/' + order_id + '/pay', { }, function (result) {
+                        if (result === 'success') {
+                            $scope.load();
+                        }
+                    });
+                });
+            }
+        };
+
+        $scope.deleteOrder = function (order_id) {
+            if (order_id) {
+                confirmModal($scope, 'Are you sure delete it?', function () {
+                    angularHttpDelete($http, '/api/v1/order/' + order_id, function (result) {
+                        if (result === 'success') {
+                            $scope.load();
+                        }
+                    });
+                });
+            }
+        };
+
+        $scope.confirmOrder = function (order_id) {
+            if (order_id) {
+                confirmModal($scope, 'Are you sure confirm it?', function () {
+                    angularHttpPost($http, '/api/v1/order/' + order_id + '/confirm', function (result) {
+                        if (result === 'success') {
+                            $scope.load();
+                        }
+                    });
+                });
+            }
+        };
+
+        $scope.commentOrder = function (order_id) {
+            if (order_id) {
+                angularHttpPost($http, '/api/v1/order/' + order_id + '/done', function (result) {
+                    if (result === 'success') {
+                        $scope.load();
+                    }
+                });
+            }
+        };
 
     });
 

@@ -64,7 +64,7 @@
                         <td><img src="{{item.logo}}" style="width: 60px;height:60px;margin-right:10px;"/><a href="/product/{{item._id}}">{{item.name}}</a></td>
                         <td>{{item.state}}</td>
                         <td>{{item.storage}}</td>
-                        <td>{{item.price}}</td>
+                        <td class="text-danger">{{item.price | currency: '$'}}</td>
                         <td>{{item.visits}}</td>
                         <td>{{item.nSaled}}</td>
                         <td>{{item.date | date: 'MM/dd/yyyy' }}</td>

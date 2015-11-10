@@ -54,7 +54,7 @@ var shop = new Schema({
         type: Number,
         default: 0
     },
-    nSales: {
+    nSaled: {
         type: Number,
         default: 0
     },
@@ -206,7 +206,7 @@ Shop.business = {
         } else if (sortByScore === '1' || sortByScore === '-1') {
             sort.score = Number(sortByScore);
         } else if (sortBySaled === '1' || sortBySaled === '-1') {
-            sort.nSales = Number(sortBySaled);
+            sort.nSaled = Number(sortBySaled);
         } else if (sortByProducts === '1' || sortByProducts === '-1') {
             sort.nProducts = Number(sortByProducts);
         } else {

@@ -58,12 +58,14 @@
                     </div><!-- End div.box -->
                 </div>
                 <div class="summary col-sm-12">
+                    <h3 class="text-right text-danger">Total: <b>{{totalPay | currency: '$'}}</b></h3>
                     <a class="btn btn-primary btn-lg pull-right" href="#" ng-click="confirmOrder()">Submit Order</a>
                     <a class="btn btn-lg pull-right" href="/user/manage/cart">Back to Cart</a>
                 </div>
             </div>
             <div role="tabpanel" class="tab-pane" id="payOrder">
-
+                <h2>Pay</h2>
+                
             </div>
             <div role="tabpanel" class="tab-pane" id="doneOrder">
 
@@ -160,7 +162,9 @@
             $http.get('/api/v1/order/cart').success(function (data) {
                 if (typeof data === 'object') {
                     $scope.orderData = data;
+                    $scope.totalPay = 0;
                     for (var j = 0; j < data.length; j++) { // cart order
+                        $scope.totalPay += data[j].total;
                         for (var i = 0; i < data[j].products.length; i++) { // order products
                             (function (i, j) {
                                 $http.get('/api/v1/product/' + data[j].products[i]._id + '?part=1').success(function (result) {
@@ -218,9 +222,10 @@
                 if (i === orders.length) { // success
                     console.log('success');
                     $("a[href='#payOrder']").tab('show');
+                    $("div.progress-bar", "div.tab-confirm-order").text('2.Pay').css('width', '66%');
                 } else {
-                    var data = { address: address, state: 'submit', submitDate: new Date().toISOString() };
-                    angularHttpPost($http, '/api/v1/order/' + $scope.orderData[i]._id, data, function (data) {
+                    var data = { address: address };
+                    angularHttpPost($http, '/api/v1/order/' + $scope.orderData[i]._id + '/submit', data, function (data) {
                         if (data === 'success') {
                             submitOrder(i + 1);
                         }
