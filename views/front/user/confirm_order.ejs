@@ -1,5 +1,9 @@
 <div class="container" ng-controller="confirmOrder">
-    <legend><h3><%=title%></h3></legend>
+    <legend>
+        <span class="h3"><%=title%></span>
+        <small class="pull-right text-success hide"><i class="fa fa-info"></i> <span id="successInfo"></span></small>
+        <small class="pull-right text-danger hide"><i class="fa fa-info"></i> <span id="errorInfo"></span></small>
+    </legend>
     <div class="tab-confirm-order">
         <ul class="nav nav-tabs hide" role="tablist">
             <li class="active"><a href="#confirmOrder">Confirm</a></li>
@@ -7,7 +11,7 @@
             <li class=""><a href="#doneOrder">Done</a></li>
         </ul>
         <div class="progress">
-            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100" style="width: 33%;">
+            <div class="progress-bar progress-bar-striped progress-bar-success active" role="progressbar" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100" style="width: 33%;">
                 1. Confirm
             </div>
         </div>
@@ -64,11 +68,28 @@
                 </div>
             </div>
             <div role="tabpanel" class="tab-pane" id="payOrder">
-                <h2>Pay</h2>
-                
+                <legend><h2>Pay</h2></legend>
+                <form class="form form-horizontal" name="payForm" ng-submit="processPayForm(payForm.$valid)" novalidate>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">Payment Password</label>
+                        <div class="input-group col-sm-4">
+                            <input class="form-control" type="password" ng-model="payFormData.password" placeholder="payment password" required/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group col-sm-3 col-sm-offset-2">
+                            <button type="submit" class="btn btn-primary btn-lg" ng-disabled="payForm.$invalid">Pay it</button>
+                        </div>
+                    </div>
+                </form>
             </div>
             <div role="tabpanel" class="tab-pane" id="doneOrder">
-
+                <h1 class="text-success text-center">Success! <small>Your order has paid, waiting the seller shipping.</small></h1>
+                <div class="text-center">
+                    <a class="btn btn-lg" href="/user/manage/order">Back to my order</a>
+                    <a class="btn btn-lg" href="/search">Countinue to go shoppping...</a>
+                </div>
             </div>
         </div>
     </div>
@@ -139,7 +160,7 @@
     });
 
     App.controller('confirmOrder', function ($scope, $http) {
-        var user_id = '<%=userInfo._id%>';
+        var user_id = '<%=userInfo._id%>', username = '<%=userInfo.username%>';
 
         $scope.loadUserData = function () {
             $scope.userData = {};
@@ -232,6 +253,31 @@
                     });
                 }
             })(0);
+        };
+
+        $scope.processPayForm = function (isValid) {
+            if (isValid) {
+                angularHttpPost($http, '/user/login', { username: username, password: $scope.payFormData.password }, function (data) {
+                    if (data === 'success') {
+                        var orders = $scope.orderData;
+                        (function submitOrder(i) {
+                            if (i === orders.length) { // success
+                                console.log('success');
+                                $("a[href='#doneOrder']").tab('show');
+                                $("div.progress-bar", "div.tab-confirm-order").text('3.Done').css('width', '100%');
+                            } else {
+                                angularHttpPost($http, '/api/v1/order/' + $scope.orderData[i]._id + '/pay', {}, function (data) {
+                                    if (data === 'success') {
+                                        submitOrder(i + 1);
+                                    }
+                                });
+                            }
+                        })(0);
+                    } else {
+                        showErrorInfo('Payment password is wrong.');
+                    }
+                });
+            }
         };
 
     });

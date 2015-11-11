@@ -6,7 +6,6 @@
 var mongoose = require('mongoose'),
     shortid = require('shortid'),
     url = require('url'),
-    Db = require('./db/Db'),
     settings = require('./db/settings'),
     Schema = mongoose.Schema;
 
@@ -43,6 +42,7 @@ var AdminUser = mongoose.model("AdminUser", adminUser);
 AdminUser.business = {
 
     insert: function ( req, res ) {
+        var Db = require('./db/Db');
         AdminUser.findOne( { username: req.body.username }, function ( err, user ) {
             if ( user ) {
                 res.end('This user is existed.');
@@ -54,11 +54,13 @@ AdminUser.business = {
     },
 
     update: function ( _id, req, res ) {
+        var Db = require('./db/Db');
         req.body.password = Db.encrypt( req.body.password, settings.encrypt_key );
         Db.updateOneById( _id, AdminUser, req, res, req.session.adminUserInfo.username + ' update the ' + req.body.username + '\' info.' );
     },
 
     delete: function ( id, req, res ) {
+        var Db = require('./db/Db');
         if ( req.session.adminUserInfo._id === id ) {
             res.end('Cannot delete current logined administrator.');
         } else {

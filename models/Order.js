@@ -260,6 +260,7 @@ Order.business = {
                         // 从购物车中删除
                         (function rmCart(i) {
                             if (i === order.products.length) {
+                                res.end('success');
                                 return;
                             }
                             User.update({ _id: req.session.user._id }, { $pull: { cart: { _id: order.products[i]._id } } },function (err) {
@@ -282,11 +283,12 @@ Order.business = {
                     if (err) {
                         res.end('error');
                     } else {
-                        Order.findOne({ _id: id, 'user._id': user_id, state: 'shipping' }, function (err, order) {
+                        Order.findOne({ _id: id, 'shop.shop_owner_id': user_id, state: 'shipping' }, function (err, order) {
                             if (err) {
                                 console.log(err);
                                 res.end('error');
                             }
+                            // bug here
                             if (!order) {
                                 res.end('No the order here.');
                                 return;
@@ -315,7 +317,13 @@ Order.business = {
                 });
                 break;
             case 'confirm':
-                updateOrder({ _id: id, 'user._id': user_id, state: 'shipping' }, { state: 'confirm', confirmDate: now() });
+                updateOrder({ _id: id, 'user._id': user_id, state: 'shipping' }, { state: 'confirm', confirmDate: now() }, function (err) {
+                    if (err) {
+                        res.end('error');
+                    } else {
+                        res.end('success');
+                    }
+                });
                 break;
             case 'done':
                 updateOrder({ _id: id, 'user._id': user_id, state: 'confirm' }, { state: 'done', confirmDate: now() });

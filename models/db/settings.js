@@ -54,6 +54,13 @@ module.exports = {
 		'commission': new Array('commission', 'Commission Management')
 	},
 
+	// 销售管理模块
+	SALE_MANAGE: {
+		'order': new Array('order', 'Order Management'),
+		'sale_history': new Array('sale_history', 'Sale History'),
+		'income': new Array('income', 'Income')
+	},
+
 	// 目录
 	UPDATE_FOLDER: process.cwd() + '/public/upload/',
 	TEMPLATE_FOLDER: process.cwd() + '/views/web/temp/',

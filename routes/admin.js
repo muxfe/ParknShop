@@ -122,8 +122,16 @@ router.get( '/api/v1/current_commission', function (req, res, next) {
 });
 
 /* Sale Management */
-router.get( '', function (req, res, next) {
+router.get( '/manage/order', function (req, res, next) {
+	res.render('manage/order', AdminUtils.getPageInfo( req, res, settings.SALE_MANAGE['order'], '/admin/manage/order' ));
+});
 
+router.get( '/manage/sale_history', function (req, res, next) {
+	res.render('manage/sale_history', AdminUtils.getPageInfo( req, res, settings.SALE_MANAGE['sale_history'], '/admin/manage/sale_history' ));
+});
+
+router.get( '/manage/income', function (req, res, next) {
+	res.render('manage/income', AdminUtils.getPageInfo( req, res, settings.SALE_MANAGE['income'], '/admin/manage/income' ));
 });
 
 /******************************************************************************/

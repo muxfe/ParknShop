@@ -45,5 +45,25 @@ router.get( '/manage/order', function ( req, res, next ) {
     res.render( 'front/shop_owner/order', SiteUtils.getData4ShopOwner( req, res, 'Order Management' ) );
 });
 
+// category page
+router.get( '/manage/category', function ( req, res, next ) {
+    res.render( 'front/shop_owner/category', SiteUtils.getData4ShopOwner( req, res, 'Category Management' ) );
+});
+
+// income page
+router.get( '/manage/income', function ( req, res, next ) {
+    res.render( 'front/shop_owner/income', SiteUtils.getData4ShopOwner( req, res, 'Income Management' ) );
+});
+
+// sale_history page
+router.get( '/manage/sale_history', function ( req, res, next ) {
+    res.render( 'front/shop_owner/sale_history', SiteUtils.getData4ShopOwner( req, res, 'Sale History Management' ) );
+});
+
+// ad page
+router.get( '/manage/ad', function ( req, res, next ) {
+    res.render( 'front/shop_owner/ad', SiteUtils.getData4ShopOwner( req, res, 'Advertisement Management' ) );
+});
+
 
 module.exports = router;

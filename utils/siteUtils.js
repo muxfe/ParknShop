@@ -15,19 +15,19 @@
      Message = require('../models/Message');
 
 
-var _CustomerCategory = [
-    { name: 'Home', url: '/user/manage', childs: [] },
-    { name: 'Account', url: '#', childs: [
-        { name: 'Change Password', url: '/user/manage/profile#password', childs: [] },
-        { name: 'Change Profile', url: '/user/manage/profile#profile', childs: [] },
-        { name: 'Message Config', url: '/user/manage/profile#message', childs: [] }
-    ]},
-    { name: 'Message', url: '/user/manage/message', childs: [] },
-];
-
-var _ShopOwnerCategory = [
-    { name: 'Home', url: '/shop/manage', childs: [] }
-];
+// var _CustomerCategory = [
+//     { name: 'Home', url: '/user/manage', childs: [] },
+//     { name: 'Account', url: '#', childs: [
+//         { name: 'Change Password', url: '/user/manage/profile#password', childs: [] },
+//         { name: 'Change Profile', url: '/user/manage/profile#profile', childs: [] },
+//         { name: 'Message Config', url: '/user/manage/profile#message', childs: [] }
+//     ]},
+//     { name: 'Message', url: '/user/manage/message', childs: [] },
+// ];
+//
+// var _ShopOwnerCategory = [
+//     { name: 'Home', url: '/shop/manage', childs: [] }
+// ];
 
 var _IndexCategory = [
     { name: 'Home', url: '/', childs: [] },
@@ -126,7 +126,7 @@ var SiteUtils = {
         return {
             siteConfig: SiteUtils.getSiteInfo( ),
             title: title,
-            category: _CustomerCategory,
+            category: _IndexCategory,
             userInfo: req.session.user,
             logined: req.session.logined,
             home: '/user/manage/',
@@ -138,7 +138,7 @@ var SiteUtils = {
         return {
             siteConfig: SiteUtils.getSiteInfo( ),
             title: title,
-            category: _ShopOwnerCategory,
+            category: _IndexCategory,
             userInfo: req.session.user,
             logined: req.session.logined,
             home: '/shop/manage/',

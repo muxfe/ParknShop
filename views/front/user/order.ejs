@@ -37,11 +37,17 @@
             </div>
         </div>
         <div class="box orders">
-            <div class="panel" ng-repeat="orderItem in data" ng-class="{ 'done': 'panel-success', 'pay': 'panel-info', 'submit': 'panel-default', 'shipping': 'panel-warning' }[orderItem.state]">
-                <div class="panel-heading">
-                    <span>[{{orderItem.date | date: 'MM/dd/yyyy'}}] Order: {{orderItem._id}}</span>
-                    <span style="margin-left: 200px;">Shop: <a href="/shop/{{shopData[orderItem.shop._id]._id}}">{{shopData[orderItem.shop._id].name}}</a></span>
-                    <span class="pull-right">State: {{orderItem.state}}</span>
+            <div class="panel" ng-repeat="orderItem in data" ng-class="{ 'done': 'panel-success', 'pay': 'panel-info', 'submit': 'panel-default', 'shipping': 'panel-warning', 'confirm': 'panel-success' }[orderItem.state]">
+                <div class="panel-heading col-xs-12">
+                    <div class="col-xs-4">
+                        <span>[{{orderItem.date | date: 'MM/dd/yyyy'}}] Order: {{orderItem._id}}</span>
+                    </div>
+                    <div class="col-xs-4">
+                        <span style="">Shop: <a href="/shop/{{shopData[orderItem.shop._id]._id}}">{{shopData[orderItem.shop._id].name}}</a></span>
+                    </div>
+                    <div class="col-xs-4">
+                        <a class="pull-right {{orderItem._id}}" href="#" data-toggle="popover">State: {{orderItem.state}}</a>
+                    </div>
                 </div>
                 <div class="panel-body">
                     <div class="box-body table-responsive no-padding">
@@ -89,10 +95,26 @@
         $("div.input-daterange input").each(function () {
             $(this).datepicker({format: 'mm/dd/yyyy'});
         });
+
+        // $("a.state-popover").popover({
+        //     trigger: 'click',
+        //     placement: 'bottom',
+        //     title: 'title',
+        //     html: true,
+        //     content: 'xxxxxx'
+        // });
     });
 
     App.controller("MyOrder", function ($scope, $http) {
         var url = '/api/v1/order?role=customer';
+        var nState = 5,
+            stateMap = {
+                'submit': 1,
+                'pay': 2,
+                'shipping': 3,
+                'confirm': 4,
+                'done': 5
+            };
 
         initPage($scope, $http, url, true, loadProducts);
         $scope.load = function () {
@@ -112,6 +134,38 @@
                             $http.get('/api/v1/product/' + product._id).success(function (result) {
                                 if (typeof result === 'object') {
                                     $.extend($scope.data[i].products[j], result);
+
+                                    // status popover
+                                    var order = $scope.data[i],
+                                        percentage = (stateMap[order.state] / nState) * 100,
+                                        html = '<div class="progress"><div class="progress-bar progress-bar-success active" aria-valuenow="' + percentage + '" aria-valuemin="0" aria-valuemax="100" role="progressbar" style="width: ' + percentage + '%;">' + Math.round(percentage) + '%</div></div>';
+
+                                    function format(date) {
+                                        return new Date(date).toString().substring(4, 24);
+                                    }
+                                    if (order.submitDate) {
+                                        html += '<p>Submit Date: </p><p>' + format(order.submitDate) + '</p>';
+                                    }
+                                    if (order.payDate) {
+                                        html += '<p>Pay Date: </p><p>' + format(order.payDate) + '</p>';
+                                    }
+                                    if (order.shippingDate) {
+                                        html += '<p>Shipping Date: </p><p>' + format(order.shippingDate) + '</p>';
+                                    }
+                                    if (order.confirmDate) {
+                                        html += '<p>Confirm Date: </p><p>' + format(order.confirmDate) + '</p>';
+                                    }
+                                    if (order.doneDate) {
+                                        html += '<p>Done Date: </p><p>' + format(order.doneDate) + '</p>';
+                                    }
+
+                                    $("a." + order._id).popover({
+                                        trigger: 'hover',
+                                        title: 'Progress Date',
+                                        content: html,
+                                        html: 'true',
+                                        placement: 'left'
+                                    });
                                 } else {
                                     showErrorInfo('get product(' + $scope.data[i].products[j]._id + ') error');
                                 }
@@ -160,7 +214,7 @@
         $scope.confirmOrder = function (order_id) {
             if (order_id) {
                 confirmModal($scope, 'Are you sure confirm it?', function () {
-                    angularHttpPost($http, '/api/v1/order/' + order_id + '/confirm', function (result) {
+                    angularHttpPost($http, '/api/v1/order/' + order_id + '/confirm', {}, function (result) {
                         if (result === 'success') {
                             $scope.load();
                         }
@@ -171,7 +225,7 @@
 
         $scope.commentOrder = function (order_id) {
             if (order_id) {
-                angularHttpPost($http, '/api/v1/order/' + order_id + '/done', function (result) {
+                angularHttpPost($http, '/api/v1/order/' + order_id + '/done', {}, function (result) {
                     if (result === 'success') {
                         $scope.load();
                     }

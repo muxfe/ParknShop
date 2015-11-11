@@ -55,5 +55,9 @@ router.get('/search', function (req, res, next) {
 	res.render('front/search', SiteUtils.getData4Search(req, res, stype, keyword, 'Search Result'));
 });
 
+router.get('/category/:cate_name?', function (req, res, next) {
+	res.render('/front/category', SiteUtils.getPageInfos('Category'));
+});
+
 
 module.exports = router;
