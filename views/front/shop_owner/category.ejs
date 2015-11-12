@@ -1,14 +1,137 @@
-<div class="container">
+<div class="container" ng-controller="shopCategory">
     <div class="col-xs-2">
         <% include sidebar.ejs %>
     </div>
     <div class="col-xs-10">
-
+        <div class="panel">
+            <a href="#addCategory" role="button" class="btn btn-primary btn-sm" data-toggle="modal"><span class="fa fa-plus-square" aria-hidden="true">&nbsp;</span>New Category</a>
+			<input type="hidden" id="targetIds"/>
+			<button class="btn btn-danger btn-sm" ng-click="deleteItems()" role="button"><span class="fa fa-fw fa-trash-o" aria-hidden="true">&nbsp;</span>Delete</button>
+		</div>
+        <!-- Category Table -->
+		<div class="box">
+			<div class="box-body table-responsive no-padding" >
+				<table class="table table-hover">
+					<tr>
+						<th><input type="checkbox" class="mini" id="selectAll"/></th>
+						<th>SortId</th>
+						<th>Name</th>
+						<th>Url</th>
+						<th>State</th>
+						<th>Description</th>
+						<th>Date</th>
+						<th>Operation</th>
+					</tr>
+					<tr class="datalist" ng-repeat="item in data">
+						<td><input type="checkbox" name="listItem" class="mini" value="{{item._id}}" ng-click="getNewIds()"/></td>
+						<td class=" ">{{item.sortId}}</td>
+						<td class=" " ng-show="item.parentId === 'top'">{{item.name}}</td>
+						<td class=" " ng-show="item.parentId !== 'top'">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-location-arrow"></i>&nbsp;{{item.name}}</td>
+						<td class=" ">{{item.url}}</td>
+						<td class=" ">{{item.state}}</td>
+						<td class=" ">{{item.description}}</td>
+						<td class=" ">{{item.date | date : "yy-MM-dd"}}</td>
+						<td class=" ">
+							<button class="btn btn-primary btn-xs" data-whatever="{{item._id}}" data-toggle="modal" data-target="#addCategory"><span class="fa fa-fw fa-edit" aria-hidden="true"></span>Edit</button>&nbsp;
+							<button class="btn btn-danger btn-xs" ng-click="deleteItems(item._id)"><span class="fa fa-fw fa-trash-o" aria-hidden="true"></span>Delete</button>
+						</td>
+					</tr>
+				</table>
+			</div><!-- /.box-body -->
+		</div><!-- /.box -->
     </div>
+    <!--添加目录模态窗口-->
+    <div class="modal fade" id="addCategory">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">New Category</h4>
+                </div>
+                <div class="modal-body">
+                    <form role="form" class="form-horizontal" name="myForm" ng-submit="processForm(myForm.$valid)" novalidate>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Parent</label>
+                            <div class="col-sm-4">
+								<select class="form-control" id="select-parentId" name="parentId" ng-model="formData.parentId">
+									<option value="top">Top</option>
+									<option value="{{item._id}}" ng-repeat="item in data" ng-show="item.parentId === 'top'">{{item.name}}</option>
+								</select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Name</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" name="name" ng-model="formData.name" ng-minlength="1" ng-maxlength="30" required/>
+                                <label for="inputError" class="control-label text-danger" ng-show="myForm.name.$invalid && !myForm.name.$pristine"><i class="fa fa-times-circle-o"></i> 1-30 letters</label>
+                            </div>
+                        </div>
+						<div class="form-group">
+							<label class="control-label col-sm-4">SortId</label>
+							<div class="col-sm-4">
+								<input type="text" class="form-control" name="sortId" ng-model="formData.sortId" ng-minlength="1" ng-maxlength="3" required/>
+								<label for="inputError" class="control-label text-danger" ng-show="myForm.sortId.$invalid && !myForm.sortId.$pristine"><i class="fa fa-times-circle-o"></i> 1-100 number</label>
+							</div>
+						</div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">isHide</label>
+                            <div class="radio col-sm-4">
+                                <label>
+                                    <input type="radio" class="mini" name="state" value="1" ng-model="formData.state" checked/>Show&nbsp;
+                                </label>
+                                <label>
+                                    <input type="radio" class="mini" name="state" value="0" ng-model="formData.state"/>Hide
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group" id="div-set-url">
+                            <label class="control-label col-sm-4">URL</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="url" ng-model="formData.url" placeholder="relative url-path" ng-minlength="2" ng-maxlength="30" ng-pattern="/^\S+[a-z_A-Z]$/" required/>
+                                <label for="inputError" class="control-label text-danger" ng-show="myForm.url.$invalid && !myForm.url.$pristine"><i class="fa fa-times-circle-o"></i> 2-30 letters</label>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Keywords</label>
+                            <div class="col-sm-6">
+                                <textarea name="keywords" cols="30" class="form-control" rows="2"  ng-model="formData.keywords" ng-maxlength="80"></textarea>
+                                <label class="control-label text-info" ng-show="true">less than 80 letters, split with comma</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Description</label>
+                            <div class="col-sm-7">
+                                <textarea name="description" cols="30" class="form-control" rows="2"  ng-model="formData.description" ng-minlength="0" ng-maxlength="100" required></textarea>
+                                <label for="inputError" class="control-label text-danger" ng-show="myForm.description.$invalid && !myForm.description.$pristine"><i class="fa fa-times-circle-o"></i> less than 100 letters</label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary" ng-disabled="myForm.$invalid">Submit</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 </div>
 
 <script>
     $( function () {
+
+    });
+
+    App.controller('shopCategory', function ($scope, $http) {
+        var url = '/api/v1/category';
+        $scope.formData = { };
+        $scope.formData.state = true;
+        $scope.formData.parentId = 'top';
+
+        initPage($scope, $http, url, false);
+        $scope.load = function () {
+            loadData($scope, $http, url);
+		};
 
     });
 </script>
