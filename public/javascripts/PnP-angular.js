@@ -204,7 +204,7 @@ function angularHttp( $http, isValid, method, url, formData, callback ) {
                     $( this ).modal( "hide" );
                 });
                 if ( data == 'success' ) {
-                    callback( data );
+                    callback && callback( data );
                 }else{
                     showErrorInfo( data );
                 }

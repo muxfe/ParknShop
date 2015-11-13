@@ -131,11 +131,6 @@
         $( 'div.fileinput' ).on( 'change.bs.fileinput', function () {
             // console.log('file selected');
             var logoDUS = $( this ).find( "div.fileinput-preview img").attr( 'src' );
-            if ( logoDUS.length > $scope.logoLimit ) {
-                alert( 'Selected logo image must be less than 20KB.' );
-                $( this ).fileinput( 'clear' );
-                return;
-            }
             $scope.shopFormData.logo = logoDUS;
         });
         $( 'div.fileinput' ).on( 'clear.bs.fileinput', function () {

@@ -24,6 +24,8 @@ var Category = require('../models/Category');
 var SystemLog = require('../models/SystemLog');
 // 手续费对象
 var Commission = require('../models/Commission');
+// 广告对象
+var Ad = require('../models/Ad');
 
 // 管理员工具
 var AdminUtils = require('../utils/adminUtils');

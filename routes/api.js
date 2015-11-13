@@ -379,4 +379,60 @@ router.delete('/v1/category/:cate_id', function (req, res, next) {
 	}
 });
 
+/* Ad Api */
+/*
+ * GET ads
+ * @param: ad_id
+ */
+router.get('/v1/ad/:ad_id?', function (req, res, next) {
+	var ad_id = req.params.ad_id,
+		query = url.parse(req.url, true).query
+		shop = query.shop || '';
+
+	if (ad_id) {
+		Ad.business.findOne(ad_id, req, res);
+	} else {
+		Ad.business.query(req, res, shop);
+	}
+});
+
+/*
+ * PUT ads
+ * @body: title, content, url, logo, valid_date, state
+ */
+router.put('/v1/ad', function (req, res, next) {
+	if (Auth.isShopOwner(req)) {
+		Ad.business.insertByUser(req, res);
+	} else {
+		res.end('Permission Denied.');
+	}
+});
+
+/*
+ * POST ads
+ * @param: ad_id
+ * @body: title, content, url, logo, valid_date, state
+ */
+router.post('/v1/ad/:ad_id', function (req, res, next) {
+	var ad_id = req.params.ad_id;
+	if (Auth.isShopOwner(req)) {
+		Ad.business.updateByUser(ad_id, req, res);
+	} else {
+		res.end('Permission Denied.');
+	}
+});
+
+/*
+ * DELETE ads
+ * @param: ad_id
+ */
+router.put('/v1/ad/:ad_id', function (req, res, next) {
+	var ad_id = req.params.ad_id;
+	if (Auth.isShopOwner(req)) {
+		Ad.business.delete(ad_id, req, res);
+	} else {
+		res.end('Permission Denied.');
+	}
+});
+
 module.exports = router;

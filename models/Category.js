@@ -59,13 +59,10 @@ Category.business = {
 
     query: function ( req, res, shop ) {
         var query = url.parse( req.url, true ).query,
-            keyword = query.searchKey,
+            keyword = query.searchKey || '',
             re = new RegExp( keyword, 'i' ),
             key = [ ],
-            type = 'system';
-        if (shop) {
-            type = "shop";
-        }
+            type = shop ? 'shop' : 'system';
         Category.find( {
                 type: type,
                 'shop.shop_owner_id': shop ? req.session.user._id : null,

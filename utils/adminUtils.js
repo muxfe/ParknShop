@@ -148,7 +148,9 @@ var AdminUtils = {
                 break;
             case 'ad':
                 ret.obj = Ad;
-                ret.key.push( { 'name': { $regex: re } } );
+                ret.key.push( { 'title': { $regex: re } } );
+                ret.key.push( { 'content': { $regex: re } } );
+                ret.key.push( { 'url': { $regex: re } } );
                 break;
             case 'category':
                 ret.obj = Category;
