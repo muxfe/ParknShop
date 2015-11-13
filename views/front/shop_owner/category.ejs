@@ -1,6 +1,7 @@
 <div class="container" ng-controller="shopCategory">
+    <% include ../public/modal %>
     <div class="col-xs-2">
-        <% include sidebar.ejs %>
+        <% include sidebar %>
     </div>
     <div class="col-xs-10">
         <div class="panel">
@@ -50,15 +51,6 @@
                 </div>
                 <div class="modal-body">
                     <form role="form" class="form-horizontal" name="myForm" ng-submit="processForm(myForm.$valid)" novalidate>
-                        <div class="form-group">
-                            <label class="control-label col-sm-4">Parent</label>
-                            <div class="col-sm-4">
-								<select class="form-control" id="select-parentId" name="parentId" ng-model="formData.parentId">
-									<option value="top">Top</option>
-									<option value="{{item._id}}" ng-repeat="item in data" ng-show="item.parentId === 'top'">{{item.name}}</option>
-								</select>
-                            </div>
-                        </div>
                         <div class="form-group">
                             <label class="control-label col-sm-4">Name</label>
                             <div class="col-sm-4">
@@ -123,15 +115,108 @@
     });
 
     App.controller('shopCategory', function ($scope, $http) {
-        var url = '/api/v1/category';
+        var url = '/api/v1/category',
+            getUrl = url + '?shop=1';
         $scope.formData = { };
         $scope.formData.state = true;
-        $scope.formData.parentId = 'top';
 
-        initPage($scope, $http, url, false);
+        function callback(result) {
+            if (typeof result === 'object') {
+                $scope.data = $scope.data2tree(result);
+            }
+        }
+
+        initPage($scope, $http, getUrl, false, callback);
         $scope.load = function () {
-            loadData($scope, $http, url);
+            loadData($scope, $http, getUrl, callback);
 		};
 
+        $scope.load();
+
+        initDelete($scope, $http, '/api/v1/category', 'Are you sure to delete the category?');
+
+
+        // 修改类别
+        $( '#addCategory' ).on( 'show.bs.modal', function ( event ) {
+            var obj = $( event.relatedTarget );
+            var editId = obj.data( 'whatever' );
+            var modalTitle = $( this ).find( '.modal-title' );
+
+ 			// 如果不为空则为编辑状态
+            if ( editId ) {
+                modalTitle.text( "Edit Category" );
+                $http.get( "/api/v1/category/" + editId ).success( function ( result ) {
+                    $scope.formData = result;
+                    $scope.targetID = editId;
+                });
+            } else {
+                modalTitle.text("New Category");
+				$scope.formData = { };
+				$scope.formData.state = true;
+            }
+        }).on( 'hidden.bs.modal', function ( e ) {
+            // 清空数据
+            $scope.formData = { };
+			$scope.formData.state = true;
+            $scope.targetID = "";
+            $( this ).find( "input" ).val( "" );
+        });
+
+        // 添加类别
+        $scope.processForm = function ( isValid ) {
+			var method = "PUT",
+                optUrl = url;
+            if ( $scope.targetID ) {
+                optUrl = url + '/' + $scope.targetID;
+				method = "POST";
+            }
+
+            angularHttp( $http, method, optUrl, $scope.formData, function ( data ) {
+				if ( data === 'success' ) {
+					$scope.load();
+				}
+            });
+        };
+
+        $scope.data2tree = function ( data ) {
+			var d = { }, // 生成树的中间结果，利用了对象属性的哈希特性
+				da = [ ], // 返回的结果数组，内容为Category对象
+				keys = [ ]; // 为了保证SortId的有序，先保存所有已排序Top目录的_id，后面用此_id遍历对象属性
+			for ( var i = 0; i < data.length; i++ ) {
+				if ( data[i].parentId === 'top' ) {
+					if ( typeof d[data[i]._id] === 'undefined' ) {
+						d[data[i]._id] = { };
+						if ( keys.join(',').indexOf( data[i]._id ) < 0 ) {
+							keys.push( data[i]._id );
+						}
+					}
+					d[data[i]._id].me = data[i];
+				} else {
+					if ( typeof d[data[i].parentId] === 'undefined' ) {
+						d[data[i].parentId] = { };
+						if ( keys.join(',').indexOf( data[i].parentId ) < 0 ) {
+							keys.push( data[i].parentId );
+						}
+					}
+					if ( typeof d[data[i].parentId].children === 'undefined' ) {
+						d[data[i].parentId].children = [];
+					}
+					d[data[i].parentId].children.push(data[i]);
+				}
+			}
+			// console.log(d);
+			for ( var j = 0; j < keys.length; j++ ) {
+				if ( typeof d[keys[j]].me !== 'undefined' ) {
+					da.push(d[keys[j]].me); // key[j]为parentId为'top'的Category的_id值
+				}
+				if ( typeof d[keys[j]].children !== 'undefined' ) {
+					for ( var i = 0; i < d[keys[j]].children.length; i++ ) {
+						da.push(d[keys[j]].children[i]); // 依次将子目录加在父目录后面
+					}
+				}
+			}
+			// console.log(da);
+			return da;
+		};
     });
 </script>

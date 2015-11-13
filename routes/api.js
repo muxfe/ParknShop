@@ -316,17 +316,28 @@ router.delete('/v1/order/:order_id', function (req, res, next) {
  * GET Category
  * @query: shop_id
  */
-router.get('/v1/category', function (req, res, next) {
-	var query = url.parse(req.url, true).query;
+router.get('/v1/category/:cate_id?', function (req, res, next) {
+	var cate_id = req.params.cate_id,
+		query = url.parse(req.url, true).query;
 		shop_id = query.shop_id,
+		shop = query.shop,
 		condition = {};
-	if (shop_id) {
-		condition.shop_id = shop_id;
-		condition.type = 'shop';
+
+	if (cate_id) {
+		Category.business.findOne(cate_id, req, res);
 	} else {
-		condition.type = 'system';
+		if (shop) {
+			Category.business.query(req, res, shop);
+		} else {
+			if (shop_id) {
+				condition['shop._id'] = shop_id;
+				condition.type = 'shop';
+			} else {
+				condition.type = 'system';
+			}
+			Category.business.find(req, res, condition);
+		}
 	}
-	Category.business.find(req, res, condition);
 });
 
 /*
@@ -336,19 +347,8 @@ router.get('/v1/category', function (req, res, next) {
 router.post('/v1/category/:cate_id', function (req, res, next) {
 	var cate_id = req.params.cate_id;
 
-	if (Auth.isShopOwner(req) && shop_id) {
-		Shop.findOne({ 'shop_owner._id': req.session.user._id }, function (err, shop) { // 验证店主
-			if (err) {
-				console.log(err);
-				res.end('error');
-				return;
-			}
-			if (shop) {
-				Category.business.update(cate_id, req, res);
-			} else {
-				res.end('You dont have a shop.');
-			}
-		});
+	if (Auth.isShopOwner(req)) {
+		Category.business.updateByUser(cate_id, req, res);
 	} else {
 		res.end('Permission Denied.');
 	}
@@ -358,19 +358,8 @@ router.post('/v1/category/:cate_id', function (req, res, next) {
  * PUT Category
  */
 router.put('/v1/category', function (req, res, next) {
-	if (Auth.isShopOwner(req) && shop_id) {
-		Shop.findOne({ 'shop_owner._id': req.session.user._id }, function (err, shop) { // 验证店主
-			if (err) {
-				console.log(err);
-				res.end('error');
-				return;
-			}
-			if (shop) {
-				Category.business.insert(req, res);
-			} else {
-				res.end('You dont have a shop.');
-			}
-		});
+	if (Auth.isShopOwner(req)) {
+		Category.business.insertByUser(req, res);
 	} else {
 		res.end('Permission Denied.');
 	}
@@ -384,18 +373,7 @@ router.delete('/v1/category/:cate_id', function (req, res, next) {
 	var cate_id = req.params.cate_id;
 
 	if (Auth.isShopOwner(req)) {
-		Shop.findOne({ 'shop_owner._id': req.session.user._id }, function (err, shop) { // 验证店主
-			if (err) {
-				console.log(err);
-				res.end('error');
-				return;
-			}
-			if (shop) {
-				Category.business.delete(cate_id, req, res);
-			} else {
-				res.end('You dont have a shop.');
-			}
-		});
+		Category.business.delete(cate_id, req, res);
 	} else {
 		res.end('Permission Denied.');
 	}

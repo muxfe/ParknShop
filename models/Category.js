@@ -46,27 +46,29 @@ var category = new Schema({
         default: 'shop'
     },
     // if type === 'shop'
-    shop_id: String
+    shop: {
+        _id: String,
+        shop_owner_id: String,
+        shop_owner_username: String
+    }
 });
 
 var Category = mongoose.model('Category', category);
 
 Category.business = {
 
-    query: function ( req, res, shop_id ) {
+    query: function ( req, res, shop ) {
         var query = url.parse( req.url, true ).query,
             keyword = query.searchKey,
             re = new RegExp( keyword, 'i' ),
             key = [ ],
             type = 'system';
-        if (shop_id) {
+        if (shop) {
             type = "shop";
-        } else {
-            shop_id = null;
         }
         Category.find( {
                 type: type,
-                shop_id: shop_id,
+                'shop.shop_owner_id': shop ? req.session.user._id : null,
                 $or: [
                     { name: { $regex: re } },
                     { description: { $regex: re } },
@@ -86,48 +88,77 @@ Category.business = {
 
     delete: function ( id, req, res ) {
         var Db = require('./db/Db');
-        var cursor = Category.find( { parentId: id }, function ( err, result ) {
+        Category.find( { parentId: id }, function ( err, result ) {
             if ( err ) {
                 console.log( err );
                 res.end( 'error' );
                 return;
             }
-            if ( result.length > 0 ) {
+            if ( result && result.length > 0 ) {
                 res.end('Cannot delete this category that has childs.Please delete these first.');
             } else {
-                var username = '';
                 if (Auth.isAdminLogin(req)) {
-                    username = req.session.adminUserInfo.username;
+                    Db.delete( id, Category, req, res, req.session.adminUserInfo.username + ' delete the category(' + id + ')');
                 } else if (Auth.isShopOwner(req)) {
-                    username = req.session.user.username;
+                    Category.remove({ _id: id, 'shop.shop_owner_id': req.session.user._id }, function (err) {
+                        if (err) {
+                            console.log(err);
+                            res.end('error');
+                        } else {
+                            res.end('success');
+                        }
+                    });
                 }
-                Db.delete( id, Category, req, res, username + ' delete the category(' + id + ')');
             }
         });
     },
 
     insert: function ( req, res ) {
         var Db = require('./db/Db');
-        var username = '';
+        var username = req.session.adminUserInfo.username;
         req.body.keywords = req.body.keywords.split(';');
-        if (req.body.shop_id) {
-            username = req.session.user.username;
-        } else {
-            username = req.session.adminUserInfo.username;
-            req.body.type = 'system';
-        }
+        req.body.type = 'system';
         Db.addOne( Category, req, res, username + ' insert a category.' );
+    },
+
+    insertByUser: function (req, res) {
+        var Db = require('./db/Db');
+        Shop.findOne({ 'shop_owner._id': req.session.user._id }, function (err, shop) { // 验证店主
+			if (err) {
+				console.log(err);
+				res.end('error');
+				return;
+			}
+			if (shop) {
+				req.body.shop = {
+                    _id: shop._id,
+                    shop_owner_id: shop.shop_owner._id,
+                    shop_owner_username: shop.shop_owner._username
+                }
+                req.body.type = 'shop';
+                req.body.keywords = req.body.keywords.split(';');
+                Db.addOne(Category, req, res);
+			} else {
+				res.end('You dont have a shop.');
+			}
+		});
     },
 
     update: function ( id, req, res ) {
         var Db = require('./db/Db');
-        var username = '';
-        if (Auth.isAdminLogin(req)) {
-            username = req.session.adminUserInfo.username;
-        } else if (Auth.isShopOwner(req)) {
-            username = req.session.user.username;
-        }
+        var username = req.session.adminUserInfo.username;
         Db.updateOneById( id, Category, req, res, username + ' update the category(' + id + ')' );
+    },
+
+    updateByUser: function (id, req, res) {
+        Category.update({ _id: id, 'shop.shop_owner_id': req.session.user._id }, { $set: req.body }, function (err) {
+            if (err) {
+                console.log(err);
+                res.end('error');
+            } else {
+                res.end('success');
+            }
+        })
     },
 
     find: function ( req, res, condition ) {
@@ -142,6 +173,17 @@ Category.business = {
                 }
                 res.json(SiteUtils.data2tree(data));
             });
+    },
+
+    findOne: function ( id, req, res ) {
+        Category.findOne({ _id: id }, function (err, result) {
+            if (err) {
+                console.log(err);
+                res.end('error');
+            } else {
+                res.json(result);
+            }
+        });
     }
 
 };
