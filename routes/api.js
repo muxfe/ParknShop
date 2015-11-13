@@ -20,6 +20,7 @@ var Shop = require('../models/Shop'),
     Category = require('../models/Category'),
     Order = require('../models/Order'),
     Ad = require('../models/Ad'),
+	Comment = require('../models/Comment'),
 	Commission = require('../models/Commission');
 // 工具类
 var	SiteUtils = require('../utils/SiteUtils'),
@@ -385,14 +386,12 @@ router.delete('/v1/category/:cate_id', function (req, res, next) {
  * @param: ad_id
  */
 router.get('/v1/ad/:ad_id?', function (req, res, next) {
-	var ad_id = req.params.ad_id,
-		query = url.parse(req.url, true).query
-		shop = query.shop || '';
+	var ad_id = req.params.ad_id;
 
 	if (ad_id) {
 		Ad.business.findOne(ad_id, req, res);
 	} else {
-		Ad.business.query(req, res, shop);
+		Ad.business.query(req, res);
 	}
 });
 

@@ -1,0 +1,243 @@
+<div class="row" ng-controller="adsList">
+	<% include public/modal %>
+    <div class="col-xs-12">
+        <br/>
+        <div class="panel">
+            <a href="#addAd" role="button" class="btn btn-primary btn-sm" data-toggle="modal"><span class="fa fa-plus-square" aria-hidden="true">&nbsp;</span>New Ad</a>
+			<% include public/tableTool %>
+			<div class="pull-right">
+				<% include public/searchBox %>
+			</div>
+        </div>
+        <div class="box">
+            <div class="box-body table-responsive no-padding">
+                <table class="table table-hover">
+					<tr>
+						<th><input type="checkbox" class="mini" id="selectAll"/></th>
+						<th>ID</th>
+                        <th>SortId</th>
+                        <th>Title</th>
+                        <th>Content</th>
+                        <th>Url</th>
+						<th>Price</th>
+						<th>State</th>
+                        <th>Date</th>
+                        <th>Valid Date</th>
+                        <th>Operation</th>
+					</tr>
+					<tr class="datalist" ng-repeat="item in data">
+						<td><input type="checkbox" name="listItem" class="mini" value="{{item._id}}" ng-click="getNewIds()"/></td>
+						<td class=" ">{{item._id}}</td>
+						<td class=" ">{{item.sortId}}</td>
+						<td class=" ">{{item.title}}</td>
+						<td class=" ">{{item.content}}</td>
+						<td class=" ">{{item.url}}</td>
+						<td class="text-danger">{{item.price | currency: '$'}}</td>
+						<td class=" ">{{item.state}}</td>
+						<td class=" ">{{item.date | date : "MM/dd/yy"}}</td>
+						<td class=" ">
+							Start: {{item.startDate | date : "MM/dd/yy"}} <br/>
+							End: {{item.endDate | date : "MM/dd/yy"}}
+						</td>
+						<td class=" ">
+							<button class="btn btn-primary btn-xs" data-whatever="{{item._id}}" data-toggle="modal" data-target="#addAd"><span class="fa fa-fw fa-edit" aria-hidden="true"></span>Edit</button>&nbsp;
+							<button class="btn btn-danger btn-xs" ng-click="delOneItem(item._id)"><span class="fa fa-fw fa-trash-o" aria-hidden="true"></span>Delete</button>
+						</td>
+					</tr>
+                </table>
+            </div><!-- /.box-body -->
+            <div class="box-footer">
+                <!--分页-->
+                <% include public/pagination %>
+            </div>
+            <div class="overlay hide" id="dataLoading">
+                <i class="fa fa-refresh fa-spin"></i>
+            </div>
+        </div><!-- /.box -->
+    </div>
+	<!--添加广告模态窗口-->
+	<div class="modal fade" id="addAd">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">New Ad</h4>
+				</div>
+				<div class="modal-body">
+					<form role="form" class="form-horizontal" name="myForm" ng-submit="processForm(myForm.$valid)" novalidate>
+						<div class="form-group">
+							<label class="control-label col-sm-4">Title</label>
+							<div class="col-sm-4">
+								<input type="text" class="form-control" name="name" ng-model="formData.title" ng-minlength="1" ng-maxlength="50" required/>
+								<label for="inputError" class="control-label text-danger" ng-show="myForm.title.$invalid && !myForm.title.$pristine"><i class="fa fa-times-circle-o"></i> 1-50 letters</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-4">SortId</label>
+							<div class="col-sm-4">
+								<input type="text" class="form-control" name="sortId" ng-model="formData.sortId" ng-minlength="1" ng-maxlength="3" ng-pattern="/[0-9]{1,100}/" required/>
+								<label for="inputError" class="control-label text-danger" ng-show="myForm.sortId.$invalid && !myForm.sortId.$pristine"><i class="fa fa-times-circle-o"></i> 1-100 number</label>
+							</div>
+						</div>
+						<div class="form-group">
+                            <label class="control-label col-sm-4"><span class="text-danger">*</span> Price</label>
+                            <div class="col-sm-3">
+                                <div class="input-group">
+                                    <div class="input-group-addon">$</div>
+                                    <input type="text" class="form-control input" name="price" ng-model="formData.price" ng-minlength="1" ng-maxlength="12" ng-pattern="/^[1-9]+[\.]?[0-9]*$/" placeholder="1-12 numbers and point" required/>
+                                </div>
+                                <label for="inputError" class="control-label text-danger" ng-show="myForm.price.$invalid && !myForm.price.$pristine"><i class="fa fa-times-circle-o"></i> 1-12 numbers, point allowed.</label>
+                            </div>
+                        </div>
+						<div class="form-group">
+							<label class="control-label col-sm-4">isHide</label>
+							<div class="radio col-sm-4">
+								<label>
+									<input type="radio" class="mini" name="state" value="1" ng-model="formData.state" checked/>Show&nbsp;
+								</label>
+								<label>
+									<input type="radio" class="mini" name="state" value="0" ng-model="formData.state"/>Hide
+								</label>
+							</div>
+						</div>
+						<div class="form-group" id="div-set-url">
+							<label class="control-label col-sm-4">URL</label>
+							<div class="col-sm-6">
+								<input type="text" class="form-control" name="url" ng-model="formData.url" placeholder="advertisement link" ng-minlength="2" ng-maxlength="30" required/>
+								<label for="inputError" class="control-label text-danger" ng-show="myForm.url.$invalid && !myForm.url.$pristine"><i class="fa fa-times-circle-o"></i> 2-30 letters</label>
+
+							</div>
+						</div>
+						<div class="form-group">
+			                <label for="" class="control-label col-sm-4">Valid Date</label>
+			                <div class="input-group input-daterange col-sm-4" style="padding-left:15px;">
+			                    <input type="text" class="form-control startDate" name="startDate" ng-model="formData.startDate" style="width:100px;" required/>
+			                    <span class="input-group-addon">to</span>
+			                    <input type="text" class="form-control endDate" name="endDate" ng-model="formData.endDate" style="width:100px;" required/>
+			                </div>
+			            </div>
+						<div class="form-group">
+		                    <label for="" class="col-sm-4 control-label">Logo</label>
+		                    <div class="fileinput fileinput-new col-sm-6" data-provides="fileinput">
+		                        <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
+		                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTAiIGhlaWdodD0iMTQwIj48cmVjdCB3aWR0aD0iMTkwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9Ijk1IiB5PSI3MCIgc3R5bGU9ImZpbGw6I2FhYTtmb250LXdlaWdodDpib2xkO2ZvbnQtc2l6ZToxMnB4O2ZvbnQtZmFtaWx5OkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmO2RvbWluYW50LWJhc2VsaW5lOmNlbnRyYWwiPjE5MHgxNDA8L3RleHQ+PC9zdmc+" alt="Your Shop Logo (<5KB)">
+		                        </div>
+		                        <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
+		                        <div>
+		                            <span class="btn btn-default btn-file">
+		                                <span class="fileinput-new">Select Logo</span>
+		                                <span class="fileinput-exists">Change</span>
+		                                <input type="file" />
+		                           </span>
+		                            <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+		                        </div>
+		                    </div>
+		                </div>
+						<div class="form-group hide">
+							<label for="" class="col-sm-4 control-label">Uploaded Logo</label>
+							<div class="col-sm-6"><img id="uploaded" src="" class="img-thumbnail"></div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-4">Content</label>
+							<div class="col-sm-7">
+								<textarea name="description" cols="30" class="form-control" rows="2"  ng-model="formData.content" ng-minlength="0" ng-maxlength="100" required></textarea>
+								<label for="inputError" class="control-label text-danger" ng-show="myForm.content.$invalid && !myForm.content.$pristine"><i class="fa fa-times-circle-o"></i> less than 100 letters</label>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-primary" ng-disabled="myForm.$invalid">Submit</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						</div>
+					</form>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+	</div><!-- /.row -->
+</div>
+
+<script>
+
+	$(function () {
+		$("div.input-daterange input").each(function () {
+			$(this).datepicker({format: 'mm/dd/yyyy'});
+		});
+	});
+
+    App.controller( "adsList", function ( $scope, $http ) {
+
+        $scope.formData = {};
+		$scope.targetID = '';
+		$scope.object_type = "<%=bigCategory%>";
+
+        initPagination( $scope, $http, $scope.object_type, "<%=searchKey%>" );
+
+        initDelOption( $scope, $http, $scope.object_type, "<%=searchKey%>", 'Are you sure to delete the Ad?' );
+
+		$scope.processForm = function ( isValid ) {
+            if ( isValid ) {
+                if ( !$scope.formData.logo ) {
+                    alert( 'Logo image not upload.' );
+                    return;
+                }
+				var method = 'PUT', url = '/admin/api/v1/' + $scope.object_type;
+				if ($scope.targetID) {
+					method = 'POST';
+					url += '/' + $scope.targetID;
+				}
+				angularHttp($http, isValid, method, url, $scope.formData, function (result) {
+					if (result === 'success') {
+						initPagination( $scope, $http, $scope.object_type, "<%=searchKey%>" );
+					}
+				});
+            }
+        };
+
+
+		// 修改类别
+		$('#addAd').on('show.bs.modal', function (event) {
+			if (!event.relatedTarget) { return; }
+			var obj = $(event.relatedTarget);
+			var editId = obj.data( 'whatever' );
+			var modalTitle = $( this ).find( '.modal-title' );
+
+			// 如果不为空则为编辑状态
+			if ( editId ) {
+				modalTitle.text( "Edit Ad" );
+				$http.get( "/admin/api/v1/" + $scope.object_type + "/" + editId ).success( function ( result ) {
+					$scope.formData = result;
+					$scope.targetID = editId;
+					$("#uploaded").attr('src', result.logo).closest('div.form-group').removeClass('hide');
+					$("input.startDate").datepicker('setDate', new Date(result.startDate));
+					$("input.endDate").datepicker('setDate', new Date(result.endDate));
+				});
+			} else {
+				modalTitle.text("New Ad");
+				$scope.formData = { };
+				$scope.formData.state = true;
+			}
+		}).on( 'hidden.bs.modal', function (event) {
+			if (!event.relatedTarget) { return; }
+			// 清空数据
+			$scope.formData = { };
+			$scope.formData.state = true;
+			$scope.targetID = "";
+			$( this ).find( "input" ).val( "" );
+			$("#uploaded").attr('src', '').closest('div.form-group').addClass('hide');
+		});
+
+		$( 'div.fileinput' ).on( 'change.bs.fileinput', function () {
+            // console.log('file selected');
+            var logoDUS = $( this ).find( "div.fileinput-preview img").attr( 'src' );
+            $scope.formData.logo = logoDUS;
+        });
+        $( 'div.fileinput' ).on( 'clear.bs.fileinput', function () {
+            // console.log('file clear');
+			if ($scope.targetID) {
+	            $scope.formData.logo = $( "#uploaded img" ).attr( 'src' );
+			} else {
+				$scope.formData.logo = '';
+			}
+        });
+    });
+
+</script>

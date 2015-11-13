@@ -48,7 +48,7 @@ var shop = new Schema({
     // 店铺评分
     score: {
         type: Number,
-        default: 0
+        default: 5
     },
     nProducts: {
         type: Number,

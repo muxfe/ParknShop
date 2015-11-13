@@ -74,9 +74,10 @@ function handleDate(req) {
 
 Ad.business = {
 
-    query: function (req, res, shop) {
+    query: function (req, res) {
         var query = url.parse(req.url, true).query,
             keywords = query.searchKey || '',
+            shop = query.shop,
             re = new RegExp( keywords, 'i' ),
             type = shop ? 'shop' : 'system',
             Db = require('./db/Db');
@@ -91,7 +92,7 @@ Ad.business = {
             ]
         };
         var sort = { sortId: 1 };
-        Db.pagination(Ad, req, res, conditions, sort);
+        Db.pagination(Ad, req, res, [conditions], sort);
     },
 
     findOne: function (id, req, res) {
