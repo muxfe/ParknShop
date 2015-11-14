@@ -434,4 +434,56 @@ router.put('/v1/ad/:ad_id', function (req, res, next) {
 	}
 });
 
+/* Comment Api */
+/*
+ * GET Comment
+ *
+ */
+router.get('/v1/comment/:comment_id?', function (req, res, next) {
+	var comment_id = req.params.comment_id;
+	if (comment_id) {
+		Comment.business.findOne(comment_id, req, res);
+	} else {
+		Comment.business.find(req, res);
+	}
+});
+
+/*
+ * PUT Comment
+ *
+ */
+router.put('/v1/comment', function (req, res, next) {
+	if (Auth.isLogin(req)) {
+		Comment.business.insert(req, res);
+	} else {
+		res.end('Permission Denied');
+	}
+});
+
+/*
+ * POST Comment
+ *
+ */
+router.post('/v1/comment/:comment_id', function (req, res, next) {
+	var comment_id = req.params.comment_id;
+	if (Auth.isLogin(req)) {
+		Comment.business.update(comment_id, req, res);
+	} else {
+		res.end('Permission Denied');
+	}
+});
+
+/*
+ * DELETE Comment
+ *
+ */
+router.delete('/v1/comment/:comment_id', function (req, res, next) {
+	var comment_id = req.params.comment_id;
+	if (Auth.isLogin(req)) {
+		Comment.business.delete(comment_id, req, res);
+	} else {
+		res.end('Permission Denied');
+	}
+});
+
 module.exports = router;

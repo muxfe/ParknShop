@@ -44,7 +44,11 @@ var order = new Schema({
         new Schema({
             _id: String,
             quantity: Number,
-            price: Number
+            price: Number,
+            isComment: {
+                type: Boolean,
+                default: false
+            }
         })
     ],
     // 运费信息
@@ -86,6 +90,11 @@ var order = new Schema({
     state: {
         type: String,
         default: 'cart'
+    },
+    // 评分
+    score: {
+        type: Number,
+        default: 0
     }
 });
 
@@ -326,7 +335,7 @@ Order.business = {
                 });
                 break;
             case 'done':
-                updateOrder({ _id: id, 'user._id': user_id, state: 'confirm' }, { state: 'done', confirmDate: now() });
+                updateOrder({ _id: id, 'user._id': user_id, state: 'confirm' }, { state: 'done', score: req.body.score, doneDate: now() });
                 break;
             default:
                 res.end('Error Operation.');

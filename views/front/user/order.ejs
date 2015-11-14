@@ -56,25 +56,44 @@
                                 <th>Name</th>
                                 <th>Unit-price</th>
                                 <th>Quantity</th>
+                                <th>Comment</th>
                             </tr>
                             <tr class="datalist" ng-repeat="item in orderItem.products">
-                                <td class="col-sm-6"><img src="{{item.logo}}" style="width: 60px;height:60px;margin-right:10px;"/><a href="/product/{{item._id}}">{{item.name}}</a></td>
+                                <td class="col-sm-5"><img src="{{item.logo}}" style="width: 60px;height:60px;margin-right:10px;"/><a href="/product/{{item._id}}">{{item.name}}</a></td>
                                 <td class="col-sm-3" style="vertical-align:middle;">{{item.price | currency: '$'}} (now)</td>
-                                <td class="col-sm-3" style="vertical-align:middle;">{{item.quantity}}</td>
+                                <td class="col-sm-2" style="vertical-align:middle;">{{item.quantity}}</td>
+                                <td class="col-sm-2" style="vertical-align:middle;">
+                                    <a href="#commentModal" ng-if="!item.isComment && (orderItem.state === 'confirm' || orderItem.state === 'done')" data-toggle="modal" data-productId="{{item._id}}" data-orderId="{{orderItem._id}}" class="btn btn-info btn-sm">Comment</a>
+                                    <label class="label label-success" ng-if="item.isComment"><i class="fa fa-fw fa-check"></i> commented</label>
+                                </td>
                             </tr>
                             <tr>
-                                <td colspan="3">Receiver: {{orderItem.address.name}} <br/>
+                                <td colspan="4">Receiver: {{orderItem.address.name}} <br/>
                                 Address: {{orderItem.address.address}} ({{orderItem.address.postcode}}) <br/>
                                 Telephone: {{orderItem.address.phoneNum}}</td>
                             </tr>
                             <tr>
                                 <td><h4 class="text-danger">Total: {{orderItem.total | currency: '$'}}</h4></td>
-                                <td colspan="2" ng-switch="orderItem.state">
+                                <td colspan="3" ng-switch="orderItem.state" class="text-center" style="vertical-align:middle;">
                                     <button class="btn btn-primary" ng-switch-when="submit" ng-click="payOrder(orderItem._id)">Pay it</button>
                                     <button class="btn btn-danger" ng-switch-when="submit" ng-click="deleteOrder(orderItem._id)">Cancel</button>
                                     <h4 class="text-info" ng-switch-when="pay">Waiting the seller shipping products.</h4>
                                     <button class="btn btn-primary" ng-switch-when="shipping" ng-click="confirmOrder(orderItem._id)">Confirm</button>
-                                    <button class="btn btn-primary" ng-switch-when="confirm" ng-click="commentOrder(orderItem._id)">Comment</button>
+                                    <div ng-switch-when="confirm" class="col-xs-12">
+                                        <label class="control-label col-xs-3" style="padding-top: 12px;">Score Order: </label>
+                                        <div class="col-xs-5">
+                                            <input class="star-rating {{orderItem._id}}" type="number" class="rating" min=0 max=5 step=0.5 data-size="xs" />
+                                        </div>
+                                        <div class="col-xs-2" style="padding-top: 7px;">
+                                            <button class="btn btn-primary" ng-click="commentOrder(orderItem._id)">Star</button>
+                                        </div>
+                                    </div>
+                                    <div ng-switch-when="done">
+                                        <label class="control-label col-xs-3" style="padding-top: 12px;">Score Order: </label>
+                                        <div class="col-xs-5">
+                                            <input class="star-rating {{orderItem._id}}" type="number" value="{{orderItem.score}}" readonly="true" class="rating" min=0 max=5 step=0.5 data-size="xs" />
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         </table>
@@ -87,6 +106,42 @@
         </div>
         <% include ../public/modal %>
     </div>
+    <!--添加新用户模态窗口-->
+    <div class="modal fade" id="commentModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Comment Product</h4>
+                </div>
+                <div class="modal-body">
+                    <form role="form" class="form-horizontal" name="myForm" ng-submit="processForm(myForm.$valid)" novalidate>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Title</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="title" ng-model="formData.title" placeholder="title" required/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Content</label>
+                            <div class="col-sm-6">
+                                <textarea name="content" ng-model="formData.content" ng-minlength="0" ng-maxlength="100" cols="30" rows="2" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Star</label>
+                            <div class="col-sm-6">
+                                <input id="input-star-rating" type="number" ng-model="formData.score" class="rating" min=0 max=5 step=0.5 data-size="sm" >
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary" ng-disabled="myForm.$invalid">Comment</button>
+                        </div>
+                    </form>
+                </div><!-- /.modal-body -->
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 </div><!-- div.container END -->
 
 <script>
@@ -96,13 +151,10 @@
             $(this).datepicker({format: 'mm/dd/yyyy'});
         });
 
-        // $("a.state-popover").popover({
-        //     trigger: 'click',
-        //     placement: 'bottom',
-        //     title: 'title',
-        //     html: true,
-        //     content: 'xxxxxx'
-        // });
+        $("#input-star-rating").rating({
+            showCaption: false,
+            showClear: false
+        });
     });
 
     App.controller("MyOrder", function ($scope, $http) {
@@ -116,6 +168,8 @@
                 'done': 5
             };
 
+        $scope.targetID = '';
+        $scope.orderTargetID = '';
         initPage($scope, $http, url, true, loadProducts);
         $scope.load = function () {
             loadData($scope, $http, url, loadProducts);
@@ -134,6 +188,16 @@
                             $http.get('/api/v1/product/' + product._id).success(function (result) {
                                 if (typeof result === 'object') {
                                     $.extend($scope.data[i].products[j], result);
+
+                                    // star-rating
+                                    $("input.star-rating." + $scope.data[i]._id).rating({
+                                        showCaption: false,
+                                        showClear: false
+                                    });
+                                    if ($scope.data[i].state === 'done') {
+                                        console.log($scope.data[i].score);
+                                        $("input.star-rating." + $scope.data[i]._id).rating('update', $scope.data[i].score);
+                                    }
 
                                     // status popover
                                     var order = $scope.data[i],
@@ -185,7 +249,7 @@
                     })(key);
                 }
             }
-        } // func-loadProducts
+        }; // func-loadProducts
 
         $scope.payOrder = function (order_id) {
             if (order_id) {
@@ -225,13 +289,43 @@
 
         $scope.commentOrder = function (order_id) {
             if (order_id) {
-                angularHttpPost($http, '/api/v1/order/' + order_id + '/done', {}, function (result) {
+                var score = $("input.star-rating." + order_id).val();
+                if (score <= 0) {
+                    alert("Star is not less than zero.");
+                    return;
+                }
+                angularHttpPost($http, '/api/v1/order/' + order_id + '/done', { score: score }, function (result) {
                     if (result === 'success') {
                         $scope.load();
                     }
                 });
             }
         };
+
+        $scope.processForm = function (isValid) {
+            if (isValid && $scope.targetID && $scope.orderTargetID) {
+                $scope.formData.product_id = $scope.targetID;
+                $scope.formData.order_id = $scope.orderTargetID;
+                angularHttpPut($http, '/api/v1/comment', $scope.formData, function (result) {
+                    if (result === 'success') {
+                        $scope.load();
+                    }
+                });
+            }
+        };
+
+        // modal
+        $("#commentModal").on('show.bs.modal', function (event) {
+            var obj = $(event.relatedTarget);
+            $scope.targetID = obj.attr('data-productId');
+            $scope.orderTargetID = obj.attr('data-orderId');
+        }).on('hidden.bs.modal', function (event) {
+            $(this).find("input").val("");
+            $(this).find("textarea").val("");
+            $scope.formData = {};
+            $scope.targetID = '';
+            $scope.orderTargetID = '';
+        });
 
     });
 

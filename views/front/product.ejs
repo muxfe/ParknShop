@@ -98,7 +98,7 @@
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="active"><a href="#pContent" aria-controls="pContent" role="tab" data-toggle="tab">Content</a></li>
-                <li role="presentation"><a href="#pComment" aria-controls="pComment" role="tab" data-toggle="tab">Comment</a></li>
+                <li role="presentation"><a href="#pComment" aria-controls="pComment" role="tab" data-toggle="tab">Comment <span class="badge">{{totalItems}}</span></a></li>
             </ul>
 
             <!-- Tab panes -->
@@ -118,61 +118,31 @@
                 </div>
                 <div role="tabpanel" class="tab-pane" id="pComment">
                     <div class="col-md-4 text-center">
-                        <h1 class="">4.9</h1>
-                        <h3 class="">10 rating</h3>
+                        <h1 class="">{{shopData.score}}</h1>
+                        <div>
+                            <input class="star-rating shopRating" type="number" readonly="true" class="rating" min=0 max=5 step=0.5 />
+                        </div>
                     </div>
                     <div class="col-md-8">
-                        <legend>Comments <small class="label label-info pull-right"><a href="#">View all comments</a></small></legend>
-                        <div class="comment col-md-12">
+                        <legend>Comments</legend>
+                        <div class="comment col-md-12" ng-repeat="item in data" on-finish-render-filters>
                             <div class="col-md-6">
-                                <h2>Title</h2>
-                                <p>content</p>
-                                <span>Score</span>
+                                <h3>{{item.title}}</h3>
+                                <p>{{item.content}}</p>
+                                <span><input class="star-rating" data-score="{{item.score}}" type="number" readonly="true" class="rating" min=0 max=5 step=0.5 data-size="xs" /></span>
                             </div>
                             <div class="col-md-3">
-                                <p>By <a href="#">test1</a></p>
-                                <p>10/31/2015 22:04</p>
+                                <p>By <a href="#">{{item.user.username}}</a></p>
+                                <p>{{item.date | date: 'MM/dd/yyyy HH:mm:ss'}}</p>
                                 <p>Type: New</p>
                             </div>
                             <div class="col-md-3">
-                                <p><a href="#">Helpful(0)</a></p>
-                                <p><a href="#">Unhelpful(0)</a></p>
-                                <p>Report</p>
+                                <p><a href="#">Helpful({{item.helpful}})</a></p>
+                                <p><a href="#">Unhelpful({{item.unhelpful}})</a></p>
                             </div>
-                        </div>
-                        <div class="comment col-md-12">
-                            <div class="col-md-6">
-                                <h2>Title</h2>
-                                <p>content</p>
-                                <span>Score</span>
-                            </div>
-                            <div class="col-md-3">
-                                <p>By <a href="#">test1</a></p>
-                                <p>10/31/2015 22:04</p>
-                                <p>Type: New</p>
-                            </div>
-                            <div class="col-md-3">
-                                <p><a href="#">Helpful(0)</a></p>
-                                <p><a href="#">Unhelpful(0)</a></p>
-                                <p>Report</p>
-                            </div>
-                        </div>
-                        <div class="comment col-md-12">
-                            <div class="col-md-6">
-                                <h2>Title</h2>
-                                <p>content</p>
-                                <span>Score</span>
-                            </div>
-                            <div class="col-md-3">
-                                <p>By <a href="#">test1</a></p>
-                                <p>10/31/2015 22:04</p>
-                                <p>Type: New</p>
-                            </div>
-                            <div class="col-md-3">
-                                <p><a href="#">Helpful(0)</a></p>
-                                <p><a href="#">Unhelpful(0)</a></p>
-                                <p>Report</p>
-                            </div>
+                        </div><!-- Comment -->
+                        <div class="box-footer">
+                            <% include public/pagination %>
                         </div>
                     </div>
                 </div>
@@ -191,6 +161,11 @@
                 return false;
             }
         });
+
+        $("input.star-rating.shopRating").rating({
+            showCaption: false,
+            showClear: false
+        });
     });
 
     App.filter('to_trusted', [ '$sce', function ($sce) {
@@ -203,6 +178,7 @@
         'use strict';
         var product_id = '<%=productId%>',
             url = '/api/v1/product/' + product_id,
+            commentUrl = '/api/v1/comment?product_id=' + product_id,
             shopUrl = '/api/v1/shop/';
 
         $scope.productData = {};
@@ -218,12 +194,29 @@
                 $http.get(shopUrl + product.shop._id).success(function (shop) {
                     if (typeof shop === 'object') {
                         $scope.shopData = shop;
+                        $("input.shopRating").rating('update', shop.score);
                     }
                 });
             } else {
                 console.error(data);
             }
         });
+
+        $scope.$on('ngRepeatFinished', function (ngRepeatFinishedEvent) {
+            //下面是在ng-repeat完成后执行的js
+            $("div.comment input.star-rating").each(function (e) {
+                $(this).rating({
+                    showCaption: false,
+                    showClear: false
+                }).rating('update', $(this).attr('data-score'));
+            });
+        });
+
+        // comments
+        initPage($scope, $http, commentUrl, true);
+        $scope.load = function () {
+            loadData($scope, $http, commentUrl);
+        };
 
         $scope.add2cart = function () {
             angularHttpPost($http, '/api/v1/user/cart', $scope.buyData, function (result) {
@@ -242,6 +235,18 @@
         $scope.minus = function () {
             if ($scope.buyData.quantity > 0) {
                 $scope.buyData.quantity--;
+            }
+        };
+    })
+    .directive('onFinishRenderFilters', function ($timeout) {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attr) {
+                if (scope.$last === true) {
+                    $timeout(function() {
+                        scope.$emit('ngRepeatFinished');
+                    });
+                }
             }
         };
     });

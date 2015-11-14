@@ -23,7 +23,7 @@ var comment = new Schema({
     title: String,
     score: {
         type: Number,
-        default: 5
+        default: 0
     },
     helpful: {
         type: Number,
@@ -39,7 +39,8 @@ var comment = new Schema({
         _id: String,
         username: String
     },
-    product_id: String
+    product_id: String,
+    order_id: String
 });
 
 var Comment = mongoose.model("Comment", comment);
@@ -60,6 +61,17 @@ Comment.business = {
         }
 
         Db.pagination(Comment, req, res, conditions);
+    },
+
+    findOne: function (id, req, res) {
+        Comment.findOne({ _id: id }, function (err, comment) {
+            if (err) {
+                console.log(err);
+                res.end('error');
+            } else {
+                res.json(comment);
+            }
+        });
     },
 
     update: function (id, req, res) {
@@ -92,12 +104,34 @@ Comment.business = {
     },
 
     insert: function (req, res) {
-        var Db = require('./db/Db');
+        var Order = require('./Order');
         req.body.user = {
             _id: req.session.user._id,
-            username: req.session.username
+            username: req.session.user.username
         }
-        Db.addOne(Comment, req, res);
+        var comment = new Comment(req.body);
+        comment.save(function (err) {
+            if (err) {
+                console.log(err);
+                res.end('error');
+            } else {
+                var query = {
+                        _id: req.body.order_id,
+                        'user._id': req.session.user._id,
+                        'products._id': req.body.product_id
+                    },
+                    update = {
+                        'products.$.isComment': true
+                    };
+                Order.update(query, { $set: update }, function (err) {
+                    if (err) {
+                        res.end('error');
+                    } else {
+                        res.end('success');
+                    }
+                })
+            }
+        });
     },
 
     delete: function (id, req, res) {
