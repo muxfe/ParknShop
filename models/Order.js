@@ -66,6 +66,11 @@ var order = new Schema({
         type: Number,
         default: 0
     },
+    // 手续费
+    commission: {
+        type: Number,
+        default: 0.02 // 2%
+    },
     // 价格合计
     total: {
         type: Number,
@@ -203,6 +208,7 @@ Order.business = {
     },
 
     insert: function (req, res) {
+        var SiteUtils = require('../utils/SiteUtils');
         Order.remove({ 'user._id': req.session.user._id, state: 'cart' }, function (err) {
             if (err) {
                 console.log(err);
@@ -213,6 +219,7 @@ Order.business = {
                     username: req.session.user.username
                 };
                 var shops = req.body.shops, index = 0;
+                var commission = Number(SiteUtils.getCommission());
                 (function createOrder(index) {
                     if (index === shops.length) {
                         res.end('success');
@@ -223,6 +230,7 @@ Order.business = {
                     order.products = shops[index].products;
                     order.shop = shops[index].shop;
                     order.total = shops[index].total;
+                    order.commission = commission / 100;
                     order.save(function (err) {
                         if (err) {
                             console.log(err);
@@ -365,6 +373,88 @@ Order.business = {
                 res.end('error');
             } else {
                 res.end('success');
+            }
+        });
+    },
+
+    countIncome: function (req, res) {
+        var Auth = require('../utils/Auth'),
+            query = url.parse(req.url, true).query,
+            shop_id = query.shop_id,
+            state = query.state,
+            period = query.period,
+            startDate = new Date(query.startDate),
+            endDate = new Date(query.endDate),
+            match = {},
+            group = {},
+            role = "shop_owner";
+
+        if (Auth.isAdminLogin(req)) {
+            // next
+            role = "admin";
+        } else if (Auth.isShopOwner(req)) {
+            if (!shop_id) {
+                res.end('Not a shop.');
+                return;
+            }
+            match['shop._id'] = shop_id;
+            match['shop.shop_owner_id'] = req.session.user._id;
+        } else {
+            res.end('Permission Denied.');
+        }
+
+        if (period) {
+            var time = 0, dayTime = 24 * 60 * 60, now = new Date().getTime();
+            switch (period) {
+                case 'daily':
+                    time = now - dayTime;
+                    break;
+                case 'weekly':
+                    time = now - 7 * dayTime;
+                case 'monthly':
+                    time = now - 30 * dayTime;
+                case 'yearly':
+                    time = now - 365 * dayTime;
+                default:
+            }
+            match.payDate = {
+                $gte: new Date(time).toISOString()
+            };
+        } else {
+            if (!isNaN(startDate.valueOf()) || !isNaN(endDate.valueOf())) {
+                var condDate = {};
+                if (!isNaN(startDate.valueOf())) {
+                    condDate.$gte = startDate.toISOString();
+                }
+                if (!isNaN(endDate.valueOf())) {
+                    condDate.$lte = endDate.toISOString();
+                }
+                match.payDate = condDate;
+            }
+        }
+
+        var sum = { $subtract: [ "$total", { $multiply: [ "$total", "$commission" ] }] };
+        if (role === 'admin') {
+            sum = { $multiply: [ "$total", "$commission" ] };
+        }
+        group = {
+            _id: "$state",
+            count: { $sum: 1 },
+            totalPrice: { $sum: sum }
+        };
+
+        Order.aggregate([
+            {
+                $match: match
+            },
+            {
+                $group: group
+            }
+        ], function (err, result) {
+            if (err) {
+                res.end('error');
+            } else {
+                res.json(result);
             }
         });
     }

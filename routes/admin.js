@@ -169,6 +169,9 @@ router.get( '/api/v1/system_logs', function ( req, res, next ) {
 
 /* RESTful API */
 
+router.get('/api/v1/income', function (req, res, next) {
+	Order.business.countIncome(req, res);
+});
 
 // 获取对象信息
 router.get( '/api/v1/:object_type/:_id?', function ( req, res, next ) {

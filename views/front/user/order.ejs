@@ -21,6 +21,7 @@
                             <option value="submit">Submit</option>
                             <option value="pay">Pay</option>
                             <option value="shipping">Shipping</option>
+                            <option value="confirm">Confirm</option>
                             <option value="done">Done</option>
                         </select>
                     </div>
@@ -46,7 +47,7 @@
                         <span style="">Shop: <a href="/shop/{{shopData[orderItem.shop._id]._id}}">{{shopData[orderItem.shop._id].name}}</a></span>
                     </div>
                     <div class="col-xs-4">
-                        <a class="pull-right {{orderItem._id}}" href="#" data-toggle="popover">State: {{orderItem.state}}</a>
+                        <a class="pull-right {{orderItem._id}}" href="#" data-toggle="popover"><i class="fa fa-fw fa-caret-left"></i> State: {{orderItem.state}}</a>
                     </div>
                 </div>
                 <div class="panel-body">

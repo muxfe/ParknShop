@@ -486,4 +486,16 @@ router.delete('/v1/comment/:comment_id', function (req, res, next) {
 	}
 });
 
+/* Income Api */
+/*
+ * GET Income
+ */
+router.get('/v1/income', function (req, res, next) {
+	if (Auth.isShopOwner(req)) {
+		Order.business.countIncome(req, res);
+	} else {
+		res.end('Permission Denied');
+	}
+});
+
 module.exports = router;

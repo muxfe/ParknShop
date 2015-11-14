@@ -1,0 +1,77 @@
+<div class="container" ng-controller="incomeManage">
+    <% include public/modal %>
+    <div class="col-xs-12">
+        <div class="panel panel-info">
+            <div class="panel-body">
+                <form class="form-inline" name="filterForm">
+                    <div class="form-group price">
+                        <label for="">State:</label>
+                        <select class="form-control" ng-model="filterData.state">
+                            <option value="">Select Period</option>
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Date:</label>
+                        <div class="input-group input-daterange">
+                            <input type="text" class="form-control" name="startDate" ng-model="filterData.startDate" style="width:100px;"/>
+                            <span class="input-group-addon">to</span>
+                            <input type="text" class="form-control" name="endDate" ng-model="filterData.endDate" style="width:100px;"/>
+                        </div>
+                    </div>
+                    <a class="btn btn-default btn-sm" ng-click="load()">Go!</a>
+                </form>
+            </div>
+        </div><!-- END panel -->
+        <div class="box">
+            <div class="box-body table-responsive no-padding" >
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Commission</th>
+                            <th>Advertisement</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div><!-- /.box-body -->
+        </div>
+    </div>
+</div><!-- div.container END -->
+
+<script>
+
+    $(function () {
+        $("div.input-daterange input").each(function () {
+            $(this).datepicker({format: 'mm/dd/yyyy'});
+        });
+    });
+
+    App.controller("incomeManage", function ($scope, $http) {
+        var url = '/admin/api/v1/income'
+        $scope.load = function () {
+            $http.get(url).success(function (result) {
+                if (typeof result === 'object') {
+                    console.log(result);
+                }
+            });
+        };
+
+        $scope.load();
+
+    });
+
+</script>
