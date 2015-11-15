@@ -8,7 +8,7 @@
                 <form class="form-inline" name="filterForm">
                     <div class="form-group price">
                         <label for="">State:</label>
-                        <select class="form-control" ng-model="filterData.state">
+                        <select class="form-control" ng-model="filterData.period" ng-change="load()">
                             <option value="">Select Period</option>
                             <option value="daily">Daily</option>
                             <option value="weekly">Weekly</option>
@@ -41,11 +41,34 @@
                     </thead>
                     <tbody>
                         <tr>
+                            <td>Volume</td>
+                            <td>{{incomeData.volume}} / {{incomeData.count}}</td>
+                            <td>{{adIncomeData.count}}</td>
+                            <td>{{incomeData.count + adIncomeData.count}}</td>
+                        </tr>
+                        <tr>
+                            <td>Sales</td>
+                            <td>{{incomeData.totalPrice | currency: '$'}}</td>
+                            <td>{{adIncomeData.totalPrice | currency: '$'}}</td>
+                            <td>{{incomeData.totalPrice + adIncomeData.totalPrice | currency: '$'}}</td>
+                        </tr>
+                        <tr>
+                            <td>Commission</td>
+                            <td>{{incomeData.totalCommission | currency: '$'}}</td>
+                            <td></td>
+                            <td>{{incomeData.totalCommission | currency: '$'}}</td>
+                        </tr>
+                        <tr>
+                            <td>Average Commission</td>
+                            <td>{{incomeData.avgCommission * 100 | number: 2}}%</td>
+                            <td></td>
+                            <td>{{incomeData.avgCommission * 100 | number: 2}}%</td>
+                        </tr>
+                        <tr>
                             <td></td>
                             <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td class="text-right h4 text-danger">Total Income</td>
+                            <td class="h4 text-danger">{{incomeData.totalPrice - incomeData.totalCommission + adIncomeData.totalPrice | currency: '$'}}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -60,21 +83,36 @@
     });
 
     App.controller("income", function ($scope, $http) {
-        var url = '/api/v1/income';
+        var url = '/api/v1/income',
+            adUrl = '/api/v1/income_ad',
+            shopUrl = '/api/v1/shop/mine',
+            shop_id = '';
 
-        $http.get('/api/v1/shop/mine').success(function (data) {
-            if (typeof data === 'object') {
-                $scope.shopInfo = data;
-                $http.get(url + '?shop_id=' + data._id).success(function (result) {
-                    if (typeof result === 'object') {
-                        console.log(result);
-                    }
-                });
-            } else {
-                showErrorInfo('Get shop info failed.');
+        $scope.filterData = {};
+        $scope.load = function () {
+            var filterStr = '';
+            for (var key in $scope.filterData) {
+                filterStr += key + '=' + $scope.filterData[key] + '&';
+            }
+            filterStr = filterStr.substring(0, filterStr.length - 1);
+            $http.get(url + '?shop_id=' + shop_id + '&' + filterStr).success(function (result) {
+                if (typeof result === 'object') {
+                    $scope.incomeData = result[0];
+                }
+            });
+
+            $http.get(adUrl + '?shop_id=' + shop_id + '&' + filterStr).success(function (result) {
+                if (typeof result === 'object') {
+                    $scope.adIncomeData = result[0];
+                }
+            });
+        };
+
+        $http.get(shopUrl).success(function (result) {
+            if (typeof result === 'object') {
+                shop_id = result._id;
+                $scope.load();
             }
         });
-
-
     });
 </script>

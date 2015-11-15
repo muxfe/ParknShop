@@ -58,6 +58,9 @@ Comment.business = {
             conditions.product_id = product_id;
         } else if (user_id) {
             conditions['user._id'] = user_id;
+        } else {
+            res.end('error');
+            return;
         }
 
         Db.pagination(Comment, req, res, conditions);
@@ -141,6 +144,28 @@ Comment.business = {
                 res.end('error');
             } else {
                 res.end('success');
+            }
+        });
+    },
+
+    countProductStar: function (id, req, res) {
+        Comment.aggregate([
+            {
+                $match: {
+                    product_id: id
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    avgScore: { $avg: "$score" }
+                }
+            }
+        ], function (err, result) {
+            if (err) {
+                res.end('error');
+            } else {
+                res.json(result);
             }
         });
     }

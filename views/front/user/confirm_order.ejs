@@ -238,6 +238,10 @@
 
         $scope.confirmOrder = function () {
             var address = $("div.address.active").data('addr');
+            if (!address) {
+                alert("No address selected.");
+                return;
+            }
             var orders = $scope.orderData;
             (function submitOrder(i) {
                 if (i === orders.length) { // success

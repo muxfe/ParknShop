@@ -425,7 +425,7 @@ router.post('/v1/ad/:ad_id', function (req, res, next) {
  * DELETE ads
  * @param: ad_id
  */
-router.put('/v1/ad/:ad_id', function (req, res, next) {
+router.delete('/v1/ad/:ad_id', function (req, res, next) {
 	var ad_id = req.params.ad_id;
 	if (Auth.isShopOwner(req)) {
 		Ad.business.delete(ad_id, req, res);
@@ -486,13 +486,27 @@ router.delete('/v1/comment/:comment_id', function (req, res, next) {
 	}
 });
 
-/* Income Api */
+/* Other Api */
 /*
  * GET Income
+ * @query: period, startDate, endDate, groupDate, shop_id, state
  */
 router.get('/v1/income', function (req, res, next) {
 	if (Auth.isShopOwner(req)) {
 		Order.business.countIncome(req, res);
+	} else {
+		res.end('Permission Denied');
+	}
+});
+
+router.get('/v1/star/:shop_id', function (req, res, next) {
+	var shop_id = req.params.shop_id;
+	Order.business.countShopStar(shop_id, req, res);
+});
+
+router.get('/v1/income_ad', function (req, res, next) {
+	if (Auth.isShopOwner(req)) {
+		Ad.business.countIncome(req, res);
 	} else {
 		res.end('Permission Denied');
 	}

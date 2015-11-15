@@ -217,10 +217,7 @@ Shop.business = {
 			'state': 'approved',
 			$or: [
 				{ 'description': { $regex: re } },
-				{ 'name': { $regex: re } },
-				{ 'contact.address': { $regex: re } },
-				{ 'contact.phoneNum': { $regex: re } },
-				{ 'contact.email': { $regex: re } }
+				{ 'name': { $regex: re } }
 			]
 		}], sort);
     }

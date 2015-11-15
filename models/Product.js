@@ -104,8 +104,6 @@ Product.business = {
             conditions.$or = [];
             var re = new RegExp(keywords, 'i');
             conditions.$or.push({ name: { $regex: re } });
-            conditions.$or.push({ description: { $regex: re } });
-            conditions.$or.push({ content: { $regex: re } });
             conditions.$or.push({ tags: { $in: [ re ] } });
         }
         if (shop_id) {

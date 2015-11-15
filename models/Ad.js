@@ -174,6 +174,93 @@ Ad.business = {
         } else {
             res.end("Permission Denied.");
         }
+    },
+
+    countIncome: function (req, res) {
+        var Auth = require('../utils/Auth'),
+            query = url.parse(req.url, true).query,
+            shop_id = query.shop_id,
+            groupDate = query.groupDate,
+            period = query.period,
+            startDate = new Date(query.startDate),
+            endDate = new Date(query.endDate),
+            match = {},
+            group = {};
+
+        if (Auth.isAdminLogin(req)) {
+            // next
+        } else if (Auth.isShopOwner(req)) {
+            if (!shop_id) {
+                res.end('Not a shop.');
+                return;
+            }
+            match['shop._id'] = shop_id;
+            match['shop.shop_owner_id'] = req.session.user._id;
+        } else {
+            res.end('Permission Denied.');
+            return;
+        }
+
+        if (period) {
+            var time = 0, dayTime = 24 * 60 * 60 * 1000, now = new Date().getTime();
+            switch (period) {
+                case 'daily':
+                    time = now - dayTime;
+                    break;
+                case 'weekly':
+                    time = now - 7 * dayTime;
+                    break;
+                case 'monthly':
+                    time = now - 30 * dayTime;
+                    break;
+                case 'yearly':
+                    time = now - 365 * dayTime;
+                    break;
+                default:
+                    time = now - dayTime;
+                    break;
+            }
+            match.date = {
+                $gte: new Date(time)
+            };
+        } else {
+            if (!isNaN(startDate.valueOf()) || !isNaN(endDate.valueOf())) {
+                var condDate = {};
+                if (!isNaN(startDate.valueOf())) {
+                    condDate.$gte = startDate;
+                }
+                if (!isNaN(endDate.valueOf())) {
+                    condDate.$lte = endDate;
+                }
+                match.date = condDate;
+            }
+        }
+
+        var id = null;
+        if (groupDate) {
+            id = { month: { $month: "$date" }, day: { $dayOfMonth: "$date" }, year: { $year: "$date" } };
+        }
+
+        group = {
+            _id: id,
+            count: { $sum: 1 },
+            totalPrice: { $sum: "$price" }
+        };
+
+        Ad.aggregate([
+            {
+                $match: match
+            },
+            {
+                $group: group
+            }
+        ], function (err, result) {
+            if (err) {
+                res.end('error');
+            } else {
+                res.json(result);
+            }
+        });
     }
 
 };

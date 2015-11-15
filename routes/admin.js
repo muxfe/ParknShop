@@ -173,6 +173,10 @@ router.get('/api/v1/income', function (req, res, next) {
 	Order.business.countIncome(req, res);
 });
 
+router.get('/api/v1/income_ad', function (req, res, next) {
+	Ad.business.countIncome(req, res);
+});
+
 // 获取对象信息
 router.get( '/api/v1/:object_type/:_id?', function ( req, res, next ) {
 	var object_type = req.params.object_type,

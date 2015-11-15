@@ -130,10 +130,10 @@ Category.business = {
 				req.body.shop = {
                     _id: shop._id,
                     shop_owner_id: shop.shop_owner._id,
-                    shop_owner_username: shop.shop_owner._username
+                    shop_owner_username: shop.shop_owner.username
                 }
                 req.body.type = 'shop';
-                req.body.keywords = req.body.keywords.split(';');
+                req.body.keywords = req.body.keywords.split(',');
                 Db.addOne(Category, req, res);
 			} else {
 				res.end('You dont have a shop.');

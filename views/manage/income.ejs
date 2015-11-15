@@ -1,4 +1,4 @@
-<div class="container" ng-controller="incomeManage">
+<div class="" ng-controller="incomeManage">
     <% include public/modal %>
     <div class="col-xs-12">
         <div class="panel panel-info">
@@ -6,7 +6,7 @@
                 <form class="form-inline" name="filterForm">
                     <div class="form-group price">
                         <label for="">State:</label>
-                        <select class="form-control" ng-model="filterData.state">
+                        <select class="form-control" ng-model="filterData.period" ng-change="load()">
                             <option value="">Select Period</option>
                             <option value="daily">Daily</option>
                             <option value="weekly">Weekly</option>
@@ -32,18 +32,41 @@
                     <thead>
                         <tr>
                             <th>Item</th>
-                            <th>Commission</th>
+                            <th>Product</th>
                             <th>Advertisement</th>
                             <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
+                            <td>Volume</td>
+                            <td>{{incomeData.volume}} / {{incomeData.count}}</td>
+                            <td>{{adIncomeData.count}}</td>
+                            <td>{{incomeData.count + adIncomeData.count}}</td>
+                        </tr>
+                        <tr>
+                            <td>Sales</td>
+                            <td>{{incomeData.totalPrice | currency: '$'}}</td>
+                            <td>{{adIncomeData.totalPrice | currency: '$'}}</td>
+                            <td>{{incomeData.totalPrice + adIncomeData.totalPrice | currency: '$'}}</td>
+                        </tr>
+                        <tr>
+                            <td>Commission</td>
+                            <td>{{incomeData.totalCommission | currency: '$'}}</td>
+                            <td></td>
+                            <td>{{incomeData.totalCommission | currency: '$'}}</td>
+                        </tr>
+                        <tr>
+                            <td>Average Commission</td>
+                            <td>{{incomeData.avgCommission * 100 | number: 2}}%</td>
+                            <td></td>
+                            <td>{{incomeData.avgCommission * 100 | number: 2}}%</td>
+                        </tr>
+                        <tr>
                             <td></td>
                             <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td class="text-right h4 text-danger">Total Income</td>
+                            <td class="h4 text-danger">{{incomeData.totalCommission + adIncomeData.totalPrice | currency: '$'}}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -61,11 +84,27 @@
     });
 
     App.controller("incomeManage", function ($scope, $http) {
-        var url = '/admin/api/v1/income'
+        var url = '/admin/api/v1/income',
+            adUrl = '/admin/api/v1/income_ad';
+
+        $scope.incomeData = {};
+        $scope.adIncomeData = {};
+
+        $scope.filterData = {};
         $scope.load = function () {
-            $http.get(url).success(function (result) {
+            var filterStr = '';
+            for (var key in $scope.filterData) {
+                filterStr += key + '=' + $scope.filterData[key] + '&';
+            }
+            $http.get(url + '?' + filterStr).success(function (result) {
                 if (typeof result === 'object') {
-                    console.log(result);
+                    $scope.incomeData = result[0];
+                }
+            });
+
+            $http.get(adUrl + '?' + filterStr).success(function (result) {
+                if (typeof result === 'object') {
+                    $scope.adIncomeData = result[0];
                 }
             });
         };

@@ -173,7 +173,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-sm-4">Content</label>
+                            <label class="control-label col-sm-4"><span class="text-danger">*</span> Content</label>
                             <div class="col-sm-7">
                                 <textarea id="editor" name="editor" placeholder="product content..."></textarea>
                             </div>
@@ -207,12 +207,13 @@
         $scope.targetId = '';
 
         var url = '/api/v1/product',
+            productsUrl = url + '?shop_id=',
             cateUrl = '/api/v1/category';
 
         $scope.loadCate = function () {
             // category
             $http.get(cateUrl).success(function (data) {
-                if (data !== 'error') {
+                if (typeof data === 'object') {
                     $scope.cateOptions = data;
                     $scope.cateOptions.unshift( { me: { name: 'None', _id: 'none' } } );
                 } else {
@@ -233,8 +234,8 @@
         $http.get('/api/v1/shop/mine').success(function (data) {
             if (typeof data === 'object') {
                 $scope.shopInfo = data;
-                var shopUrl = url + '?shop_id=' + data._id;
-                initPage($scope, $http, shopUrl, true);
+                 productsUrl += data._id;
+                initPage($scope, $http, productsUrl, true);
                 initDelete($scope, $http, url, 'Are you sure to delete selected product(s)?');
                 $scope.loadCate();
             } else {
@@ -244,7 +245,7 @@
 
         $scope.load = function () {
             // product data
-            loadData($scope, $http, url);
+            loadData($scope, $http, productsUrl);
         }
 
         $scope.processForm = function (isValid) {

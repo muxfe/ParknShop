@@ -17,7 +17,7 @@
                 <div class="form-group">
                     <label for="" class="col-sm-2 control-label">Shop Name</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" name="name" ng-model="shopFormData.name" placeholder="shop name" ng-minlength="4" ng-maxlength="30" required>
+                        <input type="text" class="form-control" name="name" ng-model="shopFormData.name" placeholder="shop name" ng-minlength="1" ng-maxlength="30" required>
                         <label for="inputError" class="control-label text-danger" ng-show="newShopForm.name.$invalid && !newShopForm.name.$pristine"><i class="fa fa-times-circle-o"></i> 4-30, allowed characters.</label>
                     </div>
                 </div>
@@ -75,7 +75,6 @@
             <div class="deep">
                 <div class="control-group text-center">
                     <button class="btn btn-primary btn-lg" role="button" ng-disabled="newShopForm.$invalid">Apply New Store</button>
-                    <a class="btn btn-default col-md-offset-1" ng-click="clearData()">Clear</a>
                 </div>
             </div>
         </form>
@@ -98,7 +97,7 @@
                 method: 'GET',
                 url: '/api/v1/shop/mine'
             }).success( function (data) {
-                if ( data !== 'error' ) {
+                if ( typeof data === 'object' ) {
                     $scope.shopFormData = data;
                     $scope.edit_id = data._id;
                     $( 'form.free-shop legend' ).text( 'Change Shop Information' );
@@ -140,28 +139,23 @@
             }
         };
 
-        $scope.clearData = function () {
-            // console.log('clear button clicked.')
-            $scope.shopFormData = {
-                name: '',
-                email: '',
-                address: '',
-                phoneNum: '',
-                description: '',
-                logo: ''
-            };
-            $( 'div.fileinput' ).fileinput( 'clear' );
-            $( "div.alert-danger" ).addClass( 'hide' );
-        };
+        // $scope.clearData = function () {
+        //     // console.log('clear button clicked.')
+        //     $scope.shopFormData = {
+        //         name: '',
+        //         email: '',
+        //         address: '',
+        //         phoneNum: '',
+        //         description: '',
+        //         logo: ''
+        //     };
+        //     $( 'div.fileinput' ).fileinput( 'clear' );
+        //     $( "div.alert-danger" ).addClass( 'hide' );
+        // };
 
         $( 'div.fileinput' ).on( 'change.bs.fileinput', function () {
             // console.log('file selected');
             var logoDUS = $( this ).find( "div.fileinput-preview img").attr( 'src' );
-            if ( logoDUS.length > $scope.logoLimit ) {
-                alert( 'Selected logo image must be less than 20KB.' );
-                $( this ).fileinput( 'clear' );
-                return;
-            }
             $scope.shopFormData.logo = logoDUS;
         });
         $( 'div.fileinput' ).on( 'clear.bs.fileinput', function () {

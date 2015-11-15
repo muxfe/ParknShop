@@ -1,4 +1,5 @@
 <div class="container" ng-controller="adsList">
+    <% include ../public/modal %>
     <div class="col-xs-2">
         <% include sidebar.ejs %>
     </div>
@@ -137,8 +138,8 @@
 						<div class="form-group">
 							<label class="control-label col-sm-4">Content</label>
 							<div class="col-sm-7">
-								<textarea name="description" cols="30" class="form-control" rows="2"  ng-model="formData.content" ng-minlength="0" ng-maxlength="100" required></textarea>
-								<label for="inputError" class="control-label text-danger" ng-show="myForm.content.$invalid && !myForm.content.$pristine"><i class="fa fa-times-circle-o"></i> less than 100 letters</label>
+								<textarea name="description" cols="30" class="form-control" rows="2"  ng-model="formData.content" ng-minlength="0" ng-maxlength="500" required></textarea>
+								<label for="inputError" class="control-label text-danger" ng-show="myForm.content.$invalid && !myForm.content.$pristine"><i class="fa fa-times-circle-o"></i> less than 500 letters</label>
 							</div>
 						</div>
 						<div class="modal-footer">
