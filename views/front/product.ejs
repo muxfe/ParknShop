@@ -118,10 +118,11 @@
                 </div>
                 <div role="tabpanel" class="tab-pane" id="pComment">
                     <div class="col-md-4 text-center">
-                        <h1 class="">{{shopData.score}}</h1>
+                        <h1 class="">{{starData.avgScore}}</h1>
                         <div>
-                            <input class="star-rating shopRating" type="number" readonly="true" class="rating" min=0 max=5 step=0.5 />
+                            <input class="star-rating productRating" type="number" readonly="true" class="rating" min=0 max=5 step=0.5 />
                         </div>
+                        <h2>{{starData.count}} Rating</h2>
                     </div>
                     <div class="col-md-8">
                         <legend>Comments</legend>
@@ -162,7 +163,7 @@
             }
         });
 
-        $("input.star-rating.shopRating").rating({
+        $("input.star-rating.productRating").rating({
             showCaption: false,
             showClear: false
         });
@@ -187,6 +188,7 @@
             _id: product_id,
             quantity: 1
         };
+        $scope.starData = {};
 
         $http.get(url).success(function (product) {
             if (typeof product === 'object') {
@@ -194,11 +196,25 @@
                 $http.get(shopUrl + product.shop._id).success(function (shop) {
                     if (typeof shop === 'object') {
                         $scope.shopData = shop;
-                        $("input.shopRating").rating('update', shop.score);
                     }
                 });
             } else {
                 console.error(data);
+            }
+        });
+
+        $http.get('/api/v1/star/product/' + product_id).success(function (result) {
+            if (typeof result === 'object') {
+                if (result.length === 0) {
+                    $scope.starData = {
+                        avgScore: 0,
+                        count: 0
+                    }
+                } else {
+                    $scope.starData = result[0];
+                }
+
+                $("input.productRating").rating('update', $scope.starData.avgScore);
             }
         });
 

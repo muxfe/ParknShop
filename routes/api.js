@@ -499,9 +499,15 @@ router.get('/v1/income', function (req, res, next) {
 	}
 });
 
-router.get('/v1/star/:shop_id', function (req, res, next) {
-	var shop_id = req.params.shop_id;
-	Order.business.countShopStar(shop_id, req, res);
+router.get('/v1/star/:type/:object_id', function (req, res, next) {
+	var type = req.params.type,
+		object_id = req.params.object_id;
+
+	if (type === 'shop') {
+		Order.business.countShopStar(object_id, req, res);
+	} else if (type === 'product') {
+		Comment.business.countProductStar(object_id, req, res);
+	}
 });
 
 router.get('/v1/income_ad', function (req, res, next) {

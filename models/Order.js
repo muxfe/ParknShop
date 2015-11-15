@@ -492,13 +492,15 @@ Order.business = {
         Order.aggregate([
             {
                 $match: {
-                    'shop._id': id
+                    'shop._id': id,
+                    state: 'done'
                 }
             },
             {
                 $group: {
                     _id: null,
-                    avgScore: { $avg: "$score" }
+                    avgScore: { $avg: "$score" },
+                    count: { $sum: 1 }
                 }
             }
         ], function (err, result) {

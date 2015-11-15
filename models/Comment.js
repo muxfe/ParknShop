@@ -63,7 +63,7 @@ Comment.business = {
             return;
         }
 
-        Db.pagination(Comment, req, res, conditions);
+        Db.pagination(Comment, req, res, [conditions]);
     },
 
     findOne: function (id, req, res) {
@@ -158,7 +158,8 @@ Comment.business = {
             {
                 $group: {
                     _id: null,
-                    avgScore: { $avg: "$score" }
+                    avgScore: { $avg: "$score" },
+                    count: { $sum: 1 }
                 }
             }
         ], function (err, result) {
