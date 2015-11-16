@@ -14,33 +14,37 @@
         <div class="col-md-6">
             <div class="box box-solid">
                 <div class="box-header with-border">
-                    <i class="fa fa-location-arrow"></i>
-                    <h3 class="box-title">Quick Start</h3>
+                    <i class="fa fa-fw fa-bar-chart"></i>
+                    <h3 class="box-title">Income Profile</h3>
                 </div><!-- /.box-header -->
-                <div class="box-body">
-                    <ul class="list-unstyled">
-                        <li><a href="/admin/manage/adminUsersList"><i class="fa fa-fw fa-user-plus"></i> Add Administrator</a></li>
-                        <li><a href="/admin/manage/content/add/content"><i class="fa fa-fw fa-history"></i> View Sales History</a></li>
-                        <li><a href="/admin/manage/content/add/plug"><i class="fa fa-fw fa-usd"></i> Update Commission</a></li>
-                    </ul>
+                <div class="box-body" id="income-bar">
+                    <div id="income-barChart"></div>
+                    <!-- d3-bar-chart -->
                 </div><!-- /.box-body -->
             </div><!-- /.box -->
         </div><!-- ./col -->
     </div>
     <div class="col-md-12">
         <div class="col-md-6">
-            <div class="box box-solid">
+            <div class="box box-solid"  style="margin-bottom: 0;">
                 <div class="box-header with-border">
-                    <i class="fa fa-fw fa-bar-chart"></i>
-                    <h3 class="box-title">Income Profile</h3>
+                    <i class="fa fa-location-arrow"></i>
+                    <h3 class="box-title">Quick Start</h3>
                 </div><!-- /.box-header -->
-                <div class="box-body" id="income-bar">
-                    <!-- d3-bar-chart -->
+                <div class="box-body">
+                    <ul class="list-unstyled" style="font-size: 1.2em;">
+                        <li><a href="/admin/manage/users/shop_owner"><i class="fa fa-fw fa-male"></i> ShopOwner</a></li>
+                        <li><a href="/admin/manage/users/customer"><i class="fa fa-fw fa-user"></i> Customer</a></li>
+                        <li><a href="/admin/manage/order"><i class="fa fa-fw fa-list"></i> Order</a></li>
+                        <li><a href="/admin/manage/income"><i class="fa fa-fw fa-dollar"></i> Income</a></li>
+                        <li><a href="/admin/manage/commission"><i class="fa fa-fw fa-money"></i> Update Commission</a></li>
+                        <li><a href="/admin/manage/backup"><i class="fa fa-fw fa-copy"></i> Backup</a></li>
+                    </ul>
                 </div><!-- /.box-body -->
             </div><!-- /.box -->
         </div><!-- ./col -->
         <div class="col-md-6">
-            <div class="box box-solid">
+            <div class="box box-solid" style="margin-bottom: 0;">
                 <div class="box-header with-border">
                     <i class="fa fa-fw fa-calendar-o"></i>
                     <h3 class="box-title">System Logs</h3>
@@ -63,75 +67,35 @@
     App.controller( "mainPanel", function( $scope, $http ) {
         $http.get("/admin/api/v1/user_count").success( function ( result ) {
             var userCount = result;
-            new d3pie( "#site-pie", {
-                size: {
-                    "canvasWidth": jQuery("#site-pie").width(),
-                    "canvasHeight": jQuery(window).height() * 0.26,
-                    "pieInnerRadius": "1%",
-                    "pieOuterRadius": "100%"
+            var content = [
+                {
+                    "label": "admin",
+                    "value": userCount.adminCount
                 },
-                data: {
-                    "sortOrder": "value-desc",
-                    "content": [
-                        {
-                            "label": "admin",
-                            "value": userCount.adminCount
-                        },
-                        {
-                            "label": "customer",
-                            "value": userCount.customerCount
-                        },
-                        {
-                            "label": "shop owner",
-                            "value": userCount.shopOwnerCount
-                        }
-                    ]
+                {
+                    "label": "customer",
+                    "value": userCount.customerCount
                 },
-                tooltips: {
-                    "enabled": true,
-                    "type": "placeholder",
-                    "fontColor": "#efefef",
-                    "string": "{label}: {value}, {percentage}%"
-                },
-                misc: {
-        			"colors": {
-        				"segmentStroke": "#fff"
-        			}
-        		},
-                effects: {
-                    "pullOutSegmentOnClick": {
-                        "effect": "linear",
-                        "speed": 400,
-                        "size": 8
-                    }
-                },
-                labels: {
-                    "outer": {
-                        "pieDistance": 10
-                    },
-                    "mainLabel": {
-                        "fontSize": 16
-                    },
-                    "percentage": {
-                        "fontSize": 14,
-                        "decimalPlaces": 0
-                    },
-        			"value": {
-        				"color": "#cccc43",
-        				"fontSize": 14
-        			},
-        			"lines": {
-        				"enabled": true,
-        				"color": "#aaa"
-        			},
-        			"truncation": {
-        				"enabled": true
-        			}
+                {
+                    "label": "shop owner",
+                    "value": userCount.shopOwnerCount
                 }
-            });
+            ];
+            renderPie("#site-pie", content, { height: 170 });
         });
+
         $http.get("/admin/api/v1/system_logs?limit=5").success( function ( result ) {
             $scope.systemLog = result;
+        });
+
+        $http.get("/admin/api/v1/income?groupDate=1&period=1").success(function (result) {
+            if (typeof result === 'object') {
+                if (result.length === 0) {
+                    console.log("No result.")
+                } else {
+                    barChart("#income-barChart", [result]);
+                }
+            }
         });
     });
 </script>

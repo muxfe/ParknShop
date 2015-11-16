@@ -439,7 +439,7 @@ Order.business = {
                     time = now - 365 * dayTime;
                     break;
                 default:
-                    time = now - dayTime;
+                    time = now - 7 * dayTime;
                     break;
             }
             match.payDate = {

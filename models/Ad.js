@@ -182,20 +182,21 @@ Ad.business = {
             shop_id = query.shop_id,
             groupDate = query.groupDate,
             period = query.period,
+            role = query.role || '',
             startDate = new Date(query.startDate),
             endDate = new Date(query.endDate),
             match = {},
             group = {};
 
-        if (Auth.isAdminLogin(req)) {
-            // next
-        } else if (Auth.isShopOwner(req)) {
+        if (role && role === 'shop') {
             if (!shop_id) {
                 res.end('Not a shop.');
                 return;
             }
             match['shop._id'] = shop_id;
             match['shop.shop_owner_id'] = req.session.user._id;
+        } else if (Auth.isAdminLogin(req)) {
+            // next
         } else {
             res.end('Permission Denied.');
             return;

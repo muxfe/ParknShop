@@ -74,6 +74,11 @@
                 </table>
             </div><!-- /.box-body -->
         </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">Income Pie-chart</div>
+            <div class="panel-body" id="income-piechart">
+            </div>
+        </div>
     </div>
 </div>
 
@@ -91,19 +96,41 @@
         $scope.filterData = {};
         $scope.load = function () {
             var filterStr = '';
+            var count = 0;
             for (var key in $scope.filterData) {
                 filterStr += key + '=' + $scope.filterData[key] + '&';
             }
             filterStr = filterStr.substring(0, filterStr.length - 1);
             $http.get(url + '?shop_id=' + shop_id + '&' + filterStr).success(function (result) {
                 if (typeof result === 'object') {
-                    $scope.incomeData = result[0];
+                    if (result.length === 0) {
+                        $scope.incomeData = {
+                            totalPrice: 0,
+                            count: 0,
+                            totalCommission: 0,
+                            avgCommission: 0,
+                            volume: 0
+                        }
+                    } else {
+                        $scope.incomeData = result[0];
+                    }
                 }
             });
 
-            $http.get(adUrl + '?shop_id=' + shop_id + '&' + filterStr).success(function (result) {
+            $http.get(adUrl + '?shop_id=' + shop_id + '&role=shop&' + filterStr).success(function (result) {
                 if (typeof result === 'object') {
-                    $scope.adIncomeData = result[0];
+                    if (result.length === 0) {
+                        $scope.adIncomeData = {
+                            totalPrice: 0,
+                            count: 0
+                        }
+                    } else {
+                        $scope.adIncomeData = result[0];
+                        renderPie("#income-piechart", [
+                            { label: "Sale", value: Math.round($scope.incomeData.totalPrice - $scope.incomeData.totalCommission) },
+                            { label: "Ad", value: Math.round($scope.adIncomeData.totalPrice) }
+                        ], { height: 300 });
+                    }
                 }
             });
         };

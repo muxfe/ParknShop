@@ -84,6 +84,9 @@
         $scope.isCheckAll = false;
 
         $scope.load = function () {
+            $scope.total = 0;
+            $scope.totalItems = 0;
+            $scope.isCheckAll = false;
             $http.get('/api/v1/user/' + user_id).success(function (user) {
                 if (typeof user === 'object') {
                     $scope.cartData = user.cart;

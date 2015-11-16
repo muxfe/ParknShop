@@ -297,3 +297,174 @@ function initCheckIfDo( $scope, targetId, msg, callback ){
         $( '#checkIfDo' ).modal( 'hide' );
     };
 }
+
+function barChart(selector, dataset) {
+    var _width = jQuery("#income-barChart").width(),
+        _height = jQuery(window).height() * 0.26,
+        _padding = { top: 10, right: 40, bottom: 20, left: 50 },
+        _color_hash = {
+            0: ["Sale", "#2ca02c"],
+            1: ["Ad", "#1f77b4"]
+        },
+        _data = dataset || [];
+
+    if (!d3) {
+        console.log("D3 is not supported.");
+        return;
+    }
+    if (_data.length === 0) {
+        console.log("Dataset is empty.");
+        return;
+    }
+    var stack = d3.layout.stack();
+    stack(_data);
+    var xScale = d3.time.scale()
+        .domain([getDate(_data[0][_data[0].length - 1]._id), getDate(_data[0][0]._id)])
+        .rangeRound([0, _width - _padding.left - _padding.right]);
+
+    var yScale = d3.scale.linear()
+        .domain([0,
+            d3.max(_data, function (d) {
+                return d3.max(d, function (d) {
+                    d.y = d.totalPrice;
+                    return d.y0 + d.y;
+                })
+            })
+        ])
+        .range([ _height - _padding.bottom - _padding.top, 0 ]);
+
+    var xAxis = d3.svg.axis()
+        .scale(xScale)
+        .orient('bottom')
+        .ticks(d3.time.days, 1);
+
+    var yAxis = d3.svg.axis()
+        .scale(yScale)
+        .orient('left')
+        .ticks(10);
+
+    var colors = d3.scale.category10();
+
+    var svg = d3.select(selector)
+        .append("svg")
+        .attr("width", _width)
+        .attr("height", _height);
+
+    var groups = svg.selectAll("g")
+        .data(_data)
+        .enter()
+        .append("g")
+        .attr("class", "rgroups")
+        .attr("transform", "translate(" + _padding.left + "," + _padding.bottom + ")")
+        .style("fill", function (d, i) {
+            return _color_hash[_data.indexOf(d)][1];
+        });
+
+    var rects = groups.selectAll("rect")
+        .data(function (d) { return d; })
+        .enter()
+        .append("rect")
+        .attr("width", 2)
+        .style("fill-opacity", 1e-6);
+
+    rects.transition()
+        .duration(function (d, i) {
+            return 500 * i;
+        })
+        .ease("linear")
+        .attr("x", function (d) {
+            return xScale(getDate(d._id));
+        })
+        .attr("y", function (d) {
+            return yScale(d.y) - ( _padding.bottom - _padding.top );//- (-yScale(d.y0) - yScale(d.y) + (_height - _padding.top - _padding.bottom) * 2);
+        })
+        .attr("height", function (d) {
+            return -yScale(d.y) + (_height - _padding.top - _padding.bottom);
+        })
+        .attr("width", 15)
+        .style("fill-opacity", 1);
+
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(50, " + (_height - _padding.bottom) + ")")
+        .call(xAxis);
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(" + _padding.left + "," + _padding.top + ")")
+        .call(yAxis);
+
+    svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - 5)
+        .attr("x", 0 - (_height / 2))
+        .attr("dy", "1em")
+        .text("Total");
+
+    function getDate(_id) {
+        return new Date(_id.year, _id.month - 1, _id.day);
+    }
+}
+
+function renderPie(selector, content, options) {
+    var size = {
+            width: $(selector).width(),
+            height: $(selector).height()
+        },
+        options = options || { };
+
+    $.extend(size, options);
+    new d3pie(selector, {
+        size: {
+            "canvasWidth": size.width,
+            "canvasHeight": size.height,
+            "pieInnerRadius": "1%",
+            "pieOuterRadius": "100%"
+        },
+        data: {
+            "sortOrder": "value-asc",
+            "content": content
+        },
+        tooltips: {
+            "enabled": true,
+            "type": "placeholder",
+            "fontColor": "#efefef",
+            "string": "{label}: {value}, {percentage}%"
+        },
+        misc: {
+            "colors": {
+                "segmentStroke": "#fff"
+            }
+        },
+        effects: {
+            "pullOutSegmentOnClick": {
+                "effect": "linear",
+                "speed": 400,
+                "size": 8
+            }
+        },
+        labels: {
+            "outer": {
+                "pieDistance": 10
+            },
+            "mainLabel": {
+                "fontSize": 16
+            },
+            "percentage": {
+                "fontSize": 14,
+                "decimalPlaces": 0
+            },
+            "value": {
+                "color": "#cccc43",
+                "fontSize": 14
+            },
+            "lines": {
+                "enabled": true,
+                "color": "#aaa"
+            },
+            "truncation": {
+                "enabled": true
+            }
+        }
+    });
+}

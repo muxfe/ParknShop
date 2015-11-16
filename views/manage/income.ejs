@@ -72,6 +72,11 @@
                 </table>
             </div><!-- /.box-body -->
         </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">Income Pie-chart</div>
+            <div class="panel-body" id="income-piechart">
+            </div>
+        </div>
     </div>
 </div><!-- div.container END -->
 
@@ -98,13 +103,34 @@
             }
             $http.get(url + '?' + filterStr).success(function (result) {
                 if (typeof result === 'object') {
-                    $scope.incomeData = result[0];
+                    if (result.length === 0) {
+                        $scope.incomeData = {
+                            totalPrice: 0,
+                            count: 0,
+                            totalCommission: 0,
+                            avgCommission: 0,
+                            volume: 0
+                        }
+                    } else {
+                        $scope.incomeData = result[0];
+                    }
                 }
             });
 
             $http.get(adUrl + '?' + filterStr).success(function (result) {
                 if (typeof result === 'object') {
-                    $scope.adIncomeData = result[0];
+                    if (result.length === 0) {
+                        $scope.adIncomeData = {
+                            totalPrice: 0,
+                            count: 0
+                        }
+                    } else {
+                        $scope.adIncomeData = result[0];
+                        renderPie("#income-piechart", [
+                            { label: "Sale", value: Math.round($scope.incomeData.totalCommission) },
+                            { label: "Ad", value: Math.round($scope.adIncomeData.totalPrice) }
+                        ], { height: 300 });
+                    }
                 }
             });
         };
