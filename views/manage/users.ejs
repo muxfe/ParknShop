@@ -45,8 +45,10 @@
                         <td class=" ">
                             <% if (bigCategory === 'blacklist') { %>
                                 <button class="btn btn-primary btn-xs" ng-click="recoveryOne(user._id)" role="button"><span class="fa fa-fw fa-rotate-left" aria-hidden="true">&nbsp;</span>Recovery</button>
+                                <button class="btn btn-danger btn-xs" ng-click="delOneItem(user._id)"><span class="fa fa-fw fa-trash-o" aria-hidden="true"></span>Delete</button>
+                            <% } else { %>
+                                <button class="btn btn-danger btn-xs" ng-click="delOneItem(user._id)"><span class="fa fa-fw fa-trash-o" aria-hidden="true"></span>Blacklist</button>
                             <% } %>
-                            <button class="btn btn-danger btn-xs" ng-click="delOneItem(user._id)"><span class="fa fa-fw fa-trash-o" aria-hidden="true"></span>Blacklist</button>
                         </td>
                     </tr>
                 </table>

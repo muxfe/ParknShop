@@ -37,12 +37,12 @@
                     </tr>
                     <tr class="datalist" ng-repeat="shop in data">
                         <td><input type="checkbox" name="listItem" class="mini" value="{{shop._id}}" ng-click="getNewIds()"/></td>
-                        <td class="  ">{{shop.name}}</td>
-                        <td class="  ">{{shop.state}}</td>
+                        <td class="  "><a href="/shop/{{shop._id}}">{{shop.name}}</a></td>
+                        <td class="  "><label class="label" ng-class="{'approved': 'label-success', 'reject': 'label-danger'}[shop.state]">{{shop.state}}</label></td>
                         <td class="  ">{{shop.shop_owner.username}}</td>
                         <td class=" ">Telephone: {{shop.contact.phoneNum}}<br/>Address: {{shop.contact.address}}<br/>E-mail: {{shop.contact.email}}</td>
                         <td class=" ">{{shop.visits}}</td>
-                        <td class=" ">Products: {{shop.nProducts}} <br/> Sales: {{shop.nSales}}</td>
+                        <td class=" ">Products: {{shop.nProducts}} <br/> Saled: {{shop.nSaled}}</td>
                         <td class=" ">{{shop.date | date : "yyyy-MM-dd"}}</td>
                         <td class=" ">
                             <button class="btn btn-primary btn-xs" ng-click="approve(shop._id)" ng-show="shop.state === 'approving'"><span class="fa fa-fw fa-check" aria-hidden="true"></span>Approve</button>

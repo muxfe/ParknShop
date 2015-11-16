@@ -98,6 +98,7 @@
         $scope.filterData = {};
         $scope.load = function () {
             var filterStr = '';
+            var count = 0;
             for (var key in $scope.filterData) {
                 filterStr += key + '=' + $scope.filterData[key] + '&';
             }
@@ -113,6 +114,7 @@
                         }
                     } else {
                         $scope.incomeData = result[0];
+                        count ? render() : count++;
                     }
                 }
             });
@@ -126,13 +128,16 @@
                         }
                     } else {
                         $scope.adIncomeData = result[0];
-                        renderPie("#income-piechart", [
-                            { label: "Sale", value: Math.round($scope.incomeData.totalCommission) },
-                            { label: "Ad", value: Math.round($scope.adIncomeData.totalPrice) }
-                        ], { height: 300 });
+                        count ? render() : count++;
                     }
                 }
             });
+            function render() {
+                renderPie("#income-piechart", [
+                    { label: "Sale", value: Math.round($scope.incomeData.totalCommission) },
+                    { label: "Ad", value: Math.round($scope.adIncomeData.totalPrice) }
+                ], { height: 300 });
+            }
         };
 
         $scope.load();

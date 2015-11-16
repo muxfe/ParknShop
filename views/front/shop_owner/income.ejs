@@ -113,6 +113,7 @@
                         }
                     } else {
                         $scope.incomeData = result[0];
+                        count ? render() : count++;
                     }
                 }
             });
@@ -126,13 +127,17 @@
                         }
                     } else {
                         $scope.adIncomeData = result[0];
-                        renderPie("#income-piechart", [
-                            { label: "Sale", value: Math.round($scope.incomeData.totalPrice - $scope.incomeData.totalCommission) },
-                            { label: "Ad", value: Math.round($scope.adIncomeData.totalPrice) }
-                        ], { height: 300 });
+                        count ? render() : count++;
                     }
                 }
             });
+
+            function render() {
+                renderPie("#income-piechart", [
+                    { label: "Sale", value: Math.round($scope.incomeData.totalPrice - $scope.incomeData.totalCommission) },
+                    { label: "Ad", value: Math.round($scope.adIncomeData.totalPrice) }
+                ], { height: 300 });
+            }
         };
 
         $http.get(shopUrl).success(function (result) {

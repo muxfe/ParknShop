@@ -68,7 +68,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-6 left-button">
-                                <button class="form-control btn" style="background-color:#a8b8d5;">Buy It Now</button>
+                                <button class="form-control btn" style="background-color:#a8b8d5;" ng-click="buyItNow()">Buy It Now</button>
                             </div>
                             <div class="col-sm-6 right-button">
                                 <button class="form-control btn" style="background-color:#8aa5d6;" ng-click="add2cart()">Add to Cart</button>
@@ -239,6 +239,27 @@
                 if (result === 'success') {
                     showSuccessInfo('Add to your cart successfully.');
                     $("ul.cart", 'div.top').dropdown('toggle');
+                }
+            });
+        };
+
+        $scope.buyItNow = function () {
+            var shop = {
+                shop: {
+                    _id: $scope.shopData._id,
+                    shop_owner_id: $scope.shopData.shop_owner._id,
+                    shop_owner_username: $scope.shopData.shop_owner.username
+                },
+                products: [{
+                    _id: $scope.buyData._id,
+                    quantity: $scope.buyData.quantity,
+                    price: $scope.productData.price
+                }],
+                total: $scope.buyData.quantity * $scope.productData.price
+            };
+            angularHttpPut($http, '/api/v1/order', { shops: [shop] }, function (data) {
+                if (data === 'success') {
+                    window.location = '/user/manage/confirm_order';
                 }
             });
         };
