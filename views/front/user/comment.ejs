@@ -1,0 +1,52 @@
+<div class="container" ng-controller="myComment">
+    <div class="col-xs-2">
+        <% include sidebar.ejs %>
+    </div>
+    <div class="col-xs-10">
+        <div class="box">
+            <div class="box-body table-responsive no-padding">
+                <table class="table table-hover">
+					<tr>
+                        <th>No.</th>
+                        <th>Order ID</th>
+                        <th>Commodity ID</th>
+                        <th>Title</th>
+                        <th>Content</th>
+                        <th>Score</th>
+                        <th>Date</th>
+					</tr>
+					<tr class="datalist" ng-repeat="item in data">
+                        <td class=" ">{{$index + 1}}</td>
+                        <td class=" ">{{item.order_id}}</td>
+						<td class=" ">{{item.product_id}}</td>
+						<td class=" ">{{item.title}}</td>
+						<td class=" ">{{item.content}}</td>
+						<td class=" ">{{item.score}}</td>
+						<td class=" ">{{item.date | date : "MM/dd/yy HH:mm:ss"}}</td>
+					</tr>
+                </table>
+            </div><!-- /.box-body -->
+            <div class="box-footer">
+                <!--分页-->
+                <% include ../public/pagination %>
+            </div>
+        </div><!-- /.box -->
+    </div>
+</div>
+
+<script>
+    $( function () {
+
+    });
+
+    App.controller("myComment", function ($scope, $http) {
+        var user_id = "<%=userInfo._id%>",
+            url = '/api/v1/comment',
+            getUrl = url + '?user_id=' + user_id;
+
+        initPage($scope, $http, getUrl, true);
+        $scope.load = function () {
+            loadData($scope, $http, getUrl);
+        };
+    });
+</script>

@@ -13,12 +13,12 @@
                     <img src="<%=userInfo.logo%>" alt="User Logo" />
                 </li>
                 <li role="separator" class="divider"></li>
-                <li><a href="/user/manage" class="btn">Profile</a></li>
+                <li><a href="/user/manage/profile" class="btn">Profile</a></li>
                 <li><a href="/user/logout" class="btn logout"><i class="fa fa-sign-out"></i>Logout</a></li>
             </ul>
         </div>
         <!-- message -->
-        <div class="btn-group">
+        <!-- <div class="btn-group">
             <a class="btn dropdown-toggle" type="button" data-toggle="dropdown">
                 <i class="fa fa-envelope"></i>
                 Message <span class="badge">3</span>
@@ -32,7 +32,7 @@
                 <li><a href="#" class="btn">More..</a></li>
                 <li><a href="#" class="btn">Mark</a></li>
             </ul>
-        </div>
+        </div> -->
     <% } else { %>
         <!-- Sign in / up -->
         <div class="btn-group">
@@ -57,17 +57,29 @@
                 <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-                <li><a href="#"><b>Customer</a></b></li>
-                <li><a href="#">xxx</a></li>
-                <li><a href="#">xxx</a></li>
+                <li><a href="/"><b>Home</a></b></li>
                 <li role="separator" class="divider"></li>
-                <li><a href="#"><b>Shop Owner</a></b></li>
-                <li><a href="#">xxx</a></li>
-                <li><a href="#">xxx</a></li>
+                <li><a href="/search"><b>Search</a></b></li>
+                <li><a href="/search">Commodity</a></li>
+                <li><a href="/search?stype=shop">Shop</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="/user/manage"><b>Customer</a></b></li>
+                <li><a href="/user/manage/profile">Profile</a></li>
+                <li><a href="/user/manage/cart">Cart</a></li>
+                <li><a href="/user/manage/order">Order</a></li>
+                <li><a href="/user/manage/comment">Comment</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="/shop/manage/"><b>Shop Owner</a></b></li>
+                <li><a href="/shop/manage/detail">Detail</a></li>
+                <li><a href="/shop/manage/order">Order</a></li>
+                <li><a href="/shop/manage/product">Products</a></li>
+                <li><a href="/shop/manage/category">Category</a></li>
+                <li><a href="/shop/manage/income">Income</a></li>
+                <li><a href="/shop/manage/ad">Advertisement</a></li>
             </ul>
         </div>
         <!-- customer service -->
-        <div class="btn-group pull-right">
+        <!-- <div class="btn-group pull-right">
             <a class="btn dropdown-toggle" type="button" data-toggle="dropdown">
                 <i class="fa fa-phone"></i>
                 Service
@@ -77,7 +89,7 @@
                 <li><a href="#">Customer</a></li>
                 <li><a href="#">Shop Owner</a></li>
             </ul>
-        </div>
+        </div> -->
         <!-- shop owner center -->
         <div class="btn-group pull-right">
             <a class="btn dropdown-toggle" type="button" data-toggle="dropdown">
@@ -86,10 +98,13 @@
                 <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-                <li><a href="/user/manage/free_shop">New Store</a></li>
-                <li><a href="/shop/manage/product">On Sale</a></li>
-                <li><a href="/shop/manage/order">Sell</a></li>
-                <li><a href="/shop/manage">Management</a></li>
+                <% if (userInfo && userInfo.group === 'shop_owner') { %>
+                    <li><a href="/shop/manage/product">On Sale</a></li>
+                    <li><a href="/shop/manage/order">Sell</a></li>
+                    <li><a href="/shop/manage">Management</a></li>
+                <% } else { %>
+                    <li><a href="/user/manage/free_shop">New Store</a></li>
+                <% } %>
             </ul>
         </div>
         <!-- category -->
@@ -103,7 +118,8 @@
         <div class="btn-group pull-right">
             <a class="btn dropdown-toggle" type="button" data-toggle="dropdown">
                 <i class="fa fa-shopping-cart"></i>
-                Cart <span class="badge">3</span>
+                Cart
+                <!-- <span class="badge"></span> -->
                 <span class="caret"></span>
             </a>
             <ul class="dropdown-menu cart">

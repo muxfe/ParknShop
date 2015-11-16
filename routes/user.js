@@ -54,6 +54,10 @@ router.get('/manage/order', function ( req, res, next ) {
     res.render('front/user/order', SiteUtils.getData4Customer(req, res, 'Order Management'));
 });
 
+router.get('/manage/comment', function ( req, res, next ) {
+    res.render('front/user/comment', SiteUtils.getData4Customer(req, res, 'Comment Management'));
+});
+
 router.get( '/manage/free_shop', function ( req, res, next ) {
     if ( Auth.isShopOwner(req) ) {
         res.redirect('/');
