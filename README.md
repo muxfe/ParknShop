@@ -1,32 +1,77 @@
-# Project Name
-**PARKnSHOP.com Online Mall**
-
-# Project Topic
-The **PARKnSHOP.com Online Mall** is a shopping application developed to help the seller and customer make a deal through the Internet. It enables vendors to set up online shops, customers to browse through the shops, and a system administrator to approve and reject requests for new shops and maintain lists of shop categories. On the one hand, the application provides an online shopping site for vendors to manage the items in the shop. On the other hand, it also help customers purchase them online without having to visit the shop physically. The Online Mall is a platform for sellers and customers to conclude the transaction, where Shopping will be highly personalized and the mall will provide lower prices than most competitors. In brief, it is a description of our product which will showcase a complete shopping experience in a small package.
-
-# Team Schedule
-Our team has 38 members.
+# PARKnSHOP.com Online Mall
 
 # Develop Environment
-* OS: Windows 7/8.1
-* Develop Tools: Sublime Text
-* Server App: Node.js
-* DB: MongoDB
-* Test Tools: Firebug , mocha
-* Project management Tools: Microsoft Project 2010
+* OS: Windows 8.1
+* Develop Tools: Atom
+* Server App: Node.js v0.12.4
+* DB: MongoDB 3.0.3
+* Test Tools: Firebug
 * Version control Tools: GitHub
-* Networks: HTTP , TCP
 * GUI design tool: DevTool, Photoshop , Firebug
 * Programming Language: CSS , JavaScript
 
-# TODO LIST
-1. build basic framework
-2. complete admin function
-3. complete shop owner function
-4. complete customer function
-5. complete public pages
-6. complete some additional functions
-7. optimize and beautify
+# Getting Start
+## Dependencies
+* [MongoDb 3.0.3](https://www.mongodb.org/downloads)
+* [NodeJS v0.12.4](https://nodejs.org/en/download/)
 
-# The Deadline
-21/11/2015
+Install more than these version will be ok.
+
+### Windows
+Just download the `.msi` file, and move on.
+
+### Linux
+Compiling it in your platform is better. e.g. Ubuntu 14.04.<br/>
+```text
+git clone https://github.com/nodejs/node.git
+cd node
+$ ./configure
+$ make
+$ [sudo] make install
+```
+[read more](https:/github.com/nodejs/node)<br/>
+Build MongoDB Source, [see here](https://docs.mongodb.org/manual/contributors/tutorial/build-mongodb-from-source)
+
+### Other platform
+Please do it yourself.
+
+## Start mongod
+Add mongod in your system PATH.
+```
+mongod --dbpath="F:\Program Files\MongoDB\ParknShop\db"
+ --logpath="F:\Program Files\MongoDB\ParknShop\log\mongo.log"
+```
+If you don't set the system PATH, please run it in mongo's bin directory.<br/>
+## Edit Configure
+in `model\db\settings.js`
+```
+// MongoDB config
+URL: 'mongodb://127.0.0.1:27017/ParknShop',
+DB: 'ParknShop',
+HOST: '127.0.0.1',
+PORT: 27017,
+USERNAME: '',
+PASSWORD: ''
+```
+Change it using your mongodb config.
+```
+DB_BACKUP_FOLDER: 'F:\\Program Files\\MongoDB\\ParknShop\\backup\\'
+```
+MongoDB data backup directory.
+```
+DB_BACKUP_BAT: process.cwd() + '/models/db/bat/backup.bat'
+```
+MongoDB backup script `.bat` file path. You shouldn't to change it.
+
+## Install Project
+When mongod running successfully
+```
+cd your project path
+node bin\install
+```
+
+## Start node
+```
+node bin\www
+```
+Open `http://localhost:3000/admin` in your browser. Using `admin / admin` login backstage. And open `http://localhost:3000/user/login#register` register a new account.

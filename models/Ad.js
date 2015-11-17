@@ -181,7 +181,6 @@ Ad.business = {
             query = url.parse(req.url, true).query,
             shop_id = query.shop_id,
             groupDate = query.groupDate,
-            period = query.period,
             role = query.role || '',
             startDate = new Date(query.startDate),
             endDate = new Date(query.endDate),
@@ -204,45 +203,38 @@ Ad.business = {
             return;
         }
 
-        if (period) {
-            var time = 0, dayTime = 24 * 60 * 60 * 1000, now = new Date().getTime();
-            switch (period) {
-                case 'daily':
-                    time = now - dayTime;
-                    break;
-                case 'weekly':
-                    time = now - 7 * dayTime;
-                    break;
-                case 'monthly':
-                    time = now - 30 * dayTime;
-                    break;
-                case 'yearly':
-                    time = now - 365 * dayTime;
-                    break;
-                default:
-                    time = now - dayTime;
-                    break;
+        if (!isNaN(startDate.valueOf()) || !isNaN(endDate.valueOf())) {
+            var condDate = {};
+            if (!isNaN(startDate.valueOf())) {
+                condDate.$gte = startDate;
             }
-            match.date = {
-                $gte: new Date(time)
-            };
-        } else {
-            if (!isNaN(startDate.valueOf()) || !isNaN(endDate.valueOf())) {
-                var condDate = {};
-                if (!isNaN(startDate.valueOf())) {
-                    condDate.$gte = startDate;
-                }
-                if (!isNaN(endDate.valueOf())) {
-                    condDate.$lte = endDate;
-                }
-                match.date = condDate;
+            if (!isNaN(endDate.valueOf())) {
+                condDate.$lte = endDate;
             }
+            match.date = condDate;
         }
 
         var id = null;
         if (groupDate) {
-            id = { month: { $month: "$date" }, day: { $dayOfMonth: "$date" }, year: { $year: "$date" } };
-        }
+            countDateKey = '$date';
+            switch (groupDate) {
+                case 'daily':
+                    id = { month: { $month: countDateKey }, day: { $dayOfMonth: countDateKey }, year: { $year: countDateKey } };
+                    break;
+                case 'weekly':
+                    id = { week: { $week: countDateKey }, month: { $month: countDateKey }, year: { $year: countDateKey } };
+                    break;
+                case 'monthly':
+                    id = { month: { $month: countDateKey }, year: { $year: countDateKey } };
+                    break;
+                case 'yearly':
+                    id = { year: { $year: countDateKey } };
+                    break;
+                default:
+                    id = { month: { $month: countDateKey }, day: { $dayOfMonth: countDateKey }, year: { $year: countDateKey } };
+                    break;
+            } // end-switch
+        } // end-if-groupDate
 
         group = {
             _id: id,

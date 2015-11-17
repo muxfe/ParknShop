@@ -168,6 +168,8 @@
             angularHttpPut($http, '/api/v1/order', { shops: shops }, function (data) {
                 if (data === 'success') {
                     window.location = '/user/manage/confirm_order';
+                } else {
+                    showErrorInfo(data);
                 }
             });
         };

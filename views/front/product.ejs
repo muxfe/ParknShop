@@ -239,6 +239,8 @@
                 if (result === 'success') {
                     showSuccessInfo('Add to your cart successfully.');
                     $("ul.cart", 'div.top').dropdown('toggle');
+                } else {
+                    showErrorInfo(result);
                 }
             });
         };
@@ -260,6 +262,8 @@
             angularHttpPut($http, '/api/v1/order', { shops: [shop] }, function (data) {
                 if (data === 'success') {
                     window.location = '/user/manage/confirm_order';
+                } else {
+                    showErrorInfo(result);
                 }
             });
         };
