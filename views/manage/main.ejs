@@ -88,10 +88,10 @@
             $scope.systemLog = result;
         });
 
-        $http.get("/admin/api/v1/income?groupDate=1&period=1").success(function (result) {
+        $http.get("/admin/api/v1/income?groupDate=daily").success(function (result) {
             if (typeof result === 'object') {
                 if (result.length === 0) {
-                    console.log("No result.")
+                    console.log("No result.");
                 } else {
                     barChart("#income-barChart", [result]);
                 }

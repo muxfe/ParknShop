@@ -76,7 +76,7 @@
                             <tr>
                                 <td><h4 class="text-danger">Total: {{orderItem.total | currency: '$'}}</h4></td>
                                 <td colspan="3" ng-switch="orderItem.state" class="text-center" style="vertical-align:middle;">
-                                    <button class="btn btn-primary" ng-switch-when="submit" ng-click="payOrder(orderItem._id)">Pay it</button>
+                                    <a class="btn btn-primary" href="#payModal" data-toggle="modal" ng-switch-when="submit" data-order-id="{{orderItem._id}}">Pay it</a>
                                     <button class="btn btn-danger" ng-switch-when="submit" ng-click="deleteOrder(orderItem._id)">Cancel</button>
                                     <h4 class="text-info" ng-switch-when="pay">Waiting the seller shipping products.</h4>
                                     <button class="btn btn-primary" ng-switch-when="shipping" ng-click="confirmOrder(orderItem._id)">Confirm</button>
@@ -143,6 +143,33 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+    <!--添加新用户模态窗口-->
+    <div class="modal fade" id="payModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Pay Order</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form form-horizontal" name="payForm" ng-submit="processPayForm(payForm.$valid)" novalidate>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Payment Password</label>
+                            <div class="input-group col-sm-5">
+                                <input class="form-control" type="password" ng-model="payFormData.password" placeholder="your login password" required/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group col-sm-3 col-sm-offset-2">
+                                <button type="submit" class="btn btn-primary btn-lg" ng-disabled="payForm.$invalid">Pay it</button>
+                            </div>
+                        </div>
+                    </form>
+                </div><!-- /.modal-body -->
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 </div><!-- div.container END -->
 
 <script>
@@ -160,6 +187,7 @@
 
     App.controller("MyOrder", function ($scope, $http) {
         var url = '/api/v1/order?role=customer';
+        var username = '<%=userInfo.username%>';
         var nState = 5,
             stateMap = {
                 'submit': 1,
@@ -171,6 +199,7 @@
 
         $scope.targetID = '';
         $scope.orderTargetID = '';
+        $scope.payFormData = {};
         initPage($scope, $http, url, true, loadProducts);
         $scope.load = function () {
             loadData($scope, $http, url, loadProducts);
@@ -252,14 +281,21 @@
             }
         }; // func-loadProducts
 
-        $scope.payOrder = function (order_id) {
-            if (order_id) {
-                confirmModal($scope, 'Are you sure pay for it?', function () {
-                    angularHttpPost($http, '/api/v1/order/' + order_id + '/pay', { }, function (result) {
-                        if (result === 'success') {
-                            $scope.load();
-                        }
-                    });
+        $scope.processPayForm = function (isValid) {
+            if (isValid && $scope.orderTargetID) {
+                angularHttpPost($http, '/user/login', { username: username, password: $scope.payFormData.password }, function (data) {
+                    if (data === 'success') {
+                        angularHttpPost($http, '/api/v1/order/' + $scope.orderTargetID + '/pay', {}, function (data) {
+                            if (data === 'success') {
+                                showSuccessInfo(data);
+                                $scope.load();
+                            } else {
+                                showErrorInfo(data);
+                            }
+                        });
+                    } else {
+                        showErrorInfo('Payment password is wrong.');
+                    }
                 });
             }
         };
@@ -325,6 +361,15 @@
             $(this).find("textarea").val("");
             $scope.formData = {};
             $scope.targetID = '';
+            $scope.orderTargetID = '';
+        });
+
+        $("#payModal").on('show.bs.modal', function (event) {
+            var obj = $(event.relatedTarget);
+            $scope.orderTargetID = obj.attr('data-order-id');
+        }).on('hidden.bs.modal', function (event) {
+            $(this).find("input").val("");
+            $scope.payFormData = {};
             $scope.orderTargetID = '';
         });
 

@@ -35,11 +35,6 @@
                 </form>
             </div>
         </div><!-- END panel -->
-        <div class="panel panel-info">
-            <div class="panel-heading">Income Pie-chart</div>
-            <div class="panel-body" id="income-piechart">
-            </div>
-        </div>
         <h4>Sales</h4>
         <div class="box">
             <div class="box-body table-responsive no-padding" >
@@ -58,8 +53,8 @@
                             <td>{{genDate(item._id)}}</td>
                             <td>{{item.totalPrice | currency: '$'}}</td>
                             <td>{{item.volume}} / {{item.count}}</td>
-                            <td>{{item.avgCommission | number: 2}}%</td>
-                            <td>{{item.totalCommission | number: 2 | currency: '$'}}</td>
+                            <td>{{item.avgCommission * 100 | number: 2}}%</td>
+                            <td>{{item.totalCommission | currency: '$'}}</td>
                         </tr>
                         <tr class="text-danger">
                             <td class="text-right" colspan="4">Total</td>
@@ -137,10 +132,10 @@
             endDate: new Date(),
             groupDate: 'daily'
         };
-        $scope.incomeTotal = 0;
-        $scope.adIncomeTotal = 0;
 
         $scope.load = function () {
+            $scope.incomeTotal = 0;
+            $scope.adIncomeTotal = 0;
             var filterStr = '';
             var count = 0;
             for (var key in $scope.filterData) {
@@ -149,13 +144,14 @@
             $http.get(url + '?' + filterStr).success(function (result) {
                 if (typeof result === 'object') {
                     if (result.length === 0) {
-                        $scope.incomeData = {
+                        $scope.incomeData = [{
                             totalPrice: 0,
                             count: 0,
                             totalCommission: 0,
                             avgCommission: 0,
                             volume: 0
-                        }
+                        }];
+                        render();
                     } else {
                         $scope.incomeData = result;
                         count ? done() : count++;
@@ -166,10 +162,11 @@
             $http.get(adUrl + '?' + filterStr).success(function (result) {
                 if (typeof result === 'object') {
                     if (result.length === 0) {
-                        $scope.adIncomeData = {
+                        $scope.adIncomeData = [{
                             totalPrice: 0,
                             count: 0
-                        }
+                        }];
+                        render();
                     } else {
                         $scope.adIncomeData = result;
                         count ? done() : count++;
@@ -179,7 +176,9 @@
 
             function render(data) {
                 $("#income-piechart").html("");
-                renderPie("#income-piechart", data, { height: 300 });
+                if (data) {
+                    renderPie("#income-piechart", data, { height: 300 });
+                }
             }
 
             function done() {

@@ -7,13 +7,22 @@
             <div class="panel-body">
                 <form class="form-inline" name="filterForm">
                     <div class="form-group price">
-                        <label for="">State:</label>
-                        <select class="form-control" ng-model="filterData.period" ng-change="load()">
+                        <label for="">Period:</label>
+                        <select class="form-control" ng-model="filterData.groupDate">
                             <option value="">Select Period</option>
-                            <option value="daily">Daily</option>
+                            <option value="daily" selected="selected">Daily</option>
                             <option value="weekly">Weekly</option>
                             <option value="monthly">Monthly</option>
                             <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">State:</label>
+                        <select class="form-control" ng-model="filterData.state">
+                            <option value="">Select State</option>
+                            <option value="unpay">Unpay</option>
+                            <option value="pay">Pay</option>
+                            <option value="done">Done</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -33,58 +42,42 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Item</th>
+                            <th>Time</th>
+                            <th>Sales</th>
+                            <th>Volume <abbr title="quantity / orders"><i class="fa fa-fw fa-info"></i></abbr></th>
                             <th>Commission</th>
-                            <th>Advertisement</th>
-                            <th>Total</th>
+                            <th>Average Commission</th>
+                            <th class="col-xs-2">Income</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Volume</td>
-                            <td>{{incomeData.volume}} / {{incomeData.count}}</td>
-                            <td>{{adIncomeData.count}}</td>
-                            <td>{{incomeData.count + adIncomeData.count}}</td>
+                        <tr ng-repeat="item in incomeData">
+                            <td>{{genDate(item._id)}}</td>
+                            <td>{{item.totalPrice | currency: '$'}}</td>
+                            <td>{{item.volume}} / {{item.count}}</td>
+                            <td class="text-danger">-{{item.totalCommission | currency: '$'}}</td>
+                            <td>{{item.avgCommission * 100 | number: 2}}%</td>
+                            <td>{{item.totalPrice - item.totalCommission | currency: '$'}}</td>
                         </tr>
-                        <tr>
-                            <td>Sales</td>
-                            <td>{{incomeData.totalPrice | currency: '$'}}</td>
-                            <td>{{adIncomeData.totalPrice | currency: '$'}}</td>
-                            <td>{{incomeData.totalPrice + adIncomeData.totalPrice | currency: '$'}}</td>
+                        <tr class="h4 text-danger">
+                            <td class="text-right" colspan="5">Total</td>
+                            <td>{{incomeTotal | currency: '$'}}</td>
                         </tr>
-                        <tr>
-                            <td>Commission</td>
-                            <td>{{incomeData.totalCommission | currency: '$'}}</td>
-                            <td></td>
-                            <td>{{incomeData.totalCommission | currency: '$'}}</td>
-                        </tr>
-                        <tr>
-                            <td>Average Commission</td>
-                            <td>{{incomeData.avgCommission * 100 | number: 2}}%</td>
-                            <td></td>
-                            <td>{{incomeData.avgCommission * 100 | number: 2}}%</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td class="text-right h4 text-danger">Total Income</td>
-                            <td class="h4 text-danger">{{incomeData.totalPrice - incomeData.totalCommission + adIncomeData.totalPrice | currency: '$'}}</td>
-                        </tr>
-                    </tbody>
                 </table>
             </div><!-- /.box-body -->
-        </div>
-        <div class="panel panel-info">
-            <div class="panel-heading">Income Pie-chart</div>
-            <div class="panel-body" id="income-piechart">
-            </div>
         </div>
     </div>
 </div>
 
 <script>
     $( function () {
+        $("div.input-daterange input").each(function () {
+            $(this).datepicker({format: 'mm/dd/yyyy'});
+        });
 
+        var now = new Date();
+        $("div.input-daterange input.start").datepicker("update", new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000));
+        $("div.input-daterange input.end").datepicker("update", now);
     });
 
     App.controller("income", function ($scope, $http) {
@@ -93,8 +86,14 @@
             shopUrl = '/api/v1/shop/mine',
             shop_id = '';
 
-        $scope.filterData = {};
+        $scope.filterData = {
+            startDate: new Date(new Date().getTime() - 7 * 24 * 3600 * 1000),
+            endDate: new Date(),
+            groupDate: 'daily'
+        };
         $scope.load = function () {
+            $scope.incomeTotal = 0;
+            $scope.adIncomeTotal = 0;
             var filterStr = '';
             var count = 0;
             for (var key in $scope.filterData) {
@@ -104,40 +103,37 @@
             $http.get(url + '?shop_id=' + shop_id + '&' + filterStr).success(function (result) {
                 if (typeof result === 'object') {
                     if (result.length === 0) {
-                        $scope.incomeData = {
+                        $scope.incomeData = [{
                             totalPrice: 0,
                             count: 0,
                             totalCommission: 0,
                             avgCommission: 0,
                             volume: 0
-                        }
+                        }];
                     } else {
-                        $scope.incomeData = result[0];
-                        count ? render() : count++;
+                        $scope.incomeData = result;
                     }
+                    $scope.incomeData.forEach(function (d) {
+                        $scope.incomeTotal += d.totalPrice - d.totalCommission;
+                    });
                 }
             });
 
             $http.get(adUrl + '?shop_id=' + shop_id + '&role=shop&' + filterStr).success(function (result) {
                 if (typeof result === 'object') {
                     if (result.length === 0) {
-                        $scope.adIncomeData = {
+                        $scope.adIncomeData = [{
                             totalPrice: 0,
                             count: 0
-                        }
+                        }];
                     } else {
-                        $scope.adIncomeData = result[0];
-                        count ? render() : count++;
+                        $scope.adIncomeData = result;
                     }
+                    $scope.adIncomeData.forEach(function (d) {
+                        $scope.adIncomeTotal += d.totalPrice;
+                    });
                 }
             });
-
-            function render() {
-                renderPie("#income-piechart", [
-                    { label: "Sale", value: Math.round($scope.incomeData.totalPrice - $scope.incomeData.totalCommission) },
-                    { label: "Ad", value: Math.round($scope.adIncomeData.totalPrice) }
-                ], { height: 300 });
-            }
         };
 
         $http.get(shopUrl).success(function (result) {
@@ -146,5 +142,15 @@
                 $scope.load();
             }
         });
+
+        $scope.genDate = function(obj) {
+            var ret = '';
+            obj = obj || {};
+            if (typeof obj.day !== 'undefined') ret += (ret ? '-' : '') + obj.day + 'D';
+            if (typeof obj.week !== 'undefined') ret += (ret ? '-' : '') + obj.week + 'W';
+            if (typeof obj.month !== 'undefined') ret += (ret ? '-' : '') + obj.month + 'M';
+            if (typeof obj.year !== 'undefined') ret += (ret ? '-' : '') + obj.year + 'Y';
+            return ret || 'All';
+        }
     });
 </script>
