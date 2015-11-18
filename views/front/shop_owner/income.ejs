@@ -63,10 +63,52 @@
                             <td>{{item.avgCommission * 100 | number: 2}}%</td>
                             <td>{{item.totalPrice - item.totalCommission | currency: '$'}}</td>
                         </tr>
-                        <tr class="h4 text-danger">
+                        <tr class="text-danger">
                             <td class="text-right" colspan="5">Total</td>
                             <td>{{incomeTotal | currency: '$'}}</td>
                         </tr>
+                </table>
+            </div><!-- /.box-body -->
+        </div>
+        <h4>Advertise</h4>
+        <div class="box">
+            <div class="box-body table-responsive no-padding" >
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th class="col-xs-2">Income</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in adIncomeData">
+                            <td>{{genDate(item._id)}}</td>
+                            <td>-{{item.totalPrice | currency: '$'}}</td>
+                        </tr>
+                        <tr class="text-danger">
+                            <td class="text-right">Total</td>
+                            <td>-{{adIncomeTotal | currency: '$'}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div><!-- /.box-body -->
+        </div>
+        <h4>Summary</h4>
+        <div class="box">
+            <div class="box-body table-responsive no-padding" >
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date Range</th>
+                            <th class="col-xs-2">Total Income</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{filterData.startDate}} ~ {{filterData.endDate}}</td>
+                            <td class="h4 text-danger">{{incomeTotal - adIncomeTotal | currency: '$'}}</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div><!-- /.box-body -->
         </div>

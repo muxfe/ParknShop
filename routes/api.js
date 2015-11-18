@@ -395,6 +395,10 @@ router.get('/v1/ad/:ad_id?', function (req, res, next) {
 	}
 });
 
+router.get('/v1/index/ad', function (req, res, next) {
+	Ad.business.find(req, res);
+});
+
 /*
  * PUT ads
  * @body: title, content, url, logo, valid_date, state

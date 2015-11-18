@@ -28,7 +28,7 @@ var Commission = require('../models/Commission');
 var Ad = require('../models/Ad');
 
 // 管理员工具
-var AdminUtils = require('../utils/adminUtils');
+var AdminUtils = require('../utils/AdminUtils');
 // 系统工具
 var system = require('../utils/system');
 

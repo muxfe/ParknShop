@@ -79,6 +79,7 @@ var SiteUtils = {
             siteConfig: SiteUtils.getSiteInfo( ),
             classify: SiteUtils.getCategory(),
             category: _IndexCategory,
+            AD_LIMIT: settings.AD_LIMIT,
             userInfo: req.session.user,
             logined: req.session.logined,
             layout: 'front/public/defaultTpl'

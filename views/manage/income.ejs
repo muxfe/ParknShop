@@ -163,7 +163,7 @@
                 }
             });
 
-            $http.get(adUrl + '?' + filterStr).success(function (result) {
+            $http.get(adUrl + '?shop=1&' + filterStr).success(function (result) {
                 if (typeof result === 'object') {
                     if (result.length === 0) {
                         $scope.adIncomeData = [{

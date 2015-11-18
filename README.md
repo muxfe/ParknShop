@@ -21,7 +21,7 @@ Install more than these version will be ok.
 Just download the `.msi` file, and click next.
 
 ### Linux
-Compiling from source in your platform will ber better. e.g. Ubuntu 14.04.<br/>
+Compiling from source in your platform will be better. e.g. Ubuntu 14.04.<br/>
 ```text
 git clone https://github.com/nodejs/node.git
 cd node
@@ -30,8 +30,8 @@ $ make
 $ [sudo] make install
 ```
 [read more](https:/github.com/nodejs/node)<br/>
-Build MongoDB Source, [https://docs.mongodb.org/manual/contributors/tutorial/build-mongodb-from-source](https://docs.mongodb.org/manual/contributors/tutorial/build-mongodb-from-source)<br/>
-Install MongoDB on Ubuntu, [https://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu](https://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu)
+Build MongoDB Source, [see here](https://docs.mongodb.org/manual/contributors/tutorial/build-mongodb-from-source).<br/>
+Install MongoDB on Ubuntu, [see here](https://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu).
 
 ### Other platform
 Please do it yourself.

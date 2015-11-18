@@ -1,38 +1,24 @@
 <div class="category">
     <ul class="nav wrap1366">
         <% for (var i = 0; i < classify.length; i++) { %>
-            <li class="pull-left"><a href="<%=classify[i].url%>"><%=classify[i].name%></a></li>
+            <li class="pull-left"><a href="#"><%=classify[i].name%></a></li>
         <% } %>
     </ul>
 </div>
-<div class="container">　
+<div class="container" ng-controller="index">　
     <div class="slide wrap1190">
         <div id="index-slide" class="carousel slide" data-ride="carousel">
             <!-- Indicators -->
             <ol class="carousel-indicators">
-                <li data-target="#index-slide" data-slide-to="0" class="active"></li>
-                <li data-target="#index-slide" data-slide-to="1"></li>
-                <li data-target="#index-slide" data-slide-to="2"></li>
+                <li data-target="#index-slide" data-slide-to="{{$index}}" class="" ng-repeat="item in slides track by $index" ng-class="{ 0: 'active' }[$index]"></li>
             </ol>
 
             <!-- Wrapper for slides -->
             <div class="carousel-inner" role="listbox">
-                <div class="item active">
-                  <img src="/upload/images/slide.jpg" alt="slide">
+                <div class="item" ng-repeat="item in slides track by $index" ng-class="{ 0: 'active' }[$index]">
+                  <img src="{{item.logo}}" alt="slide">
                   <div class="carousel-caption">
-                    ...
-                  </div>
-                </div>
-                <div class="item">
-                  <img src="/upload/images/slide.jpg" alt="slide">
-                  <div class="carousel-caption">
-                    ...
-                  </div>
-                </div>
-                <div class="item">
-                  <img src="/upload/images/slide.jpg" alt="slide">
-                  <div class="carousel-caption">
-                    ...
+                    .
                   </div>
                 </div>
             </div>
@@ -50,88 +36,27 @@
     </div>
     <div class="board hot-shop">
         <legend>Hot Shop</legend>
-        <div class="shop">
+        <div class="shop" ng-repeat="item in shops track by $index">
             <div class="image pull-left">
-                <a href="#">
-                    <img src="/upload/images/hot-shop.jpg" class="img-rounded" />
+                <a href="/shop/{{item._id}}" ng-if="!item.default">
+                    <img src="{{item.logo}}" class="img-rounded" />
+                </a>
+                <a href="/search?stype=shop" ng-if="item.default">
+                    <img src="{{item.logo}}" class="img-rounded" />
                 </a>
             </div>
             <div class="items pull-right">
-                <div class="item">
+                <div class="item" ng-repeat="sub in item.products track by $index">
                     <div class="image">
-                        <img src="/upload/images/hot-shop-item-1.jpg" />
+                        <img src="{{sub.logo}}" />
                     </div>
                     <div class="text">
-                        <a href="#">Special Offers on Silver</a>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="image">
-                        <img src="/upload/images/hot-shop-item-2.jpg" />
-                    </div>
-                    <div class="text">
-                        <p>Design Watch Deal</p>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="image">
-                        <img src="/upload/images/hot-shop-item-3.jpg" />
-                    </div>
-                    <div class="text">
-                        <p>Lipstick For Less</p>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="image">
-                        <img src="/upload/images/hot-shop-item-4.jpg" />
-                    </div>
-                    <div class="text">
-                        <p>Fashion Clothes</p>
+                        <a href="/product/{{sub._id}}" ng-if="!item.default">{{sub.name | limitTo: 30}}</a>
+                        <a href="/search" ng-if="item.default">{{sub.name | limitTo: 30}}</a>
                     </div>
                 </div>
             </div>
         </div><!-- End Shop -->
-        <div class="shop">
-            <div class="image pull-left">
-                <a href="#">
-                    <img src="/upload/images/hot-shop.jpg" class="img-rounded" />
-                </a>
-            </div>
-            <div class="items pull-right">
-                <div class="item">
-                    <div class="image">
-                        <img src="/upload/images/hot-shop-item-1.jpg" />
-                    </div>
-                    <div class="text">
-                        <a href="#">Special Offers on Silver</a>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="image">
-                        <img src="/upload/images/hot-shop-item-2.jpg" />
-                    </div>
-                    <div class="text">
-                        <p>Design Watch Deal</p>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="image">
-                        <img src="/upload/images/hot-shop-item-3.jpg" />
-                    </div>
-                    <div class="text">
-                        <p>Lipstick For Less</p>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="image">
-                        <img src="/upload/images/hot-shop-item-4.jpg" />
-                    </div>
-                    <div class="text">
-                        <p>Fashion Clothes</p>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div><!-- End hot-shop -->
     <div class="board hot-brand">
         <legend>Hot Brand</legend>
@@ -139,19 +64,14 @@
             <div id="brand-slide" class="carousel slide" data-ride="carousel">
                 <!-- Indicators -->
                 <ol class="carousel-indicators">
-                    <li data-target="#brand-slide" data-slide-to="0" class="active"></li>
-                    <li data-target="#brand-slide" data-slide-to="1" class=""></li>
+                    <li data-target="#index-slide" data-slide-to="{{$index}}" class="" ng-repeat="item in brands track by $index" ng-class="{ 0: 'active' }[$index]"></li>
                 </ol>
 
                 <!-- Wrapper for slides -->
                 <div class="carousel-inner" role="listbox">
-                    <div class="item active">
-                      <img src="/upload/images/brand-lg.png" alt="slide">
-                      <img src="/upload/images/brand.png" alt="slide">
-                    </div>
-                    <div class="item">
-                      <img src="/upload/images/brand-lg.png" alt="slide">
-                      <img src="/upload/images/brand.png" alt="slide">
+                    <div class="item" ng-repeat="item in brands track by $index" ng-class="{ 0: 'active' }[$index]">
+                      <img src="/upload/images/brandlogo.png" alt="slide">
+                      <img src="{{item.logo}}" alt="slide">
                     </div>
                 </div>
 
@@ -170,90 +90,23 @@
     <div class="board hot-product">
         <legend>Hot Product</legend>
         <div class="products">
-            <div class="product">
+            <div class="product" ng-repeat="item in products track by $index">
                 <div class="image-lg pull-left">
-                    <img src="/upload/images/product.jpg" />
+                    <img src="{{item.logo}}" />
                 </div>
                 <div class="image-sm pull-left">
-                    <img src="/upload/images/product-sm-1.jpg">
-                    <img src="/upload/images/product-sm-2.jpg">
-                    <img src="/upload/images/product-sm-3.jpg">
+                    <img src="{{img}}" ng-repeat="img in item.images track by $index">
                 </div>
                 <div class="">
                     <div class="text pull-left">
-                        High quality Headset, suitable for listening to music, watching movies, enjoy the sound of joy.
+                        <a href="/product/{{item.product_id}}" ng-if="!item.default">{{item.name}}</a>
+                        <a href="#" ng-if="item.default">{{item.name}}</a>
                     </div>
-                    <div class="list pull-left">
+                    <div class="list pull-left" ng-show="!item.default">
                         <ul class="nav">
-                            <li><a>204 sale</a></li>
-                            <li><a>50$</a></li>
-                            <li><a href="#">buy it</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div><!-- End product -->
-            <div class="product">
-                <div class="image-lg pull-left">
-                    <img src="/upload/images/product.jpg" />
-                </div>
-                <div class="image-sm pull-left">
-                    <img src="/upload/images/product-sm-1.jpg">
-                    <img src="/upload/images/product-sm-2.jpg">
-                    <img src="/upload/images/product-sm-3.jpg">
-                </div>
-                <div class="">
-                    <div class="text pull-left">
-                        High quality Headset, suitable for listening to music, watching movies, enjoy the sound of joy.
-                    </div>
-                    <div class="list pull-left">
-                        <ul class="nav">
-                            <li><a>204 sale</a></li>
-                            <li><a>50$</a></li>
-                            <li><a href="#">buy it</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div><!-- End product -->
-            <div class="product">
-                <div class="image-lg pull-left">
-                    <img src="/upload/images/product.jpg" />
-                </div>
-                <div class="image-sm pull-left">
-                    <img src="/upload/images/product-sm-1.jpg">
-                    <img src="/upload/images/product-sm-2.jpg">
-                    <img src="/upload/images/product-sm-3.jpg">
-                </div>
-                <div class="">
-                    <div class="text pull-left">
-                        High quality Headset, suitable for listening to music, watching movies, enjoy the sound of joy.
-                    </div>
-                    <div class="list pull-left">
-                        <ul class="nav">
-                            <li><a>204 sale</a></li>
-                            <li><a>50$</a></li>
-                            <li><a href="#">buy it</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div><!-- End product -->
-            <div class="product">
-                <div class="image-lg pull-left">
-                    <img src="/upload/images/product.jpg" />
-                </div>
-                <div class="image-sm pull-left">
-                    <img src="/upload/images/product-sm-1.jpg">
-                    <img src="/upload/images/product-sm-2.jpg">
-                    <img src="/upload/images/product-sm-3.jpg">
-                </div>
-                <div class="">
-                    <div class="text pull-left">
-                        High quality Headset, suitable for listening to music, watching movies, enjoy the sound of joy.
-                    </div>
-                    <div class="list pull-left">
-                        <ul class="nav">
-                            <li><a>204 sale</a></li>
-                            <li><a>50$</a></li>
-                            <li><a href="#">buy it</a></li>
+                            <li><a>{{item.nSaled}} sale</a></li>
+                            <li><a class="text-danger">{{item.price | currency: '$'}}</a></li>
+                            <li><a class="btn" ng-click="buyItNow(item)">Buy It Now</a></li>
                         </ul>
                     </div>
                 </div>
@@ -261,3 +114,143 @@
         </div><!-- End products -->
     </div><!-- End hot-product -->
 </div><!-- End container -->
+
+<script>
+
+    App.controller("index", function ($scope, $http) {
+        var url = '/api/v1/index/ad?type=';
+        var types = [ 'product', 'shop', 'brand', 'slide' ];
+        var defaultData = {
+            'product': {
+                logo: '/upload/images/productlogo.png',
+                url: '#',
+                product_id: '',
+                name: 'PARKnSHOP.com Online Mall',
+                images: [
+                    '/upload/images/productlogo.png',
+                    '/upload/images/productlogo.png',
+                    '/upload/images/productlogo.png'
+                ],
+                price: 0,
+                nSaled: 0,
+                default: true
+            },
+            'shop': {
+                logo: '/upload/images/shoplogo.png',
+                url: '#',
+                name: 'PARKnSHOP.com',
+                products: [
+                    { name: "PARNnSHOP.com", logo: "/upload/images/productlogo.png" },
+                    { name: "PARNnSHOP.com", logo: "/upload/images/productlogo.png" },
+                    { name: "PARNnSHOP.com", logo: "/upload/images/productlogo.png" },
+                    { name: "PARNnSHOP.com", logo: "/upload/images/productlogo.png" }
+                ],
+                default: true
+            },
+            'brand': {
+                logo: '/upload/images/brandlogo.png',
+                url: '#',
+                default: true
+            },
+            'slide': {
+                logo: '/upload/images/slidelogo.png',
+                url: '#',
+                default: true
+            }
+        };
+        var limit = {
+            'product': <%=AD_LIMIT.product%>,
+            'shop': <%=AD_LIMIT.shop%>,
+            'brand': <%=AD_LIMIT.brand%>,
+            'slide': <%=AD_LIMIT.slide%>
+        };
+
+        $scope.slides = [];
+        $scope.shops = [];
+        $scope.brands = [];
+        $scope.products = [];
+
+        $scope.load = function () {
+            types.forEach(function (type, j) {
+                $http.get(url + types[j]).success(function (result) {
+                    if (typeof result === 'object') {
+                        $scope[types[j] + 's'] = result;
+
+                        switch (types[j]) {
+                            case 'product':
+                                $scope.products.forEach(function (d, i) {
+                                    $http.get('/api/v1/product/' + d.product_id).success(function (result) {
+                                        if (typeof result === 'object') {
+                                            $.extend($scope.products[i], result);
+                                            $scope.products[i].images = [];
+                                            var length = 0;
+                                            result.content.replace(/<img[^>]*src=["']([^'"]+)[^>]*>/gi, function (match, capture) {
+                                                if (length < 3) {
+                                                    length++;
+                                                    $scope.products[i].images.push(capture);
+                                                }
+                                            });
+                                        } else {
+                                            console.log('get product ' + d.product_id + ' error');
+                                        }
+                                    });
+                                });
+
+                                break;
+                            case 'shop':
+                                $scope.shops.forEach(function (d, i) {
+                                    d.products = [];
+                                    $http.get('/api/v1/product?shop_id=' + d.shop._id + '&currentPage=1&limit=4&sortBySaled=1').success(function (result) {
+                                        if (typeof result === 'object') {
+                                            d.products = result.docs;
+                                        }
+                                    });
+                                });
+                                break;
+                            case 'slide':
+                                if (result.length === 0) {
+                                    $scope.slides.push(defaultData[types[j]]);
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                        // 填充默认数据
+                        var rest = limit[types[j]] - result.length;
+                        for (var i = 0; i < rest; i++) {
+                            $scope[types[j] + 's'].push(defaultData[types[j]]);
+                        }
+                    } else {
+                        $scope.load();
+                    }
+                });
+            });
+        };
+
+        $scope.load();
+
+        $scope.buyItNow = function (item) {
+            var shop = {
+                shop: {
+                    _id: item.shop._id,
+                    shop_owner_id: item.shop_owner_id,
+                    shop_owner_username: item.shop.username
+                },
+                products: [{
+                    _id: item._id,
+                    quantity: 1,
+                    price: item.price
+                }],
+                total: item.price
+            };
+            angularHttpPut($http, '/api/v1/order', { shops: [shop] }, function (data) {
+                if (data === 'success') {
+                    window.location = '/user/manage/confirm_order';
+                } else {
+                    window.location = '/user/login';
+                }
+            });
+        };
+    });
+
+</script>

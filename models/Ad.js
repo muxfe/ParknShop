@@ -216,10 +216,8 @@ Ad.business = {
             }
             match['shop._id'] = shop_id;
             match['shop.shop_owner_id'] = req.session.user._id;
-            match.type = 'shop';
         } else if (Auth.isAdminLogin(req)) {
             // next
-            match.type = 'system';
         } else {
             res.end('Permission Denied.');
             return;
