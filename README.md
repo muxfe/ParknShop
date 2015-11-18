@@ -18,10 +18,10 @@
 Install more than these version will be ok.
 
 ### Windows
-Just download the `.msi` file, and move on.
+Just download the `.msi` file, and click next.
 
 ### Linux
-Compiling it in your platform is better. e.g. Ubuntu 14.04.<br/>
+Compiling from source in your platform will ber better. e.g. Ubuntu 14.04.<br/>
 ```text
 git clone https://github.com/nodejs/node.git
 cd node
@@ -30,7 +30,8 @@ $ make
 $ [sudo] make install
 ```
 [read more](https:/github.com/nodejs/node)<br/>
-Build MongoDB Source, [see here](https://docs.mongodb.org/manual/contributors/tutorial/build-mongodb-from-source)
+Build MongoDB Source, [https://docs.mongodb.org/manual/contributors/tutorial/build-mongodb-from-source](https://docs.mongodb.org/manual/contributors/tutorial/build-mongodb-from-source)<br/>
+Install MongoDB on Ubuntu, [https://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu](https://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu)
 
 ### Other platform
 Please do it yourself.
@@ -42,6 +43,18 @@ mongod --dbpath="F:\Program Files\MongoDB\ParknShop\db"
  --logpath="F:\Program Files\MongoDB\ParknShop\log\mongo.log"
 ```
 If you don't set the system PATH, please run it in mongo's bin directory.<br/>
+There is like this on Linux.
+```
+$ [sudo] service mongodb stop
+$ mongod --dbpath /path/db
+```
+
+## Install Node Modules
+```
+cd ParknShop
+npm update
+```
+
 ## Edit Configure
 in `model\db\settings.js`
 ```
@@ -63,14 +76,14 @@ DB_BACKUP_BAT: process.cwd() + '/models/db/bat/backup.bat'
 ```
 MongoDB backup script `.bat` file path. You shouldn't to change it.
 
-## Install Project
-When mongod running successfully
+## Init Project
+When mongod running successfully,
 ```
-cd your project path
-node bin\install
+cd ParknShop
+node init
 ```
 
-## Start node
+## Start Project
 ```
 node bin\www
 ```

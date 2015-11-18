@@ -31,9 +31,6 @@ var RedisStore = require('connect-redis')(session);
 // 文件操作
 var fs = require('fs');
 
-// 时间格式化
-var moment = require('moment');
-
 // 模板引擎
 var partials = require('express-partials');
 
