@@ -62,7 +62,7 @@ router.get( '/manage/sale_history', function ( req, res, next ) {
 
 // ad page
 router.get( '/manage/ad', function ( req, res, next ) {
-    res.render( 'front/shop_owner/ad', SiteUtils.getData4ShopOwner( req, res, 'Advertisement Management' ) );
+    res.render( 'front/shop_owner/ad', SiteUtils.getData4ShopAd( req, res, 'Advertisement Management' ) );
 });
 
 

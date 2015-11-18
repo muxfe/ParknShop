@@ -32,6 +32,21 @@ module.exports = {
 	SITE_KEYWORDS: 'E-Commerce,parknshop,o2o',
 	SITE_BASIC_KEYWORDS: '',
 
+	// 首页广告限制
+	AD_LIMIT: {
+		'product': 4,
+		'shop': 2,
+		'brand': 2,
+		'slide': 5
+	},
+	// 广告价格 /monthly
+	AD_PRICE: {
+		'product': 1000,
+		'shop': 2000,
+		'brand': 500,
+		'slide': 1500
+	},
+
 	// 系统管理模块
 	SYSTEM_MANAGE: new Array('system', 'System Management'),
 	ADMIN_USER_LIST: new Array('admin_user', 'Administrator Management'),

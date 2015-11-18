@@ -4,7 +4,10 @@
     </div>
     <div class="col-xs-10" ng-controller="shopDetail">
         <form class="form form-horizontal free-shop"  name="shopForm"  ng-submit="processForm(shopForm.$valid)" novalidate>
-            <legend><%=title%></legend>
+            <legend><%=title%>
+                <small class="pull-right text-danger hide"><i class="fa fa-info"></i> <span id="errorInfo"></span></small>
+                <small class="pull-right text-success hide"><i class="fa fa-info"></i> <span id="successInfo"></span></small>
+            </legend>
             <div class="alert alert-success alert-dismissible hide" role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <strong>Success!</strong> Change is save.

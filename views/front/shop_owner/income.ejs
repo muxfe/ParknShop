@@ -3,10 +3,14 @@
         <% include sidebar.ejs %>
     </div>
     <div class="col-xs-10">
+        <legend><%=title%>
+            <small class="pull-right text-danger hide"><i class="fa fa-info"></i> <span id="errorInfo"></span></small>
+            <small class="pull-right text-success hide"><i class="fa fa-info"></i> <span id="successInfo"></span></small>
+        </legend>
         <div class="panel panel-info">
             <div class="panel-body">
                 <form class="form-inline" name="filterForm">
-                    <div class="form-group price">
+                    <div class="form-group">
                         <label for="">Period:</label>
                         <select class="form-control" ng-model="filterData.groupDate">
                             <option value="">Select Period</option>

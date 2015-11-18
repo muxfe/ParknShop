@@ -107,7 +107,11 @@ Product.business = {
             conditions.$or.push({ tags: { $in: [ re ] } });
         }
         if (shop_id) {
-            conditions['shop._id'] = shop_id;
+            if (shop_id.length < 2) {
+                conditions['shop.shop_owner_id'] = req.session.user._id;
+            } else {
+                conditions['shop._id'] = shop_id;
+            }
         }
         if (state) {
             conditions.state = state;

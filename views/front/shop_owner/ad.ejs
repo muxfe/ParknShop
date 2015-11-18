@@ -4,45 +4,41 @@
         <% include sidebar.ejs %>
     </div>
     <div class="col-xs-10">
-        <br/>
+        <legend><%=title%>
+            <small class="pull-right text-danger hide"><i class="fa fa-info"></i> <span id="errorInfo"></span></small>
+            <small class="pull-right text-success hide"><i class="fa fa-info"></i> <span id="successInfo"></span></small>
+        </legend>
         <div class="panel panel-info">
-            <a href="#addAd" role="button" class="btn btn-primary btn-sm" data-toggle="modal"><span class="fa fa-plus-square" aria-hidden="true">&nbsp;</span>New Ad</a>
+            <a href="#addAd" role="button" class="btn btn-primary btn-sm" data-toggle="modal"><span class="fa fa-plus-square" aria-hidden="true">&nbsp;</span>Apply Ad</a>
             <input type="hidden" id="targetIds"/>
-            <button class="btn btn-danger btn-sm" ng-click="deleteItems()" role="button"><span class="fa fa-fw fa-trash-o" aria-hidden="true">&nbsp;</span>Delete Selected</button>
+            <!-- <button class="btn btn-danger btn-sm" ng-click="deleteItems()" role="button"><span class="fa fa-fw fa-trash-o" aria-hidden="true">&nbsp;</span>Delete Selected</button> -->
         </div>
         <div class="box">
             <div class="box-body table-responsive no-padding">
                 <table class="table table-hover">
 					<tr>
 						<th><input type="checkbox" class="mini" id="selectAll"/></th>
-                        <th>ID</th>
                         <th>SortId</th>
-                        <th>Title</th>
-                        <th>Content</th>
+                        <th>Type</th>
                         <th>Url</th>
                         <th>Price</th>
 						<th>State</th>
-                        <th>Date</th>
-                        <th>Valid Date</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
                         <th>Operation</th>
 					</tr>
 					<tr class="datalist" ng-repeat="item in data">
 						<td><input type="checkbox" name="listItem" class="mini" value="{{item._id}}" ng-click="getNewIds()"/></td>
-                        <td class=" ">{{item._id}}</td>
 						<td class=" ">{{item.sortId}}</td>
-						<td class=" ">{{item.title}}</td>
-						<td class=" ">{{item.content}}</td>
+						<td class=" ">{{item.type}}</td>
 						<td class=" ">{{item.url}}</td>
                         <td class="text-danger">{{item.price | currency: '$'}}</td>
-						<td class=" ">{{item.state}}</td>
+						<td class=" "><label class="label" ng-class="{ true: 'label-success', false: 'label-danger' }[item.state]">{{item.state}}</label></td>
 						<td class=" ">{{item.date | date : "MM/dd/yy"}}</td>
-						<td class=" ">
-							Start: {{item.startDate | date : "MM/dd/yy"}} <br/>
-							End: {{item.endDate | date : "MM/dd/yy"}}
-						</td>
+						<td class=" ">{{item.endDate | date : "MM/dd/yy"}}</td>
 						<td class=" ">
 							<button class="btn btn-primary btn-xs" data-whatever="{{item._id}}" data-toggle="modal" data-target="#addAd"><span class="fa fa-fw fa-edit" aria-hidden="true"></span>Edit</button>&nbsp;
-							<button class="btn btn-danger btn-xs" ng-click="deleteItems(item._id)"><span class="fa fa-fw fa-trash-o" aria-hidden="true"></span>Delete</button>
+							<!-- <button class="btn btn-danger btn-xs" ng-click="deleteItems(item._id)"><span class="fa fa-fw fa-trash-o" aria-hidden="true"></span>Delete</button> -->
 						</td>
 					</tr>
                 </table>
@@ -59,61 +55,49 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title">New Ad</h4>
+					<h4 class="modal-title">Buy Ad</h4>
 				</div>
 				<div class="modal-body">
 					<form role="form" class="form-horizontal" name="myForm" ng-submit="processForm(myForm.$valid)" novalidate>
-						<div class="form-group">
-							<label class="control-label col-sm-4">Title</label>
-							<div class="col-sm-4">
-								<input type="text" class="form-control" name="name" ng-model="formData.title" ng-minlength="1" ng-maxlength="50" required/>
-								<label for="inputError" class="control-label text-danger" ng-show="myForm.title.$invalid && !myForm.title.$pristine"><i class="fa fa-times-circle-o"></i> 1-50 letters</label>
-							</div>
-						</div>
-						<div class="form-group">
+                        <div class="form-group">
+                            <label for="" class="control-label col-sm-4"><span class="text-danger">*</span> Type:</label>
+                            <div class="col-sm-3">
+                                <select class="form-control" ng-model="formData.type" name="type" ng-change="clearForm()">
+                                    <option value="product" selected="selected">Product</option>
+                                    <option value="shop">Hot Shop</option>
+                                    <option value="brand">Hot Brand</option>
+                                    <option value="slide">Slide</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="formData.type === 'product'">
+                            <label for="" class="control-label col-sm-4"><span class="text-danger">*</span> Product:</label>
+                            <div class="col-sm-5">
+                                <select class="form-control" name="product_id" ng-model="formData.product_id">
+                                    <option value="">Select Product</option>
+                                    <option ng-repeat="product in productData" value="{{product._id}}">{{product.name | limitTo: 40}}</option>
+                                </select>
+                            </div>
+                        </div>
+						<!-- <div class="form-group">
 							<label class="control-label col-sm-4">SortId</label>
 							<div class="col-sm-4">
 								<input type="text" class="form-control" name="sortId" ng-model="formData.sortId" ng-minlength="1" ng-maxlength="3" ng-pattern="/[0-9]{1,100}/" required/>
 								<label for="inputError" class="control-label text-danger" ng-show="myForm.sortId.$invalid && !myForm.sortId.$pristine"><i class="fa fa-times-circle-o"></i> 1-100 number</label>
 							</div>
-						</div>
+						</div> -->
                         <div class="form-group">
-                            <label class="control-label col-sm-4"><span class="text-danger">*</span> Price</label>
-                            <div class="col-sm-3">
-                                <div class="input-group">
-                                    <div class="input-group-addon">$</div>
-                                    <input type="text" class="form-control input" name="price" ng-model="formData.price" ng-minlength="1" ng-maxlength="12" ng-pattern="/^[1-9]+[\.]?[0-9]*$/" placeholder="1-12 numbers and point" required/>
-                                </div>
-                                <label for="inputError" class="control-label text-danger" ng-show="myForm.price.$invalid && !myForm.price.$pristine"><i class="fa fa-times-circle-o"></i> 1-12 numbers, point allowed.</label>
+                            <label class="control-label col-sm-4">Price</label>
+                            <div class="col-sm-5">
+                                <p class="form-control-static text-danger"><b>{{priceData[formData.type] | currency: '$'}} / month</b></p>
                             </div>
                         </div>
-						<div class="form-group">
-							<label class="control-label col-sm-4">isHide</label>
-							<div class="radio col-sm-4">
-								<label>
-									<input type="radio" class="mini" name="state" value="1" ng-model="formData.state" checked/>Show&nbsp;
-								</label>
-								<label>
-									<input type="radio" class="mini" name="state" value="0" ng-model="formData.state"/>Hide
-								</label>
-							</div>
-						</div>
-						<div class="form-group" id="div-set-url">
+						<div class="form-group" id="div-set-url"  ng-if="formData.type !== 'product' && formData.type !== 'shop'">
 							<label class="control-label col-sm-4">URL</label>
 							<div class="col-sm-6">
-								<input type="text" class="form-control" name="url" ng-model="formData.url" placeholder="advertisement link" ng-minlength="2" ng-maxlength="30" required/>
-								<label for="inputError" class="control-label text-danger" ng-show="myForm.url.$invalid && !myForm.url.$pristine"><i class="fa fa-times-circle-o"></i> 2-30 letters</label>
-
+								<input type="text" class="form-control" name="url" ng-model="formData.url" placeholder="advertisement link" ng-maxlength="100" />
 							</div>
 						</div>
-						<div class="form-group">
-			                <label for="" class="control-label col-sm-4">Valid Date</label>
-			                <div class="input-group input-daterange col-sm-4" style="padding-left:15px;">
-			                    <input type="text" class="form-control startDate" name="startDate" ng-model="formData.startDate" style="width:100px;" required/>
-			                    <span class="input-group-addon">to</span>
-			                    <input type="text" class="form-control endDate" name="endDate" ng-model="formData.endDate" style="width:100px;" required/>
-			                </div>
-			            </div>
 						<div class="form-group">
 		                    <label for="" class="col-sm-4 control-label">Logo</label>
 		                    <div class="fileinput fileinput-new col-sm-6" data-provides="fileinput">
@@ -133,14 +117,7 @@
 		                </div>
 						<div class="form-group hide">
 							<label for="" class="col-sm-4 control-label">Uploaded Logo</label>
-							<div class="col-sm-6"><img id="uploaded" src="" class="img-thumbnail"></div>
-						</div>
-						<div class="form-group">
-							<label class="control-label col-sm-4">Content</label>
-							<div class="col-sm-7">
-								<textarea name="description" cols="30" class="form-control" rows="2"  ng-model="formData.content" ng-minlength="0" ng-maxlength="500" required></textarea>
-								<label for="inputError" class="control-label text-danger" ng-show="myForm.content.$invalid && !myForm.content.$pristine"><i class="fa fa-times-circle-o"></i> less than 500 letters</label>
-							</div>
+							<div class="col-sm-6"><img id="uploaded" src="" class="img-thumbnail" style="max-width: 300px;max-height:150px;"></div>
 						</div>
 						<div class="modal-footer">
 							<button type="submit" class="btn btn-primary" ng-disabled="myForm.$invalid">Submit</button>
@@ -163,7 +140,14 @@
 
     App.controller( "adsList", function ( $scope, $http ) {
 
-        $scope.formData = {};
+        $scope.formData = { type: 'product' };
+        $scope.productData = [];
+        $scope.priceData = {
+            'product': <%=AD_PRICE.product%>,
+            'shop': <%=AD_PRICE.shop%>,
+            'brand': <%=AD_PRICE.brand%>,
+            'slide': <%=AD_PRICE.slide%>
+        };
         $scope.targetID = '';
         var url = '/api/v1/ad', getUrl = url + '?shop=1';
 
@@ -172,31 +156,42 @@
             loadData($scope, $http, getUrl);
         }
 
-        initDelete($scope, $http, url, 'Are you sure to delete the Ad?');
+        $http.get("/api/v1/product?shop_id=1").success(function (result) {
+            if (typeof result === 'object') {
+                $scope.productData = result.docs;
+            }
+        });
+
+        // initDelete($scope, $http, url, 'Are you sure to delete the Ad?');
 
         $scope.processForm = function (isValid) {
             if (isValid) {
-                if (!$scope.formData.logo) {
-                    alert('Logo image not upload.');
-                    return;
-                }
                 var method = 'PUT', optUrl = url;
                 if ($scope.targetID) {
-                    method = 'POST';
-                    optUrl = url + '/' + $scope.targetID;
+                    return;
+                    // method = 'POST';
+                    // optUrl = url + '/' + $scope.targetID;
                 }
+
                 angularHttp($http, method, optUrl, $scope.formData, function (result) {
                     if (result === 'success') {
                         $scope.load();
+                    } else {
+                        showErrorInfo(result);
                     }
                 });
             }
         };
 
+        $scope.clearForm = function () {
+            $('div.fileinput').fileinput('clear');
+            $scope.formData.logo = '';
+            $("#uploaded").attr('src', '');
+            $( this ).find( "select[name='product_id']" ).val( "" );
+        };
 
         // 修改类别
         $('#addAd').on('show.bs.modal', function (event) {
-            if (!event.relatedTarget) { return; }
             var obj = $(event.relatedTarget);
             var editId = obj.data('whatever');
             var modalTitle = $(this).find('.modal-title');
@@ -208,21 +203,17 @@
                     $scope.formData = result;
                     $scope.targetID = editId;
                     $("#uploaded").attr('src', result.logo).closest('div.form-group').removeClass('hide');
-                    $("input.startDate").datepicker('setDate', new Date(result.startDate));
-                    $("input.endDate").datepicker('setDate', new Date(result.endDate));
                 });
             } else {
-                modalTitle.text("New Ad");
-                $scope.formData = {};
-                $scope.formData.state = true;
+                modalTitle.text("Buy Ad");
             }
         }).on( 'hidden.bs.modal', function (event) {
-            if (!event.relatedTarget) { return; }
             // 清空数据
-            $scope.formData = {};
-            $scope.formData.state = true;
+            $scope.formData = { type: $( this ).find( "select[name='type']" ).val() };
             $scope.targetID = "";
             $( this ).find( "input" ).val( "" );
+            $( this ).find( "select[name='product_id']" ).val( "" );
+            $('div.fileinput').fileinput('clear');
             $("#uploaded").attr('src', '').closest('div.form-group').addClass('hide');
         });
 

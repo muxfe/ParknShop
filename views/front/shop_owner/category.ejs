@@ -4,6 +4,10 @@
         <% include sidebar %>
     </div>
     <div class="col-xs-10">
+        <legend><%=title%>
+            <small class="pull-right text-danger hide"><i class="fa fa-info"></i> <span id="errorInfo"></span></small>
+            <small class="pull-right text-success hide"><i class="fa fa-info"></i> <span id="successInfo"></span></small>
+        </legend>
         <div class="panel">
             <a href="#addCategory" role="button" class="btn btn-primary btn-sm" data-toggle="modal"><span class="fa fa-plus-square" aria-hidden="true">&nbsp;</span>New Category</a>
 			<input type="hidden" id="targetIds"/>

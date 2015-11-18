@@ -146,6 +146,14 @@ var SiteUtils = {
         };
     },
 
+    getData4ShopAd: function (req, res, title) {
+        var ret = SiteUtils.getData4ShopOwner(req, res, title);
+        var settings = require('../models/db/settings');
+        ret.AD_LIMIT = settings.AD_LIMIT;
+        ret.AD_PRICE = settings.AD_PRICE;
+        return ret;
+    },
+
     data2tree: function ( data ) {
         var d = { }, // 生成树的中间结果，利用了对象属性的哈希特性
             da = [ ], // 返回的结果数组，内容为Category对象

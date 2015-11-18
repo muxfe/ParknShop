@@ -15,20 +15,21 @@ var ad = new Schema({
         unique: true,
         'default': shortid.generate
     },
-    title: String,
-    content: String,
-    url: String,
-    logo: {
-        type: String,
-        default: 'upload/images/default_ad.jpg'
-    },
     // 权值
     sortId: {
         type: Number,
-        default: 0
+        default: 100
     },
-    // 是否置顶
-    isTop: Boolean,
+    // 外链
+    url: String,
+    // 图片
+    logo: String,
+    // 是否置顶, admin操作
+    isTop: {
+        type: Boolean,
+        default: false
+    },
+    // create Date
     date: {
         type: Date,
         default: Date.now
@@ -38,7 +39,7 @@ var ad = new Schema({
         type: Boolean,
         default: true
     },
-    // 广告类型：system/shop
+    // 广告类型：product/shop/slide/brand
     type: {
         type: String,
         default: 'shop'
@@ -48,51 +49,43 @@ var ad = new Schema({
         shop_owner_id: String,
         shop_owner_username: String
     },
-    startDate: Date,
+    // if type = 'product'
+    product_id: String,
+    startDate: {
+        type: Date,
+        default: Date.now
+    },
+    // 到期日期
     endDate: Date,
     // price
     price: {
         type: Number,
-        default: 1000
+        default: 500 // 500/month shop
     }
 });
 
 var Ad = mongoose.model('Ad', ad);
 
-function handleDate(req) {
-    var startDate = new Date(req.body.startDate), endDate = new Date(req.body.endDate);
-    if (isNaN(startDate.valueOf())) {
-        startDate = new Date();
-    }
-    if (isNaN(endDate.valueOf())) {
-        endDate = new Date();
-        endDate.setDate(new Date(startDate).getDate() + 30);
-    }
-    req.body.startDate = startDate.toISOString();
-    req.body.endDate = endDate.toISOString();
-}
-
 Ad.business = {
 
     query: function (req, res) {
         var query = url.parse(req.url, true).query,
-            keywords = query.searchKey || '',
+            // keywords = query.searchKey || '',
             shop = query.shop,
-            re = new RegExp( keywords, 'i' ),
-            type = shop ? 'shop' : 'system',
-            Db = require('./db/Db');
+            // re = new RegExp( keywords, 'i' ),
+            Db = require('./db/Db'),
+            Auth = require('../utils/Auth'),
+            conditions = {};
 
-        var conditions = {
-            type: type,
-            'shop.shop_owner_id': shop ? req.session.user._id : null,
-            $or: [
-                { title: { $regex: re } },
-                { content: { $regex: re } },
-                { url: { $regex: re } }
-            ]
-        };
-        var sort = { sortId: 1 };
-        Db.pagination(Ad, req, res, [conditions], sort);
+        if (shop && Auth.isShopOwner(req)) {
+            conditions = { 'shop.shop_owner_id': shop ? req.session.user._id : null };
+        } else if (Auth.isAdminLogin(req)) {
+            conditions = {};
+        } else {
+            res.end("Permission Denied.");
+        }
+
+        Db.pagination(Ad, req, res, [conditions]);
     },
 
     findOne: function (id, req, res) {
@@ -106,16 +99,35 @@ Ad.business = {
         });
     },
 
+    find: function (req, res) {
+        var query = url.parse(req.url, true).query,
+            type = query.type || 'product',
+            now = new Date(),
+            settings = require('./db/settings'),
+            limit = settings.AD_LIMIT[type] || 0;
+
+        Ad.find({ type: type, endDate: { $gte: now }, state: true })
+            .limit(limit)
+            .exec(function (err, result) {
+                if (err) {
+                    console.log(err);
+                    res.end('errror');
+                } else {
+                    res.json(result);
+                }
+            });
+    },
+
     insert: function (req, res) {
-        var Db = require('./db/Db');
-        var username = req.session.adminUserInfo.username;
-        handleDate(req);
-        req.body.type = 'system';
-        Db.addOne(Ad, req, res, username + ' insert a advertisement.');
+        res.end('bad call');
     },
 
     insertByUser: function (req, res) {
-        var Db = require('./db/Db');
+        var Db = require('./db/Db'),
+            settings = require("./db/settings"),
+            type = req.body.type || 'product',
+            limit = settings.AD_LIMIT[type] || 2,
+            price = settings.AD_PRICE[type] || 1000;
         Shop.findOne({ 'shop_owner._id': req.session.user._id }, function (err, shop) { // 验证店主
 			if (err) {
 				console.log(err);
@@ -126,11 +138,22 @@ Ad.business = {
 				req.body.shop = {
                     _id: shop._id,
                     shop_owner_id: shop.shop_owner._id,
-                    shop_owner_username: shop.shop_owner._username
+                    shop_owner_username: shop.shop_owner.username
                 }
-                req.body.type = 'shop';
-                handleDate(req);
-                Db.addOne(Ad, req, res);
+                req.body.endDate = new Date(new Date().getTime() + 30 * 24 * 3600 * 1000).toISOString();
+                req.body.price = price;
+                Ad.count({ type: type, state: true, endDate: { $gte: new Date() } }, function (err, count) {
+                    if (err) {
+                        console.log(err);
+                        res.end('error');
+                    } else {
+                        if (count < limit) {
+                            Db.addOne(Ad, req, res);
+                        } else {
+                            res.end("No Ad Position is valid.");
+                        }
+                    }
+                });
 			} else {
 				res.end('You dont have a shop.');
 			}
@@ -140,13 +163,11 @@ Ad.business = {
     update: function (id, req, res) {
         var Db = require('./db/Db');
         var username = req.session.adminUserInfo.username;
-        handleDate(req);
         Db.updateOneById( id, Ad, req, res, username + ' update the Ad(' + id + ')' );
     },
 
     updateByUser: function (id, req, res) {
-        handleDate(req);
-        Ad.update({ _id: id, 'shop.shop_owner_id': req.session.user._id, type: 'shop' }, { $set: req.body }, function (err) {
+        Ad.update({ _id: id, 'shop.shop_owner_id': req.session.user._id }, { $set: req.body }, function (err) {
             if (err) {
                 console.log(err);
                 res.end('error');
@@ -162,16 +183,17 @@ Ad.business = {
 
         if (Auth.isAdminLogin(req)) {
             Db.delete( id, Ad, req, res, req.session.adminUserInfo.username + ' delete the Ad(' + id + ')');
-        } else if (Auth.isShopOwner(req)) {
-            Ad.remove({ _id: id, 'shop.shop_owner_id': req.session.user._id }, function (err) {
-                if (err) {
-                    console.log(err);
-                    res.end('error');
-                } else {
-                    res.end('success');
-                }
-            });
         } else {
+        // } else if (Auth.isShopOwner(req)) {
+        //     Ad.remove({ _id: id, 'shop.shop_owner_id': req.session.user._id }, function (err) {
+        //         if (err) {
+        //             console.log(err);
+        //             res.end('error');
+        //         } else {
+        //             res.end('success');
+        //         }
+        //     });
+        // } else {
             res.end("Permission Denied.");
         }
     },
