@@ -104,9 +104,11 @@ Ad.business = {
             type = query.type || 'product',
             now = new Date(),
             settings = require('./db/settings'),
-            limit = settings.AD_LIMIT[type] || 0;
+            limit = settings.AD_LIMIT[type] || 0,
+            sort = { date: 1 };
 
         Ad.find({ type: type, endDate: { $gte: now }, state: true })
+            .sort(sort)
             .limit(limit)
             .exec(function (err, result) {
                 if (err) {

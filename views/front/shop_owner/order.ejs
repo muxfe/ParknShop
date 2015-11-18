@@ -38,7 +38,7 @@
         </div>
         <div class="box orders">
             <div class="panel" ng-repeat="orderItem in data" ng-class="{ 'done': 'panel-success', 'pay': 'panel-info', 'submit': 'panel-default', 'shipping': 'panel-warning', 'confirm': 'panel-success' }[orderItem.state]">
-                <div class="panel-heading col-xs-12">
+                <div class="panel-heading" style="height:40px;">
                     <div class="col-xs-4">
                         <span>[{{orderItem.date | date: 'MM/dd/yyyy'}}] Order: {{orderItem._id}}</span>
                     </div>
@@ -46,7 +46,7 @@
                         <span style="">Shop: <a href="/shop/{{shopData[orderItem.shop._id]._id}}">{{shopData[orderItem.shop._id].name}}</a></span>
                     </div>
                     <div class="col-xs-4">
-                        <a class="pull-right {{orderItem._id}}" href="#" data-toggle="popover">State: {{orderItem.state}}</a>
+                        <a class="pull-right {{orderItem._id}}" href="#" data-toggle="popover"><i class="fa fa-fw fa-caret-left"></i> State: {{orderItem.state}}</a>
                     </div>
                 </div>
                 <div class="panel-body">
@@ -61,6 +61,11 @@
                                 <td class="col-sm-6"><img src="{{item.logo}}" style="width: 60px;height:60px;margin-right:10px;"/><a href="/product/{{item._id}}">{{item.name}}</a></td>
                                 <td class="col-sm-3" style="vertical-align:middle;">{{item.price | currency: '$'}} (now)</td>
                                 <td class="col-sm-3" style="vertical-align:middle;">{{item.quantity}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">Receiver: {{orderItem.address.name}} <br/>
+                                Address: {{orderItem.address.address}} ({{orderItem.address.postcode}}) <br/>
+                                Telephone: {{orderItem.address.phoneNum}}</td>
                             </tr>
                             <tr>
                                 <td><h4 class="text-danger">Total: {{orderItem.total | currency: '$'}}</h4></td>

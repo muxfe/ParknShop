@@ -39,7 +39,7 @@
         </div>
         <div class="box orders">
             <div class="panel" ng-repeat="orderItem in data" ng-class="{ 'done': 'panel-success', 'pay': 'panel-info', 'submit': 'panel-default', 'shipping': 'panel-warning', 'confirm': 'panel-success' }[orderItem.state]">
-                <div class="panel-heading col-xs-12">
+                <div class="panel-heading" style="height:40px;">
                     <div class="col-xs-4">
                         <span>[{{orderItem.date | date: 'MM/dd/yyyy'}}] Order: {{orderItem._id}}</span>
                     </div>

@@ -168,9 +168,8 @@
             if (isValid) {
                 var method = 'PUT', optUrl = url;
                 if ($scope.targetID) {
-                    return;
-                    // method = 'POST';
-                    // optUrl = url + '/' + $scope.targetID;
+                    method = 'POST';
+                    optUrl = url + '/' + $scope.targetID;
                 }
 
                 angularHttp($http, method, optUrl, $scope.formData, function (result) {

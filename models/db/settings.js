@@ -37,7 +37,7 @@ module.exports = {
 		'product': 4,
 		'shop': 2,
 		'brand': 2,
-		'slide': 5
+		'slide': 3
 	},
 	// 广告价格 /monthly
 	AD_PRICE: {

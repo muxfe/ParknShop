@@ -105,7 +105,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{filterData.startDate}} ~ {{filterData.endDate}}</td>
+                            <td>{{filterData.startDate | date: 'MM/dd/yyyy'}} ~ {{filterData.endDate | date: 'MM/dd/yyyy'}}</td>
                             <td class="h4 text-danger">{{incomeTotal - adIncomeTotal | currency: '$'}}</td>
                         </tr>
                     </tbody>
@@ -146,7 +146,7 @@
                 filterStr += key + '=' + $scope.filterData[key] + '&';
             }
             filterStr = filterStr.substring(0, filterStr.length - 1);
-            $http.get(url + '?shop_id=' + shop_id + '&' + filterStr).success(function (result) {
+            $http.get(url + '?shop_id=' + shop_id + '&role=shop&' + filterStr).success(function (result) {
                 if (typeof result === 'object') {
                     if (result.length === 0) {
                         $scope.incomeData = [{

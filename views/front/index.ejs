@@ -70,7 +70,8 @@
                 <!-- Wrapper for slides -->
                 <div class="carousel-inner" role="listbox">
                     <div class="item" ng-repeat="item in brands track by $index" ng-class="{ 0: 'active' }[$index]">
-                      <img src="/upload/images/brandlogo.png" alt="slide">
+                      <img src="{{item.logolg}}" alt="slide" ng-if="!item.default">
+                      <img src="{{item.logo}}" alt="slide" ng-if="item.default">
                       <img src="{{item.logo}}" alt="slide">
                     </div>
                 </div>
@@ -119,7 +120,7 @@
 
     App.controller("index", function ($scope, $http) {
         var url = '/api/v1/index/ad?type=';
-        var types = [ 'product', 'shop', 'brand', 'slide' ];
+        var types = [ 'slide', 'shop', 'brand', 'product' ];
         var defaultData = {
             'product': {
                 logo: '/upload/images/productlogo.png',
@@ -208,9 +209,17 @@
                                 });
                                 break;
                             case 'slide':
-                                if (result.length === 0) {
-                                    $scope.slides.push(defaultData[types[j]]);
-                                }
+
+                                break;
+                            case 'brand':
+                                $scope.brands.forEach(function (d, i) {
+                                    $http.get('/api/v1/shop/' + d.shop._id).success(function (result) {
+                                        if (typeof result === 'object') {
+                                            $scope.brands[i].logolg = $scope.brands[i].logo;
+                                            $.extend($scope.brands[i], result);
+                                        }
+                                    })
+                                });
                                 break;
                             default:
                                 break;
